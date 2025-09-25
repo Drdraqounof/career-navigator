@@ -1,0 +1,151 @@
+<!-- Case.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Me - Find Your Perfect Path</title>
+  
+  <!-- SEO & Open Graph -->
+  <meta name="description" content="AI-powered Career Navigator: personalized career guidance based on job market trends.">
+  <meta property="og:title" content="AI-Powered Career Navigator">
+  <meta property="og:description" content="Helping students, graduates, and career changers find the right career path.">
+  <meta property="og:type" content="website">
+
+  <!-- Scripts & Styles -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.0/cdn.min.js" defer></script>
+  <link rel="stylesheet" href="case.css">
+</head>
+<body x-data="{ activeSection: 'overview' }">
+
+  <header>
+    <nav class="container">
+      <div class="logo">🚀 Find Me Career Navigator</div>
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#timeline">Timeline</a></li>
+        <li><a href="#tech">Tech Stack</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="#" id="testLink">Test</a></li>
+
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Find Me</h1>
+      <p>Empowering students, graduates, and career changers with personalized guidance based on real job market trends</p>
+      <a href="#overview" class="cta-button">Explore the Project</a>
+    </div>
+  </section>
+
+  <main class="main-content" id="mainContent">
+    <div class="container">
+
+      <!-- Overview -->
+      <section id="overview" class="section fade-in">
+        <h2>Project Overview</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <h3>🎯 What It Does</h3>
+            <p>A web app that helps users figure out which jobs fit them, what skills they need, and what steps to take next. Provides personalized guidance based on real job market trends.</p>
+          </div>
+          <div class="feature-card">
+            <h3>🏗️ Development Approach</h3>
+            <p>Built using Agile methodology with 3 sprints over 6 weeks. Core features first, then advanced functionality. Mock data initially, real APIs later.</p>
+          </div>
+          <div class="feature-card">
+            <h3>📊 Smart Insights</h3>
+            <p>Helps improve resumes, identifies skills gaps, and creates actionable career plans. Adapts recommendations as the job market evolves.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Audience -->
+      <section id="audience" class="section fade-in">
+        <h2>Who It's For</h2>
+        <div class="audience-list">
+          <div class="audience-item">🎓 High school seniors planning college or careers</div>
+          <div class="audience-item">👨‍🎓 Recent graduates entering the job market</div>
+          <div class="audience-item">🔄 Career changers looking for new opportunities</div>
+          <div class="audience-item">🔍 Anyone wanting smarter job search methods</div>
+        </div>
+      </section>
+
+      <!-- Problems -->
+      <section id="problems" class="section fade-in">
+        <h2>Problems We Solve</h2>
+        <div class="problems-grid">
+          <div class="problem-item"><strong>Resume Struggles:</strong> Don't know how to tailor resumes for specific jobs</div>
+          <div class="problem-item"><strong>Skills Gaps:</strong> Unclear about what skills they're missing</div>
+          <div class="problem-item"><strong>Learning Direction:</strong> Unsure what to learn next in their career</div>
+          <div class="problem-item"><strong>Market Trends:</strong> Don't understand current job market dynamics</div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="section fade-in">
+        <h2>Key Features</h2>
+        <div class="features-grid">
+          <div class="feature-card"><h3>🛤️ Onboarding Flow</h3><p>Users answer personalized questions to receive tailored career advice and recommendations.</p></div>
+          <div class="feature-card"><h3>🔍 Explore Flow</h3><p>Search and filter careers with detailed information about requirements, salaries, and growth potential.</p></div>
+          <div class="feature-card"><h3>💾 Save & Compare</h3><p>Save interesting jobs or career paths and compare multiple options side by side.</p></div>
+          <div class="feature-card"><h3>📋 My Plan Page</h3><p>Comprehensive summary of skills gaps and suggested actionable next steps.</p></div>
+          <div class="feature-card"><h3>📄 Export Feature</h3><p>Download personalized career plans as PDF or Markdown files for offline reference.</p></div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section id="timeline" class="section fade-in">
+        <h2>Development Timeline</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Sprint 1: Foundation (Weeks 1-2)</h3>
+              <p><strong>Week 1:</strong> Define problem, analyze competitors, create user personas, plan MVP</p>
+              <p><strong>Week 2:</strong> Create wireframes, set up Trello backlog, scaffold project repository</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Sprint 2: Core Setup (Week 3)</h3>
+              <p>Build onboarding flow, set up application state management, implement mock APIs, establish design system</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Sprint 3: Main Features (Weeks 4-5)</h3>
+              <p><strong>Week 4:</strong> Build Explore flow, Save & Compare functionality, data persistence</p>
+              <p><strong>Week 5:</strong> Implement My Plan page, export features, conduct usability testing</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Final Phase (Week 6)</h3>
+              <p>Complete documentation, create training materials, prepare demo, showcase final project</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech -->
+      <section id="tech" class="section fade-in">
+        <h2>Technology Stack</h2>
+        <div class="tech-grid">
+          <div class="tech-item"><h4>Frontend</h4><p>React 18+ with TypeScript, Vite</p></div>
+          <div class="tech-item"><h4>State Management</h4><p>Zustand or React Context</p></div>
+          <div class="tech-item"><h4>Styling</h4><p>TailwindCSS</p></div>
+          <div class="tech-item"><h4>Routing & Forms</h4><p>React Router, React Hook Form + Zod</p></div>
+          <div class="tech-item"><h4>Hosting</h4><p>Vercel</p></div>
+          <div class="tech-item"><h4>Project Management</h4><p>Trello for task tracking</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="case.js"></script>
+
+</body>
+</html>

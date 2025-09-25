@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Me - Your Career Dashboard</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #667eea;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #667eea;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background: #5a6fd8;
+      transform: translateY(-2px);
+    }
+
+    /* Main Content */
+    .main-content {
+      padding-top: 100px;
+      min-height: 100vh;
+    }
+
+    .welcome-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 3rem;
+      margin-bottom: 3rem;
+      text-align: center;
+      color: white;
+    }
+
+    .welcome-section h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #fff, #e0e7ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* User Type Selector */
+    .user-type-selector {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 3rem 0;
+      flex-wrap: wrap;
+    }
+
+    .user-type-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 250px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 3px solid transparent;
+    }
+
+    .user-type-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-type-card.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .user-type-card .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-type-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .user-type-card p {
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    /* Dashboard Content */
+    .dashboard-content {
+      display: none;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .dashboard-content.active {
+      display: block;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .dashboard-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header .icon {
+      font-size: 2rem;
+      color: #667eea;
+    }
+
+    .card-header h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .progress-bar {
+      background: #e0e7ff;
+      border-radius: 10px;
+      height: 10px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.8s ease;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .skill-tag {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #667eea;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0.2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: 10px;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #667eea;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .user-type-selector {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .user-type-card {
+        min-width: 100%;
+        max-width: 400px;
+      }
+
+      .welcome-section h1 {
+        font-size: 2rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <div class="logo">🚀 Find Me Career Navigator</div>
+      <ul class="nav-links">
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="group.html">Explore</a></li>
+        <li><a href="#my-plan">My Plan</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li>
+          <div class="user-profile" onclick="showUserMenu()">
+            <span id="userIcon">👤</span>
+            <span id="userName">John Doe</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Welcome Section -->
+      <section class="welcome-section fade-in">
+        <h1>Welcome to Your Career Journey</h1>
+        <p>Choose your profile to get personalized career guidance, tailored resources, and actionable next steps for your unique situation.</p>
+      </section>
+
+      <!-- User Type Selector -->
+      <section class="user-type-selector fade-in">
+        <div class="user-type-card" data-type="student" onclick="selectUserType('student')">
+          <div class="icon">🎓</div>
+          <h3>High School Student</h3>
+          <p>Planning your college path and exploring future career options</p>
+        </div>
+
+        <div class="user-type-card" data-type="graduate" onclick="selectUserType('graduate')">
+          <div class="icon">👨‍🎓</div>
+          <h3>Recent Graduate</h3>
+          <p>Ready to enter the job market with your new degree</p>
+        </div>
+
+        <div class="user-type-card" data-type="changer" onclick="selectUserType('changer')">
+          <div class="icon">🔄</div>
+          <h3>Career Changer</h3>
+          <p>Looking to transition to a new field or industry</p>
+        </div>
+
+        <div class="user-type-card" data-type="professional" onclick="selectUserType('professional')">
+          <div class="icon">💼</div>
+          <h3>Working Professional</h3>
+          <p>Advancing your career and developing new skills</p>
+        </div>
+      </section>
+
+      <!-- Student Dashboard -->
+      <section class="dashboard-content" id="student-dashboard">
+        <div class="dashboard-grid">
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🎯</span>
+              <h3>Career Exploration Progress</h3>
+            </div>
+            <p>You've explored 3 out of 10 recommended career paths</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 30%"></div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Careers Saved</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">12</span>
+                <span class="stat-label">Skills Identified</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Explore More Careers</a>
+              <a href="#" class="btn btn-secondary">Take Assessment</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">📚</span>
+              <h3>College Planning</h3>
+            </div>
+            <p>Based on your interests, here are recommended majors and programs:</p>
+            <div style="margin: 1rem 0;">
+              <span class="skill-tag">Computer Science</span>
+              <span class="skill-tag">Data Science</span>
+              <span class="skill-tag">Business Administration</span>
+              <span class="skill-tag">Psychology</span>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">View College Programs</a>
+              <a href="#" class="btn btn-secondary">Scholarship Search</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🛠️</span>
+              <h3>Skills Development</h3>
+            </div>
+            <p>Start building in-demand skills early</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 45%"></div>
+            </div>
+            <div style="margin: 1rem 0;">
+              <span class="skill-tag">Critical Thinking</span>
+              <span class="skill-tag">Communication</span>
+              <span class="skill-tag">Digital Literacy</span>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Start Learning</a>
+              <a href="#" class="btn btn-secondary">Find Mentors</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Graduate Dashboard -->
+      <section class="dashboard-content" id="graduate-dashboard">
+        <div class="dashboard-grid">
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🔍</span>
+              <h3>Job Search Progress</h3>
+            </div>
+            <p>Your job search is gaining momentum!</p>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-number">23</span>
+                <span class="stat-label">Applications Sent</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">8</span>
+                <span class="stat-label">Interviews Scheduled</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Find New Jobs</a>
+              <a href="#" class="btn btn-secondary">Track Applications</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">📄</span>
+              <h3>Resume Optimization</h3>
+            </div>
+            <p>Your resume match score for recent applications:</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 78%"></div>
+            </div>
+            <p style="margin-top: 1rem; color: #667eea; font-weight: 600;">78% Match Score</p>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Improve Resume</a>
+              <a href="#" class="btn btn-secondary">ATS Check</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🎯</span>
+              <h3>Interview Preparation</h3>
+            </div>
+            <p>Prepare for your upcoming interviews</p>
+            <div style="margin: 1rem 0;">
+              <span class="skill-tag">Behavioral Questions</span>
+              <span class="skill-tag">Technical Skills</span>
+              <span class="skill-tag">Company Research</span>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Practice Interviews</a>
+              <a href="#" class="btn btn-secondary">Research Companies</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Career Changer Dashboard -->
+      <section class="dashboard-content" id="changer-dashboard">
+        <div class="dashboard-grid">
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🔄</span>
+              <h3>Transition Planning</h3>
+            </div>
+            <p>Your career transition roadmap progress</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 60%"></div>
+            </div>
+            <div style="margin: 1rem 0;">
+              <span class="skill-tag">Skills Assessment</span>
+              <span class="skill-tag">Industry Research</span>
+              <span class="skill-tag">Network Building</span>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Continue Plan</a>
+              <a href="#" class="btn btn-secondary">Find Mentors</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🎓</span>
+              <h3>Skills Gap Analysis</h3>
+            </div>
+            <p>Skills needed for your target role:</p>
+            <div style="margin: 1rem 0;">
+              <span class="skill-tag">Project Management</span>
+              <span class="skill-tag">Data Analysis</span>
+              <span class="skill-tag">Digital Marketing</span>
+              <span class="skill-tag">Leadership</span>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Start Learning</a>
+              <a href="#" class="btn btn-secondary">Find Courses</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🌐</span>
+              <h3>Industry Insights</h3>
+            </div>
+            <p>Stay updated with your target industry trends</p>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-number">15%</span>
+                <span class="stat-label">Job Growth</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">$75k</span>
+                <span class="stat-label">Avg Salary</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">View Trends</a>
+              <a href="#" class="btn btn-secondary">Connect with Pros</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Professional Dashboard -->
+      <section class="dashboard-content" id="professional-dashboard">
+        <div class="dashboard-grid">
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">📈</span>
+              <h3>Career Growth Tracker</h3>
+            </div>
+            <p>Your professional development progress</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 85%"></div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-number">12</span>
+                <span class="stat-label">Skills Mastered</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">3</span>
+                <span class="stat-label">Certifications</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Set New Goals</a>
+              <a href="#" class="btn btn-secondary">View Progress</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">🎯</span>
+              <h3>Leadership Development</h3>
+            </div>
+            <p>Build executive presence and leadership skills</p>
+            <div style="margin: 1rem 0;">
+              <span class="skill-tag">Strategic Thinking</span>
+              <span class="skill-tag">Team Management</span>
+              <span class="skill-tag">Public Speaking</span>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Leadership Program</a>
+              <a href="#" class="btn btn-secondary">360 Feedback</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card fade-in">
+            <div class="card-header">
+              <span class="icon">💼</span>
+              <h3>Market Value</h3>
+            </div>
+            <p>Your current market position and opportunities</p>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-number">95th</span>
+                <span class="stat-label">Percentile</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">$120k</span>
+                <span class="stat-label">Market Rate</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <a href="#" class="btn btn-primary">Salary Analysis</a>
+              <a href="#" class="btn btn-secondary">New Opportunities</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Fade in animation on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // User type selection
+    let currentUserType = null;
+
+    function selectUserType(type) {
+      // Remove active class from all cards
+      document.querySelectorAll('.user-type-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      // Hide all dashboard content
+      document.querySelectorAll('.dashboard-content').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Add active class to selected card
+      document.querySelector(`[data-type="${type}"]`).classList.add('active');
+      
+      // Show corresponding dashboard
+      document.getElementById(`${type}-dashboard`).classList.add('active');
+      
+      currentUserType = type;
+      
+      // Update user profile
+      updateUserProfile(type);
+      
+      // Animate progress bars
+      setTimeout(() => {
+        document.querySelectorAll('.progress-fill').forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0%';
+          setTimeout(() => {
+            bar.style.width = width;
+          }, 100);
+        });
+      }, 300);
+    }
+
+    function updateUserProfile(type) {
+      const profiles = {
+        student: { icon: '🎓', name: 'Alex Student' },
+        graduate: { icon: '👨‍🎓', name: 'Jordan Graduate' },
+        changer: { icon: '🔄', name: 'Sam Changer' },
+        professional: { icon: '💼', name: 'Morgan Pro' }
+      };
+      
+      const profile = profiles[type];
+      document.getElementById('userIcon').textContent = profile.icon;
+      document.getElementById('userName').textContent = profile.name;
+    }
+
+    function showUserMenu() {
+      alert('User menu functionality would be implemented here');
+    }
+
+    // Initialize with student type on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        selectUserType('student');
+      }, 1000);
+    });
+
+    // Check authentication (from original code)
+    function isLoggedIn() {
+      return localStorage.getItem("loggedIn") === "true";
+    }
+
+    // Redirect if not logged in (commented out for demo)
+    // if (!isLoggedIn()) {
+    //   window.location.href = "login.html";
+    // }
+
+    function logoutUser() {
+      localStorage.removeItem("loggedIn");
+      window.location.href = "case.html";
+    }
+
+    // Add logout functionality to user profile click
+    let clickCount = 0;
+    function showUserMenu() {
+      clickCount++;
+      if (clickCount === 2) {
+        const confirmLogout = confirm('Do you want to logout?');
+        if (confirmLogout) {
+          logoutUser();
+        }
+        clickCount = 0;
+      } else {
+        setTimeout(() => clickCount = 0, 2000);
+      }
+    }
+  </script>
+</body>
+</html>

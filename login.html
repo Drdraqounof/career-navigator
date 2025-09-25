@@ -1,0 +1,142 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Navigator - Login</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-container h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #2c3e50;
+    }
+
+    .login-container p {
+      margin-bottom: 2rem;
+      color: #6c757d;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: border 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 1rem;
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+    }
+
+    .extra-links {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    .extra-links a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      margin: 0 0.5rem;
+    }
+
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Welcome Back</h1>
+    <p>Log in to continue your career journey</p>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+      </div>
+      
+      <button type="submit" class="login-btn">Log In</button>
+    </form>
+
+    <div class="extra-links">
+      <a href="#">Forgot Password?</a> | 
+      <a href="#">Create Account</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // stop form from reloading page
+
+      // Fake login (always succeeds)
+      localStorage.setItem("isLoggedIn", "true");
+
+      // Redirect to student.html
+      window.location.href = "groupsheet.html";
+    });
+  </script>
+</body>
+</html>

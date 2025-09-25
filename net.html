@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Me - Professional Network</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #667eea;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #64748b;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #667eea;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1.5rem;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #667eea;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 25px;
+      padding: 0.5rem 1rem;
+      width: 300px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .search-bar:focus-within {
+      background: white;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-bar input {
+      border: none;
+      background: none;
+      outline: none;
+      flex: 1;
+      padding: 0.25rem;
+    }
+
+    .search-icon {
+      color: #94a3b8;
+      margin-right: 0.5rem;
+    }
+
+    /* Main Layout */
+    .main-content {
+      padding-top: 100px;
+      display: grid;
+      grid-template-columns: 1fr 3fr 1fr;
+      gap: 2rem;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      height: fit-content;
+      position: sticky;
+      top: 120px;
+    }
+
+    .sidebar h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }
+
+    .filter-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .filter-option:hover {
+      color: #667eea;
+    }
+
+    .filter-option input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #667eea;
+    }
+
+    .quick-stats {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      color: white;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .quick-stats h3 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .quick-stats p {
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
+
+    .connection-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .connection-item:hover {
+      background: #f8fafc;
+      margin: 0 -1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border-radius: 8px;
+    }
+
+    .connection-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .connection-info {
+      flex: 1;
+    }
+
+    .connection-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .connection-role {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    /* Main Content */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .page-header {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: #64748b;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .content-tabs {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      padding: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-button {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-button.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .connections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .person-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .person-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .person-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .person-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .person-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .person-info h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .person-role {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .person-company {
+      color: #667eea;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .person-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #64748b;
+    }
+
+    .stat-number {
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .person-skills {
+      margin-bottom: 1rem;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .skill-tag {
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .person-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd8;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .btn.connected {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn.connected:hover {
+      background: #059669;
+    }
+
+    .mutual-connections {
+      color: #64748b;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Right Sidebar */
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .widget {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .widget h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .suggestion-item:hover {
+      border-color: #667eea;
+      background: #fafbff;
+    }
+
+    .suggestion-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .activity-content h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-content p {
+      font-size: 0.8rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    .activity-time {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 0.25rem;
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr 2fr;
+      }
+
+      .right-sidebar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .sidebar {
+        position: relative;
+        top: 0;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .search-bar {
+        width: 200px;
+      }
+
+      .connections-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <div class="logo">🚀 Find Me Career Navigator</div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search people..." id="searchInput">
+      </div>
+      <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="group.html">Explore</a></li>
+        <li><a href="#network" class="active">Network</a></li>
+        <li><a href="events.html">Events</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content container">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="quick-stats">
+        <h3>247</h3>
+        <p>Professional Connections</p>
+      </div>
+
+      <h3>Recent Connections</h3>
+      <div class="recent-connections" id="recentConnections">
+        <div class="connection-item">
+          <div class="connection-avatar">SJ</div>
+          <div class="connection-info">
+            <div class="connection-name">Sarah Johnson</div>
+            <div class="connection-role">Product Manager</div>
+          </div>
+        </div>
+        <div class="connection-item">
+          <div class="connection-avatar">MK</div>
+          <div class="connection-info">
+            <div class="connection-name">Mike Kim</div>
+            <div class="connection-role">Senior Developer</div>
+          </div>
+        </div>
+        <div class="connection-item">
+          <div class="connection-avatar">EL</div>
+          <div class="connection-info">
+            <div class="connection-name">Emma Lopez</div>
+            <div class="connection-role">UX Designer</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Industry</label>
+        <div class="filter-option">
+          <input type="checkbox" id="tech" checked>
+          <span>Technology</span>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="business">
+          <span>Business</span>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="design">
+          <span>Design</span>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="marketing">
+          <span>Marketing</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Connection Level</label>
+        <div class="filter-option">
+          <input type="checkbox" id="first" checked>
+          <span>1st Connections</span>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="second" checked>
+          <span>2nd Connections</span>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="third">
+          <span>3rd+ Connections</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <div class="page-header fade-in">
+        <h1>Professional Network</h1>
+        <p>Discover, connect, and collaborate with professionals who can help advance your career and expand your opportunities.</p>
+      </div>
+
+      <div class="content-tabs fade-in">
+        <button class="tab-button active" onclick="switchTab('discover')">Discover</button>
+        <button class="tab-button" onclick="switchTab('connections')">My Connections</button>
+        <button class="tab-button" onclick="switchTab('requests')">Requests</button>
+        <button class="tab-button" onclick="switchTab('suggestions')">Suggestions</button>
+      </div>
+
+      <div class="connections-grid" id="connectionsContainer">
+        <!-- Connections will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <aside class="right-sidebar">
+      <div class="widget">
+        <h3>People You May Know</h3>
+        <div class="suggestion-item">
+          <div class="suggestion-avatar">AC</div>
+          <div>
+            <h4>Alex Chen</h4>
+            <p>Software Architect at TechCorp</p>
+            <div class="mutual-connections">5 mutual connections</div>
+            <button class="btn btn-primary" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Connect</button>
+          </div>
+        </div>
+        <div class="suggestion-item">
+          <div class="suggestion-avatar">RW</div>
+          <div>
+            <h4>Rachel Williams</h4>
+            <p>Marketing Director at InnovateCo</p>
+            <div class="mutual-connections">3 mutual connections</div>
+            <button class="btn btn-primary" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Connect</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <h3>Network Activity</h3>
+        <div class="activity-item">
+          <div class="activity-avatar">JD</div>
+          <div class="activity-content">
+            <h4>John Davis</h4>
+            <p>Updated his job title to Senior Product Manager at StartupXYZ</p>
+            <div class="activity-time">2 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar">LT</div>
+          <div class="activity-content">
+            <h4>Lisa Thompson</h4>
+            <p>Shared an article about "Future of Remote Work"</p>
+            <div class="activity-time">4 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar">MC</div>
+          <div class="activity-content">
+            <h4>Mark Cooper</h4>
+            <p>Joined the AI & Machine Learning group</p>
+            <div class="activity-time">1 day ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <h3>Industry News</h3>
+        <div class="activity-item">
+          <div class="activity-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">📰</div>
+          <div class="activity-content">
+            <h4>Tech Industry Report</h4>
+            <p>Latest trends in software development and emerging technologies</p>
+            <div class="activity-time">1 hour ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">💡</div>
+          <div class="activity-content">
+            <h4>Career Growth Tips</h4>
+            <p>5 essential skills for advancing in your tech career</p>
+            <div class="activity-time">3 hours ago</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // Sample connections data
+    const connectionsData = {
+      discover: [
+        {
+          id: 'sarah-johnson',
+          name: 'Sarah Johnson',
+          role: 'Senior Product Manager',
+          company: 'TechFlow Inc.',
+          avatar: 'SJ',
+          connections: '500+',
+          mutualConnections: 12,
+          skills: ['Product Strategy', 'Agile', 'User Research', 'Analytics'],
+          location: 'San Francisco, CA',
+          industry: 'Technology',
+          connected: false
+        },
+        {
+          id: 'mike-rodriguez',
+          name: 'Mike Rodriguez',
+          role: 'Full Stack Developer',
+          company: 'DevCorp Solutions',
+          avatar: 'MR',
+          connections: '350+',
+          mutualConnections: 8,
+          skills: ['React', 'Node.js', 'Python', 'AWS'],
+          location: 'Austin, TX',
+          industry: 'Technology',
+          connected: false
+        },
+        {
+          id: 'emma-chen',
+          name: 'Emma Chen',
+          role: 'UX/UI Designer',
+          company: 'DesignStudio Pro',
+          avatar: 'EC',
+          connections: '280+',
+          mutualConnections: 15,
+          skills: ['Figma', 'User Testing', 'Prototyping', 'Design Systems'],
+          location: 'New York, NY',
+          industry: 'Design',
+          connected: false
+        },
+        {
+          id: 'david-kim',
+          name: 'David Kim',
+          role: 'Data Science Manager',
+          company: 'Analytics Hub',
+          avatar: 'DK',
+          connections: '450+',
+          mutualConnections: 6,
+          skills: ['Machine Learning', 'Python', 'SQL', 'Tableau'],
+          location: 'Seattle, WA',
+          industry: 'Technology',
+          connected: false
+        },
+        {
+          id: 'lisa-wang',
+          name: 'Lisa Wang',
+          role: 'Marketing Director',
+          company: 'GrowthCo',
+          avatar: 'LW',
+          connections: '600+',
+          mutualConnections: 23,
+          skills: ['Digital Marketing', 'SEO', 'Content Strategy', 'Analytics'],
+          location: 'Los Angeles, CA',
+          industry: 'Marketing',
+          connected: false
+        },
+        {
+          id: 'alex-johnson',
+          name: 'Alex Johnson',
+          role: 'Software Architect',
+          company: 'CloudTech Systems',
+          avatar: 'AJ',
+          connections: '400+',
+          mutualConnections: 9,
+          skills: ['System Design', 'Microservices', 'Docker', 'Kubernetes'],
+          location: 'Denver, CO',
+          industry: 'Technology',
+          connected: false
+        }
+      ],
+      connections: [
+        {
+          id: 'john-davis',
+          name: 'John Davis',
+          role: 'Senior Software Engineer',
+          company: 'TechCorp',
+          avatar: 'JD',
+          connections: '320+',
+          mutualConnections: 18,
+          skills: ['JavaScript', 'React', 'Node.js', 'MongoDB'],
+          location: 'Boston, MA',
+          industry: 'Technology',
+          connected: true
+        },
+        {
+          id: 'rachel-brown',
+          name: 'Rachel Brown',
+          role: 'Product Designer',
+          company: 'InnovateUX',
+          avatar: 'RB',
+          connections: '250+',
+          mutualConnections: 11,
+          skills: ['UI Design', 'Sketch', 'Prototyping', 'User Research'],
+          location: 'Portland, OR',
+          industry: 'Design',
+          connected: true
+        },
+        {
+          id: 'tom-wilson',
+          name: 'Tom Wilson',
+          role: 'DevOps Engineer',
+          company: 'CloudFirst',
+          avatar: 'TW',
+          connections: '180+',
+          mutualConnections: 7,
+          skills: ['AWS', 'Jenkins', 'Docker', 'Terraform'],
+          location: 'Chicago, IL',
+          industry: 'Technology',
+          connected: true
+        }
+      ],
+      requests: [
+        {
+          id: 'anna-lee',
+          name: 'Anna Lee',
+          role: 'Frontend Developer',
+          company: 'WebStudio',
+          avatar: 'AL',
+          connections: '150+',
+          mutualConnections: 4,
+          skills: ['Vue.js', 'CSS', 'JavaScript', 'Sass'],
+          location: 'Miami, FL',
+          industry: 'Technology',
+          connected: false,
+          requestType: 'received'
+        },
+        {
+          id: 'chris-martin',
+          name: 'Chris Martin',
+          role: 'Business Analyst',
+          company: 'DataInsights',
+          avatar: 'CM',
+          connections: '200+',
+          mutualConnections: 6,
+          skills: ['SQL', 'Excel', 'Business Intelligence', 'Tableau'],
+          location: 'Atlanta, GA',
+          industry: 'Business',
+          connected: false,
+          requestType: 'received'
+        }
+      ],
+      suggestions: [
+        {
+          id: 'olivia-garcia',
+          name: 'Olivia Garcia',
+          role: 'Scrum Master',
+          company: 'AgileWorks',
+          avatar: 'OG',
+          connections: '300+',
+          mutualConnections: 14,
+          skills: ['Agile', 'Scrum', 'Jira', 'Team Leadership'],
+          location: 'Phoenix, AZ',
+          industry: 'Business',
+          connected: false
+        },
+        {
+          id: 'james-taylor',
+          name: 'James Taylor',
+          role: 'Cloud Engineer',
+          company: 'CloudNine',
+          avatar: 'JT',
+          connections: '220+',
+          mutualConnections: 8,
+          skills: ['Azure', 'Python', 'Terraform', 'DevOps'],
+          location: 'Nashville, TN',
+          industry: 'Technology',
+          connected: false
+        }
+      ]
+    };
+
+    let currentTab = 'discover';
+    let connectedPeople = new Set(['john-davis', 'rachel-brown', 'tom-wilson']);
+
+    // Initialize page
+    window.addEventListener('load', () => {
+      renderConnections();
+      setupAnimations();
+      setupSearch();
+      setupFilters();
+    });
+
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      // Update tab buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Render connections for the selected tab
+      renderConnections();
+    }
+
+    function renderConnections() {
+      const container = document.getElementById('connectionsContainer');
+      const connections = connectionsData[currentTab] || [];
+      
+      container.innerHTML = '';
+      
+      connections.forEach((person, index) => {
+        const personCard = createPersonCard(person);
+        personCard.classList.add('fade-in');
+        container.appendChild(personCard);
+        
+        // Stagger animations
+        setTimeout(() => {
+          personCard.classList.add('visible');
+        }, index * 100);
+      });
+    }
+
+    function createPersonCard(person) {
+      const card = document.createElement('div');
+      card.className = 'person-card';
+      card.onclick = () => viewProfile(person.id);
+      
+      const isConnected = connectedPeople.has(person.id);
+      let actionButtons = '';
+      
+      if (currentTab === 'requests') {
+        actionButtons = `
+          <button class="btn btn-primary" onclick="acceptRequest('${person.id}', event)" style="flex: 1;">
+            Accept
+          </button>
+          <button class="btn btn-secondary" onclick="declineRequest('${person.id}', event)" style="flex: 1;">
+            Decline
+          </button>
+        `;
+      } else if (isConnected) {
+        actionButtons = `
+          <button class="btn connected" onclick="viewProfile('${person.id}', event)" style="flex: 1;">
+            Connected
+          </button>
+          <button class="btn btn-secondary" onclick="sendMessage('${person.id}', event)" style="flex: 1;">
+            Message
+          </button>
+        `;
+      } else {
+        actionButtons = `
+          <button class="btn btn-primary" onclick="connectWith('${person.id}', event)" style="flex: 1;">
+            Connect
+          </button>
+          <button class="btn btn-secondary" onclick="viewProfile('${person.id}', event)" style="flex: 1;">
+            View Profile
+          </button>
+        `;
+      }
+      
+      card.innerHTML = `
+        <div class="person-header">
+          <div class="person-avatar">${person.avatar}</div>
+          <div class="person-info">
+            <h3>${person.name}</h3>
+            <div class="person-role">${person.role}</div>
+            <div class="person-company">${person.company}</div>
+          </div>
+        </div>
+        <div class="person-stats">
+          <div class="stat">
+            <span>👥</span>
+            <span class="stat-number">${person.connections}</span>
+            <span>connections</span>
+          </div>
+          <div class="stat">
+            <span>🤝</span>
+            <span class="stat-number">${person.mutualConnections}</span>
+            <span>mutual</span>
+          </div>
+          <div class="stat">
+            <span>📍</span>
+            <span>${person.location}</span>
+          </div>
+        </div>
+        <div class="person-skills">
+          <div class="skills-list">
+            ${person.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+          </div>
+        </div>
+        <div class="person-actions">
+          ${actionButtons}
+        </div>
+        ${person.mutualConnections > 0 ? `<div class="mutual-connections">${person.mutualConnections} mutual connections</div>` : ''}
+      `;
+      
+      return card;
+    }
+
+    function connectWith(personId, event) {
+      event.stopPropagation();
+      
+      const button = event.target;
+      connectedPeople.add(personId);
+      
+      button.textContent = 'Request Sent';
+      button.className = 'btn btn-secondary';
+      button.disabled = true;
+      
+      showNotification('Connection request sent successfully!', 'success');
+      
+      // Update stats
+      updateConnectionStats();
+    }
+
+    function acceptRequest(personId, event) {
+      event.stopPropagation();
+      
+      connectedPeople.add(personId);
+      showNotification('Connection request accepted!', 'success');
+      
+      // Remove from requests and move to connections
+      const person = connectionsData.requests.find(p => p.id === personId);
+      if (person) {
+        person.connected = true;
+        connectionsData.connections.push(person);
+        connectionsData.requests = connectionsData.requests.filter(p => p.id !== personId);
+      }
+      
+      renderConnections();
+      updateConnectionStats();
+    }
+
+    function declineRequest(personId, event) {
+      event.stopPropagation();
+      
+      // Remove from requests
+      connectionsData.requests = connectionsData.requests.filter(p => p.id !== personId);
+      renderConnections();
+      
+      showNotification('Connection request declined', 'info');
+    }
+
+    function sendMessage(personId, event) {
+      event.stopPropagation();
+      showNotification('Message feature coming soon!', 'info');
+    }
+
+    function viewProfile(personId, event) {
+      if (event) event.stopPropagation();
+      
+      // Find the person data
+      let person = null;
+      for (const tab in connectionsData) {
+        person = connectionsData[tab].find(p => p.id === personId);
+        if (person) break;
+      }
+      
+      if (person) {
+        showProfileModal(person);
+      }
+    }
+
+    function showProfileModal(person) {
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        animation: fadeIn 0.3s ease;
+      `;
+      
+      const isConnected = connectedPeople.has(person.id);
+      
+      modal.innerHTML = `
+        <div style="
+          background: white;
+          border-radius: 16px;
+          max-width: 600px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          animation: slideUp 0.3s ease;
+        ">
+          <div style="
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 150px;
+            position: relative;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <div style="
+              position: absolute;
+              bottom: -50px;
+              left: 30px;
+              width: 100px;
+              height: 100px;
+              background: white;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 2.5rem;
+              font-weight: 700;
+              color: #667eea;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            ">${person.avatar}</div>
+            <button onclick="this.closest('.modal').remove()" style="
+              position: absolute;
+              top: 20px;
+              right: 20px;
+              background: rgba(255, 255, 255, 0.2);
+              border: none;
+              color: white;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              cursor: pointer;
+              font-size: 1.2rem;
+            ">×</button>
+          </div>
+          
+          <div style="padding: 4rem 2rem 2rem;">
+            <div style="margin-bottom: 2rem;">
+              <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">${person.name}</h2>
+              <div style="color: #64748b; font-size: 1.1rem; margin-bottom: 0.25rem;">${person.role}</div>
+              <div style="color: #667eea; font-weight: 600;">${person.company}</div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+              <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                <div style="font-size: 1.2rem; font-weight: 800; color: #667eea;">${person.connections}</div>
+                <div style="color: #64748b; font-size: 0.8rem;">Connections</div>
+              </div>
+              <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                <div style="font-size: 1.2rem; font-weight: 800; color: #667eea;">${person.mutualConnections}</div>
+                <div style="color: #64748b; font-size: 0.8rem;">Mutual</div>
+              </div>
+              <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                <div style="font-size: 1.2rem; font-weight: 800; color: #667eea;">${person.industry}</div>
+                <div style="color: #64748b; font-size: 0.8rem;">Industry</div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 2rem;">
+              <h3 style="font-weight: 700; margin-bottom: 1rem;">Skills & Expertise</h3>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                ${person.skills.map(skill => `
+                  <span style="
+                    background: #667eea;
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 20px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                  ">${skill}</span>
+                `).join('')}
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 2rem;">
+              <h3 style="font-weight: 700; margin-bottom: 1rem;">Location</h3>
+              <p style="color: #64748b; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📍</span> ${person.location}
+              </p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+              <button class="${isConnected ? 'btn connected' : 'btn btn-primary'}" onclick="${isConnected ? `sendMessage('${person.id}', event)` : `connectWith('${person.id}', event)`}" style="flex: 1;">
+                ${isConnected ? 'Send Message' : 'Connect'}
+              </button>
+              <button class="btn btn-secondary" style="flex: 1;">
+                View Posts
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      modal.className = 'modal';
+      document.body.appendChild(modal);
+      
+      // Close on background click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+    }
+
+    function updateConnectionStats() {
+      const statsElement = document.querySelector('.quick-stats h3');
+      if (statsElement) {
+        statsElement.textContent = connectedPeople.size + 244; // Base number + connected
+      }
+    }
+
+    function setupAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    function setupSearch() {
+      const searchInput = document.getElementById('searchInput');
+      let searchTimeout;
+      
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const query = e.target.value.toLowerCase();
+          filterConnections(query);
+        }, 300);
+      });
+    }
+
+    function filterConnections(query) {
+      if (!query) {
+        renderConnections();
+        return;
+      }
+      
+      const container = document.getElementById('connectionsContainer');
+      const connections = connectionsData[currentTab] || [];
+      
+      const filteredConnections = connections.filter(person => 
+        person.name.toLowerCase().includes(query) ||
+        person.role.toLowerCase().includes(query) ||
+        person.company.toLowerCase().includes(query) ||
+        person.skills.some(skill => skill.toLowerCase().includes(query))
+      );
+      
+      container.innerHTML = '';
+      
+      if (filteredConnections.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+            <h3>No people found</h3>
+            <p>Try adjusting your search terms or explore different categories.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      filteredConnections.forEach((person, index) => {
+        const personCard = createPersonCard(person);
+        personCard.classList.add('fade-in', 'visible');
+        container.appendChild(personCard);
+      });
+    }
+
+    function setupFilters() {
+      const filterCheckboxes = document.querySelectorAll('.filter-option input[type="checkbox"]');
+      filterCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', applyFilters);
+      });
+    }
+
+    function applyFilters() {
+      const industryFilters = Array.from(document.querySelectorAll('.filter-group:nth-of-type(1) input[type="checkbox"]:checked')).map(cb => cb.id);
+      const connectionFilters = Array.from(document.querySelectorAll('.filter-group:nth-of-type(2) input[type="checkbox"]:checked')).map(cb => cb.id);
+      
+      const container = document.getElementById('connectionsContainer');
+      const connections = connectionsData[currentTab] || [];
+      
+      let filteredConnections = connections;
+      
+      // Apply industry filters
+      if (industryFilters.length > 0) {
+        const industryMap = {
+          'tech': 'Technology',
+          'business': 'Business',
+          'design': 'Design',
+          'marketing': 'Marketing'
+        };
+        
+        const selectedIndustries = industryFilters.map(id => industryMap[id]).filter(Boolean);
+        filteredConnections = filteredConnections.filter(person => selectedIndustries.includes(person.industry));
+      }
+      
+      // Apply connection level filters (simplified for demo)
+      if (connectionFilters.length > 0 && connectionFilters.length < 3) {
+        // This is a simplified filter - in a real app, you'd have actual connection level data
+        filteredConnections = filteredConnections.filter((person, index) => {
+          if (connectionFilters.includes('first')) return index % 3 === 0;
+          if (connectionFilters.includes('second')) return index % 3 === 1;
+          if (connectionFilters.includes('third')) return index % 3 === 2;
+          return true;
+        });
+      }
+      
+      // Render filtered connections
+      container.innerHTML = '';
+      
+      if (filteredConnections.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+            <h3>No people match your filters</h3>
+            <p>Try adjusting your filter selections to see more connections.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      filteredConnections.forEach((person, index) => {
+        const personCard = createPersonCard(person);
+        personCard.classList.add('fade-in');
+        container.appendChild(personCard);
+        
+        setTimeout(() => {
+          personCard.classList.add('visible');
+        }, index * 50);
+      });
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#667eea'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        animation: slideInRight 0.3s ease;
+        font-weight: 600;
+      `;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(100px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes slideOutRight {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(100px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
