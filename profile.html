@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Me - Profile</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #667eea;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #64748b;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #667eea;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1.5rem;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #667eea;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 25px;
+      padding: 0.5rem 1rem;
+      width: 300px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .search-bar:focus-within {
+      background: white;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-bar input {
+      border: none;
+      background: none;
+      outline: none;
+      flex: 1;
+      padding: 0.25rem;
+    }
+
+    .search-icon {
+      color: #94a3b8;
+      margin-right: 0.5rem;
+    }
+
+    .main-content {
+      padding-top: 100px;
+      display: grid;
+      grid-template-columns: 1fr 2.5fr 1fr;
+      gap: 2rem;
+      min-height: 100vh;
+    }
+
+    .profile-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .profile-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: sticky;
+      top: 120px;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    }
+
+    .profile-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+    }
+
+    .profile-title {
+      color: #667eea;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .profile-bio {
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      flex: 1;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd8;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .profile-links {
+      list-style: none;
+    }
+
+    .profile-links li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .profile-links li:last-child {
+      border-bottom: none;
+    }
+
+    .profile-links a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .content-header {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-tabs {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      padding: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+
+    .tab-button {
+      flex: 1;
+      min-width: 120px;
+      background: none;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-button.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .content-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-header-bar {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .content-type-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .content-type-icon.code {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .content-type-icon.video {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    .content-type-icon.event {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+
+    .content-type-icon.article {
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
+    }
+
+    .content-type-icon.project {
+      background: linear-gradient(135deg, #fa709a, #fee140);
+    }
+
+    .content-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .content-title {
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+      font-size: 1rem;
+    }
+
+    .content-meta {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .content-body {
+      padding: 1.5rem;
+    }
+
+    .content-description {
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .code-preview {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .code-preview pre {
+      color: #e94560;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .code-language {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    .video-preview {
+      background: #000;
+      border-radius: 8px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-thumbnail {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 4px;
+      font-size: 1.5rem;
+      color: #667eea;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .play-button:hover {
+      background: white;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .event-preview {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      color: white;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .event-date {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .event-time {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .content-stats {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #64748b;
+    }
+
+    .stat-number {
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .content-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      background: #f1f5f9;
+      color: #667eea;
+    }
+
+    .action-btn.liked {
+      color: #ef4444;
+    }
+
+    .timestamp {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .widget {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 120px;
+    }
+
+    .widget h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }
+
+    .skill-tag {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #667eea;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0.25rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .activity-text {
+      flex: 1;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .activity-time {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .create-content-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      z-index: 500;
+    }
+
+    .create-content-btn:hover {
+      background: #5a6fd8;
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr 2fr;
+      }
+
+      .right-sidebar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .profile-sidebar {
+        order: 2;
+      }
+
+      .content-area {
+        order: 1;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .search-bar {
+        width: 200px;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tab-button {
+        min-width: 100px;
+      }
+
+      .create-content-btn {
+        bottom: 1rem;
+        right: 1rem;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(100px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideOutRight {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(100px); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <div class="logo">🚀 Find Me Career Navigator</div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search content..." id="searchInput">
+      </div>
+      <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="groups.html">Explore</a></li>
+        <li><a href="net.html">Network</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="#profile" class="active">Profile</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content container">
+    <aside class="profile-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar">AS</div>
+        <h2 class="profile-name">Alex Smith</h2>
+        <div class="profile-title">Senior Full Stack Developer</div>
+        <p class="profile-bio">
+          Passionate developer building innovative web applications. Love sharing knowledge and contributing to open source projects.
+        </p>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-number" id="totalPosts">6</span>
+            <span class="stat-label">Posts</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">2.3K</span>
+            <span class="stat-label">Followers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">892</span>
+            <span class="stat-label">Following</span>
+          </div>
+        </div>
+        
+        <div class="profile-actions">
+          <button class="btn btn-primary" id="editProfileBtn">Edit Profile</button>
+          <button class="btn btn-secondary" id="shareProfileBtn">Share</button>
+        </div>
+        
+        <ul class="profile-links">
+          <li><span>🌐</span><a href="#" target="_blank">alexsmith.dev</a></li>
+          <li><span>💼</span><a href="#" target="_blank">LinkedIn</a></li>
+          <li><span>🐙</span><a href="#" target="_blank">GitHub</a></li>
+          <li><span>🐦</span><a href="#" target="_blank">@alexsmith</a></li>
+          <li><span>📧</span>alex@example.com</li>
+          <li><span>📍</span>Philadelphia, PA</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="content-area">
+      <div class="content-header">
+        <h1>My Content</h1>
+        <p>Share your knowledge, projects, and experiences with the community</p>
+      </div>
+
+      <div class="content-tabs" id="contentTabs">
+        <button class="tab-button active" data-tab="all">All Content</button>
+        <button class="tab-button" data-tab="code">Code</button>
+        <button class="tab-button" data-tab="video">Videos</button>
+        <button class="tab-button" data-tab="event">Events</button>
+        <button class="tab-button" data-tab="article">Articles</button>
+        <button class="tab-button" data-tab="project">Projects</button>
+      </div>
+
+      <div class="content-grid" id="contentContainer"></div>
+    </div>
+
+    <aside class="right-sidebar">
+      <div class="widget">
+        <h3>Skills & Technologies</h3>
+        <div>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">React</span>
+          <span class="skill-tag">Node.js</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">PostgreSQL</span>
+          <span class="skill-tag">AWS</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">GraphQL</span>
+          <span class="skill-tag">TypeScript</span>
+          <span class="skill-tag">MongoDB</span>
+        </div>
+      </div>
+
+      <div class="widget">
+        <h3>Recent Activity</h3>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #667eea; color: white;">💻</div>
+          <div class="activity-text">Published new code snippet</div>
+          <div class="activity-time">2h ago</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #10b981; color: white;">👥</div>
+          <div class="activity-text">Joined React Developers group</div>
+          <div class="activity-time">1d ago</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #f59e0b; color: white;">📅</div>
+          <div class="activity-text">Created Tech Meetup event</div>
+          <div class="activity-time">2d ago</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #ef4444; color: white;">🎥</div>
+          <div class="activity-text">Uploaded tutorial video</div>
+          <div class="activity-time">3d ago</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #8b5cf6; color: white;">📝</div>
+          <div class="activity-text">Published article on Medium</div>
+          <div class="activity-time">1w ago</div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <h3>Achievements</h3>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #fbbf24; color: white;">🏆</div>
+          <div class="activity-text">Top Contributor</div>
+          <div class="activity-time">Nov 2025</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #06b6d4; color: white;">⭐</div>
+          <div class="activity-text">Community Star</div>
+          <div class="activity-time">Oct 2025</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #84cc16; color: white;">🚀</div>
+          <div class="activity-text">Early Adopter</div>
+          <div class="activity-time">Sep 2025</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <button class="create-content-btn" id="createContentBtn">+</button>
+
+  <script>
+    (function() {
+      const contentData = [
+        {
+          id: 'react-hooks',
+          type: 'code',
+          title: 'Custom React Hooks for API Calls',
+          description: 'A reusable custom hook for handling API requests with loading states, error handling, and caching.',
+          content: 'const useApi = (url) => {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    fetch(url)\n      .then(res => res.json())\n      .then(setData)\n      .finally(() => setLoading(false));\n  }, [url]);\n  \n  return { data, loading };\n};',
+          language: 'JavaScript',
+          likes: 45,
+          comments: 12,
+          shares: 8,
+          timestamp: '2 hours ago',
+          tags: ['React', 'JavaScript', 'Hooks']
+        },
+        {
+          id: 'docker-tutorial',
+          type: 'video',
+          title: 'Docker Fundamentals: From Zero to Production',
+          description: 'Complete Docker tutorial covering containers, images, volumes, and deployment strategies.',
+          thumbnail: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=400&h=200&fit=crop',
+          duration: '28:45',
+          views: 1250,
+          likes: 89,
+          comments: 23,
+          shares: 15,
+          timestamp: '1 day ago',
+          tags: ['Docker', 'DevOps', 'Tutorial']
+        },
+        {
+          id: 'tech-meetup',
+          type: 'event',
+          title: 'Philadelphia Tech Meetup - November',
+          description: 'Monthly meetup for Philadelphia tech professionals featuring talks on AI, blockchain, and career development.',
+          date: '2025-11-28',
+          time: '6:00 PM',
+          location: 'WeWork Center City',
+          attendees: 87,
+          likes: 34,
+          comments: 18,
+          shares: 22,
+          timestamp: '3 days ago',
+          tags: ['Networking', 'Philadelphia', 'Tech']
+        },
+        {
+          id: 'microservices',
+          type: 'article',
+          title: 'Building Scalable Microservices with Node.js',
+          description: 'Deep dive into microservices architecture, covering service discovery, API gateways, and data consistency patterns.',
+          readTime: '12 min read',
+          likes: 156,
+          comments: 34,
+          shares: 67,
+          timestamp: '5 days ago',
+          tags: ['Node.js', 'Architecture', 'Microservices']
+        },
+        {
+          id: 'portfolio',
+          type: 'project',
+          title: 'Personal Portfolio Website Redesign',
+          description: 'Complete redesign using React, Next.js, and Tailwind CSS. Features dark mode, animations, and responsive design.',
+          technologies: ['React', 'Next.js', 'Tailwind CSS'],
+          likes: 78,
+          comments: 19,
+          shares: 25,
+          timestamp: '1 week ago',
+          tags: ['React', 'Portfolio', 'Web Design']
+        },
+        {
+          id: 'python-automation',
+          type: 'code',
+          title: 'Python Script for Automated Data Processing',
+          description: 'Automated script for reading CSV files, cleaning data, and generating reports with visualizations.',
+          content: 'import pandas as pd\n\ndf = pd.read_csv("data.csv")\ndf = df.dropna()\nstats = df.groupby("month").agg({\n  "revenue": "sum",\n  "users": "count"\n})\nprint(stats)',
+          language: 'Python',
+          likes: 92,
+          comments: 27,
+          shares: 18,
+          timestamp: '1 week ago',
+          tags: ['Python', 'Data Science']
+        }
+      ];
+
+      let currentTab = 'all';
+      let likedContent = new Set(['react-hooks', 'microservices']);
+
+      const typeIcons = {
+        code: '💻',
+        video: '🎥',
+        event: '📅',
+        article: '📝',
+        project: '🚀'
+      };
+
+      function getFilteredContent() {
+        if (currentTab === 'all') return contentData;
+        return contentData.filter(item => item.type === currentTab);
+      }
+
+      function createContentCard(item) {
+        const card = document.createElement('div');
+        card.className = 'content-card fade-in';
+        
+        let preview = '';
+        
+        if (item.type === 'code') {
+          preview = `<div class="code-preview"><div class="code-language">${item.language}</div><pre><code>${item.content.substring(0, 150)}...</code></pre></div>`;
+        } else if (item.type === 'video') {
+          preview = `<div class="video-preview"><img src="${item.thumbnail}" class="video-thumbnail" alt="Video"><button class="play-button">▶</button><div style="position: absolute; bottom: 0.5rem; right: 0.5rem; background: rgba(0,0,0,0.7); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${item.duration}</div></div>`;
+        } else if (item.type === 'event') {
+          const date = new Date(item.date);
+          const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+          preview = `<div class="event-preview"><div class="event-date">${monthDay}</div><div class="event-time">${item.time}</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">📍 ${item.location}</div></div>`;
+        } else if (item.type === 'article') {
+          preview = `<div style="background: linear-gradient(135deg, #43e97b, #38f9d7); border-radius: 8px; padding: 1.5rem; color: white; margin-bottom: 1rem; text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📖</div><div style="font-size: 1.1rem; font-weight: 600;">${item.readTime}</div></div>`;
+        } else if (item.type === 'project') {
+          preview = `<div style="background: linear-gradient(135deg, #fa709a, #fee140); border-radius: 8px; padding: 1.5rem; color: white; margin-bottom: 1rem;"><div style="font-size: 2rem; text-align: center; margin-bottom: 1rem;">🚀</div><div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">${item.technologies.map(t => `<span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem;">${t}</span>`).join('')}</div></div>`;
+        }
+
+        const isLiked = likedContent.has(item.id);
+        
+        card.innerHTML = `
+          <div class="content-header-bar">
+            <div class="content-type-icon ${item.type}">${typeIcons[item.type]}</div>
+            <div class="content-info">
+              <h3 class="content-title">${item.title}</h3>
+              <div class="content-meta">${item.timestamp} • ${item.tags.join(', ')}</div>
+            </div>
+          </div>
+          <div class="content-body">
+            ${preview}
+            <p class="content-description">${item.description}</p>
+            <div class="content-stats">
+              <div class="stat"><span>❤️</span><span class="stat-number" data-stat="likes">${item.likes}</span><span>likes</span></div>
+              <div class="stat"><span>💬</span><span class="stat-number">${item.comments}</span><span>comments</span></div>
+              <div class="stat"><span>🔄</span><span class="stat-number">${item.shares}</span><span>shares</span></div>
+              ${item.views ? `<div class="stat"><span>👁️</span><span class="stat-number">${item.views}</span><span>views</span></div>` : ''}
+              ${item.attendees ? `<div class="stat"><span>👥</span><span class="stat-number">${item.attendees}</span><span>attending</span></div>` : ''}
+            </div>
+            <div class="content-actions">
+              <div class="action-buttons">
+                <button class="action-btn ${isLiked ? 'liked' : ''}" data-action="like" data-id="${item.id}">${isLiked ? '❤️' : '🤍'} Like</button>
+                <button class="action-btn" data-action="comment">💬 Comment</button>
+                <button class="action-btn" data-action="share">🔄 Share</button>
+              </div>
+              <div class="timestamp">${item.timestamp}</div>
+            </div>
+          </div>
+        `;
+        
+        return card;
+      }
+
+      function renderContent() {
+        const container = document.getElementById('contentContainer');
+        container.innerHTML = '';
+        
+        const items = getFilteredContent();
+        
+        if (items.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b;"><div style="font-size: 3rem; margin-bottom: 1rem;">📝</div><h3>No content yet</h3><p>Start sharing your knowledge!</p></div>';
+          return;
+        }
+        
+        items.forEach((item, idx) => {
+          const card = createContentCard(item);
+          container.appendChild(card);
+          setTimeout(() => card.classList.add('visible'), idx * 100);
+        });
+      }
+
+      function handleLike(itemId, button) {
+        const item = contentData.find(i => i.id === itemId);
+        if (!item) return;
+        
+        if (likedContent.has(itemId)) {
+          likedContent.delete(itemId);
+          item.likes--;
+          button.innerHTML = '🤍 Like';
+          button.classList.remove('liked');
+          showNotification('Removed from liked content', 'info');
+        } else {
+          likedContent.add(itemId);
+          item.likes++;
+          button.innerHTML = '❤️ Like';
+          button.classList.add('liked');
+          showNotification('Liked!', 'success');
+        }
+        
+        const statEl = button.closest('.content-card').querySelector('[data-stat="likes"]');
+        if (statEl) statEl.textContent = item.likes;
+      }
+
+      function showNotification(msg, type) {
+        const notif = document.createElement('div');
+        notif.style.cssText = `position: fixed; top: 100px; right: 20px; background: ${type === 'success' ? '#10b981' : '#667eea'}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 3000; animation: slideInRight 0.3s ease; font-weight: 600;`;
+        notif.textContent = msg;
+        document.body.appendChild(notif);
+        setTimeout(() => {
+          notif.style.animation = 'slideOutRight 0.3s ease';
+          setTimeout(() => notif.remove(), 300);
+        }, 3000);
+      }
+
+      document.getElementById('contentTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-button');
+        if (!btn) return;
+        
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTab = btn.dataset.tab;
+        renderContent();
+      });
+
+      document.getElementById('contentContainer').addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]');
+        if (!action) return;
+        
+        e.stopPropagation();
+        const actionType = action.dataset.action;
+        
+        if (actionType === 'like') {
+          handleLike(action.dataset.id, action);
+        } else if (actionType === 'comment') {
+          showNotification('Comments coming soon!', 'info');
+        } else if (actionType === 'share') {
+          showNotification('Link copied to clipboard!', 'success');
+        }
+      });
+
+      document.getElementById('editProfileBtn').addEventListener('click', () => {
+        showNotification('Edit profile coming soon!', 'info');
+      });
+
+      document.getElementById('shareProfileBtn').addEventListener('click', () => {
+        showNotification('Profile link copied!', 'success');
+      });
+
+      document.getElementById('createContentBtn').addEventListener('click', () => {
+        showNotification('Create content coming soon!', 'info');
+      });
+
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (!query) {
+          renderContent();
+          return;
+        }
+        
+        const container = document.getElementById('contentContainer');
+        container.innerHTML = '';
+        
+        const filtered = contentData.filter(item => 
+          item.title.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query) ||
+          item.tags.some(t => t.toLowerCase().includes(query))
+        );
+        
+        if (filtered.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b;"><div style="font-size: 3rem;">🔍</div><h3>No results found</h3></div>';
+          return;
+        }
+        
+        filtered.forEach(item => {
+          const card = createContentCard(item);
+          card.classList.add('visible');
+          container.appendChild(card);
+        });
+      });
+
+      renderContent();
+    })();
+  </script>
+</body>
+</html>
