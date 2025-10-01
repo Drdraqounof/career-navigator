@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Navigator - Find Your Perfect Path</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.0/cdn.min.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        header { background: #2c3e50; color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        
+        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6rem 0; text-align: center; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        
+        .main-cta, .secondary-cta { display: inline-block; padding: 1rem 2rem; background: white; color: #667eea; text-decoration: none; border-radius: 50px; font-weight: bold; transition: transform 0.3s, box-shadow 0.3s; border: none; cursor: pointer; font-size: 1rem; }
+        .main-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .secondary-cta { background: transparent; color: white; border: 2px solid white; margin: 0.5rem; }
+        
+        .demo-section { padding: 4rem 0; background: #f8f9fa; }
+        .demo-container { background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto; }
+        
+        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
+        
+        .quiz-container { display: none; }
+        .quiz-container.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .question h3 { font-size: 1.5rem; margin-bottom: 1.5rem; color: #2c3e50; }
+        .options { display: flex; flex-direction: column; gap: 1rem; }
+        .option { padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; }
+        .option:hover { border-color: #667eea; background: #f8f9fa; }
+        .option.selected { border-color: #667eea; background: #667eea; color: white; }
+        .option input { margin-right: 1rem; }
+        
+        .results-container { margin-top: 2rem; animation: fadeIn 0.5s; }
+        
+        .career-group { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 15px; margin-bottom: 2rem; color: white; }
+        .career-group h3 { font-size: 2rem; margin-bottom: 1rem; }
+        .career-group .match-score { font-size: 3rem; font-weight: bold; margin-bottom: 1rem; }
+        .career-group .group-description { font-size: 1.1rem; margin-bottom: 1.5rem; opacity: 0.9; }
+        
+        .careers-in-group { display: grid; gap: 1rem; margin-top: 1.5rem; }
+        .career-card { background: rgba(255,255,255,0.95); color: #2c3e50; padding: 1.5rem; border-radius: 10px; }
+        .career-card h4 { font-size: 1.3rem; margin-bottom: 0.5rem; color: #667eea; }
+        .career-card p { margin-bottom: 0.5rem; }
+        
+        .dashboard-button { background: white; color: #667eea; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; margin-top: 1rem; transition: transform 0.3s; }
+        .dashboard-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .features-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; padding: 4rem 0; }
+        .feature-demo { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .feature-demo h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #667eea; }
+        .mockup-screen { background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-top: 1rem; border: 2px solid #e0e0e0; }
+        
+        .skills-gap { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+        .skill-item { display: flex; justify-content: space-between; align-items: center; }
+        .skill-level { display: flex; gap: 0.5rem; }
+        .skill-dot { width: 15px; height: 15px; border-radius: 50%; background: #e0e0e0; }
+        .skill-dot.filled { background: #667eea; }
+        
+        .testimonials { background: #2c3e50; color: white; padding: 4rem 0; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .testimonial { background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 15px; }
+        .testimonial-text { font-style: italic; margin-bottom: 1rem; }
+        .testimonial-author { font-weight: bold; }
+        
+        .cta-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 0; text-align: center; }
+        .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body x-data="careerQuiz()">
+    <header>
+        <nav class="container">
+            <div class="logo">🎯 Career Navigator</div>
+            <ul class="nav-links">
+                <li><a href="../Dashboard/dashboard.html">Home</a></li>
+                <li><a href="#demo">Assessment</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#testimonials">Success Stories</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Find Your Perfect Career Path</h1>
+            <p>Stop guessing about your future. Get personalized career recommendations based on your interests, skills, and real job market data.</p>
+            <a href="#demo" class="main-cta">Take Free Career Assessment</a>
+        </div>
+    </section>
+
+    <section id="demo" class="demo-section">
+        <div class="container">
+            <h2 style="text-align:center; color:#2c3e50; font-size:2.5rem; margin-bottom:2rem;">Try It Now - Career Assessment</h2>
+            <div class="demo-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" :style="`width: ${(currentStep / totalSteps) * 100}%`"></div>
+                </div>
+                <p style="text-align:center; margin-bottom:2rem; color:#6c757d;">Step <span x-text="currentStep"></span> of <span x-text="totalSteps"></span></p>
+
+                <!-- Question 1 -->
+                <div class="quiz-container" :class="{ 'active': currentStep === 1 }" x-show="currentStep === 1">
+                    <div class="question">
+                        <h3>What type of work environment energizes you most?</h3>
+                        <div class="options">
+                            <template x-for="(label,value) in questions.environment" :key="value">
+                                <label class="option" :class="{ 'selected': answers.environment === value }">
+                                    <input type="radio" :name="'environment'" :value="value" x-model="answers.environment">
+                                    <span x-text="label"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-container" :class="{ 'active': currentStep === 2 }" x-show="currentStep === 2">
+                    <div class="question">
+                        <h3>Which activities do you find most engaging?</h3>
+                        <div class="options">
+                            <template x-for="(label,value) in questions.activities" :key="value">
+                                <label class="option" :class="{ 'selected': answers.activities === value }">
+                                    <input type="radio" :name="'activities'" :value="value" x-model="answers.activities">
+                                    <span x-text="label"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-container" :class="{ 'active': currentStep === 3 }" x-show="currentStep === 3">
+                    <div class="question">
+                        <h3>What's your current experience level with technology?</h3>
+                        <div class="options">
+                            <template x-for="(label,value) in questions.techLevel" :key="value">
+                                <label class="option" :class="{ 'selected': answers.techLevel === value }">
+                                    <input type="radio" :name="'techLevel'" :value="value" x-model="answers.techLevel">
+                                    <span x-text="label"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-container" :class="{ 'active': currentStep === 4 }" x-show="currentStep === 4">
+                    <div class="question">
+                        <h3>What's most important to you in a career?</h3>
+                        <div class="options">
+                            <template x-for="(label,value) in questions.priority" :key="value">
+                                <label class="option" :class="{ 'selected': answers.priority === value }">
+                                    <input type="radio" :name="'priority'" :value="value" x-model="answers.priority">
+                                    <span x-text="label"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation buttons -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem;">
+                    <button x-show="currentStep>1" @click="prevStep()" class="secondary-cta">Previous</button>
+                    <div x-show="currentStep<totalSteps">
+                        <button @click="nextStep()" class="main-cta">Next</button>
+                    </div>
+                    <button x-show="currentStep===totalSteps" @click="calculateResults()" class="main-cta">Get My Results</button>
+                </div>
+
+                <!-- Results - Career Groups -->
+                <div x-show="showResults" class="results-container">
+                    <h3 style="margin-bottom:2rem; font-size:1.8rem; text-align:center; color:#2c3e50;">Your Career Group Matches</h3>
+                    
+                    <template x-for="group in sortedGroups()" :key="group.name">
+                        <div class="career-group" x-show="group.match >= 50">
+                            <div class="match-score" x-text="group.match + '%'"></div>
+                            <h3 x-text="group.name"></h3>
+                            <p class="group-description" x-text="group.description"></p>
+                            
+                            <div class="careers-in-group">
+                                <template x-for="career in getCareersInGroup(group)" :key="career.name">
+                                    <div class="career-card">
+                                        <h4 x-text="career.name"></h4>
+                                        <p><strong>Average Salary:</strong> <span x-text="career.salary"></span></p>
+                                        <p><strong>Job Growth:</strong> <span x-text="career.growth"></span></p>
+                                        <p><strong>Match Score:</strong> <span x-text="career.match + '%'"></span></p>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <a href="../Dashboard/dashboard.html" class="dashboard-button">Go to Dashboard →</a>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-showcase container">
+        <div class="feature-demo">
+            <h3>🔍 Explore Careers</h3>
+            <p>Search through thousands of career paths with real salary data, job growth projections, and skill requirements.</p>
+            <div class="mockup-screen">
+                <div>
+                    <p><strong>Software Developer</strong> - $95k avg salary</p>
+                    <p>Skills needed: JavaScript, Python, React</p>
+                    <p>23% job growth expected</p>
+                </div>
+            </div>
+        </div>
+        <div class="feature-demo">
+            <h3>📊 Skills Gap Analysis</h3>
+            <p>See exactly what skills you need to develop and get personalized learning recommendations.</p>
+            <div class="skills-gap">
+                <div class="skill-item">
+                    <span>JavaScript</span>
+                    <div class="skill-level">
+                        <div class="skill-dot filled"></div>
+                        <div class="skill-dot filled"></div>
+                        <div class="skill-dot filled"></div>
+                        <div class="skill-dot"></div>
+                        <div class="skill-dot"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <span>React</span>
+                    <div class="skill-level">
+                        <div class="skill-dot filled"></div>
+                        <div class="skill-dot filled"></div>
+                        <div class="skill-dot"></div>
+                        <div class="skill-dot"></div>
+                        <div class="skill-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feature-demo">
+            <h3>💾 Save & Compare</h3>
+            <p>Save interesting careers and compare them side-by-side to make informed decisions.</p>
+            <div class="mockup-screen">
+                Saved: Software Dev, UX Designer, Data Analyst<br>
+                Compare salaries, growth, and requirements
+            </div>
+        </div>
+        <div class="feature-demo">
+            <h3>📋Roadmap  </h3>
+            <p>Building network certifications, and milestones to reach your career goals.</p>
+            <div class="mockup-screen">
+                <div style="text-align:left;">
+                    ✅ Complete JavaScript fundamentals<br>
+                    🔄 Learn React framework<br>
+                    ⏳ Build portfolio projects<br>
+                    ⏳ Apply for junior positions
+                </div>
+            </div>
+        </div>
+        <div class="feature-demo">
+            <h3>📋 Personalized Action Plan</h3>
+            <p>Get a step-by-step roadmap with courses, certifications, and milestones to reach your career goals.</p>
+            <div class="mockup-screen">
+                <div style="text-align:left;">
+                    ✅ Complete JavaScript fundamentals<br>
+                    🔄 Learn React framework<br>
+                    ⏳ Build portfolio projects<br>
+                    ⏳ Apply for junior positions
+                </div>
+            </div>
+        </div> 
+        <div class="feature-demo">
+            <h3>📄 Export Your Plan</h3>
+            <p>Download your personalized career plan as a PDF or Markdown file for easy reference and sharing.</p>
+            <div class="mockup-screen">
+                <div style="text-align:left;">
+                    [Download PDF] [Download Markdown]
+                </div>
+            </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 style="margin-bottom:2rem; font-size:2.5rem;">Success Stories</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p class="testimonial-text">"This tool helped me find a career I truly enjoy. I landed my dream job in just 3 months!"</p>
+                    <p class="testimonial-author">— Alex P., Software Engineer</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"The skills gap analysis showed me exactly what I needed to learn to get promoted."</p>
+                    <p class="testimonial-author">— Maria R., UX Designer</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"I never knew which career fit me best until I took this assessment."</p>
+                    <p class="testimonial-author">— James L., Data Analyst</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <h2>Ready to Discover Your Career?</h2>
+        <p>Take the free assessment now and unlock your personalized roadmap to success.</p>
+        <a href="#demo" class="secondary-cta">Start Assessment</a>
+        <a href="#features" class="secondary-cta">Explore Features</a>
+    </section>
+
+    <script>
+        function careerQuiz() {
+            return {
+                currentStep: 1,
+                totalSteps: 4,
+                answers: {},
+                showResults: false,
+                selectedCareer: null,
+                groups: [
+                    { 
+                        name: 'Tech Builders', 
+                        description: 'You excel at creating technical solutions and building digital products. Careers in this group focus on coding, architecture, and system design.',
+                        careers: ['Software Developer', 'DevOps Engineer'],
+                        score: 0, 
+                        match: 0 
+                    },
+                    { 
+                        name: 'Creative Designers', 
+                        description: 'You thrive in visual and user-centered design. These careers blend creativity with user experience to craft engaging digital experiences.',
+                        careers: ['UX Designer', 'UI Designer'],
+                        score: 0, 
+                        match: 0 
+                    },
+                    { 
+                        name: 'Analytical Thinkers', 
+                        description: 'You love working with data and uncovering insights. These careers involve analysis, pattern recognition, and data-driven decision making.',
+                        careers: ['Data Analyst', 'Business Intelligence Analyst'],
+                        score: 0, 
+                        match: 0 
+                    },
+                    { 
+                        name: 'Strategic Leaders', 
+                        description: 'You excel at big-picture thinking and leading teams. These careers focus on strategy, stakeholder management, and product vision.',
+                        careers: ['Product Manager', 'Project Manager'],
+                        score: 0, 
+                        match: 0 
+                    }
+                ],
+                careers: [
+                    { name: 'Software Developer', salary: '$95,000', growth: '23%', score: 0, match: 0, group: 'Tech Builders' },
+                    { name: 'DevOps Engineer', salary: '$105,000', growth: '28%', score: 0, match: 0, group: 'Tech Builders' },
+                    { name: 'UX Designer', salary: '$85,000', growth: '16%', score: 0, match: 0, group: 'Creative Designers' },
+                    { name: 'UI Designer', salary: '$80,000', growth: '14%', score: 0, match: 0, group: 'Creative Designers' },
+                    { name: 'Data Analyst', salary: '$75,000', growth: '25%', score: 0, match: 0, group: 'Analytical Thinkers' },
+                    { name: 'Business Intelligence Analyst', salary: '$82,000', growth: '22%', score: 0, match: 0, group: 'Analytical Thinkers' },
+                    { name: 'Product Manager', salary: '$115,000', growth: '19%', score: 0, match: 0, group: 'Strategic Leaders' },
+                    { name: 'Project Manager', salary: '$90,000', growth: '18%', score: 0, match: 0, group: 'Strategic Leaders' }
+                ],
+                questions: {
+                    environment: {
+                        collaborative: 'Collaborative team environment',
+                        independent: 'Independent work',
+                        mixed: 'Mix of both',
+                        'client-facing': 'Client-facing role'
+                    },
+                    activities: {
+                        'problem-solving': 'Solving complex problems',
+                        'creative': 'Creative design work',
+                        'data': 'Analyzing data and patterns',
+                        'strategy': 'Strategic planning'
+                    },
+                    techLevel: {
+                        beginner: 'Beginner',
+                        intermediate: 'Intermediate',
+                        advanced: 'Advanced',
+                        expert: 'Expert'
+                    },
+                    priority: {
+                        salary: 'High salary',
+                        balance: 'Work-life balance',
+                        impact: 'Positive impact',
+                        growth: 'Career growth'
+                    }
+                },
+                answerWeights: {
+                    environment: {
+                        collaborative: { 'Software Developer': 5, 'DevOps Engineer': 6, 'UX Designer': 10, 'UI Designer': 9, 'Data Analyst': 5, 'Business Intelligence Analyst': 6, 'Product Manager': 10, 'Project Manager': 10 },
+                        independent:  { 'Software Developer': 10, 'DevOps Engineer': 9, 'UX Designer': 5, 'UI Designer': 6, 'Data Analyst': 10, 'Business Intelligence Analyst': 9, 'Product Manager': 5, 'Project Manager': 4 },
+                        mixed:        { 'Software Developer': 8, 'DevOps Engineer': 8, 'UX Designer': 8, 'UI Designer': 8, 'Data Analyst': 8, 'Business Intelligence Analyst': 8, 'Product Manager': 8, 'Project Manager': 8 },
+                        'client-facing': { 'Software Developer': 5, 'DevOps Engineer': 4, 'UX Designer': 5, 'UI Designer': 5, 'Data Analyst': 5, 'Business Intelligence Analyst': 7, 'Product Manager': 10, 'Project Manager': 9 }
+                    },
+                    activities: {
+                        'problem-solving': { 'Software Developer': 10, 'DevOps Engineer': 10, 'UX Designer': 3, 'UI Designer': 2, 'Data Analyst': 8, 'Business Intelligence Analyst': 9, 'Product Manager': 7, 'Project Manager': 6 },
+                        'creative': { 'Software Developer': 3, 'DevOps Engineer': 2, 'UX Designer': 10, 'UI Designer': 10, 'Data Analyst': 2, 'Business Intelligence Analyst': 3, 'Product Manager': 5, 'Project Manager': 4 },
+                        'data': { 'Software Developer': 5, 'DevOps Engineer': 6, 'UX Designer': 3, 'UI Designer': 2, 'Data Analyst': 10, 'Business Intelligence Analyst': 10, 'Product Manager': 6, 'Project Manager': 5 },
+                        'strategy': { 'Software Developer': 4, 'DevOps Engineer': 5, 'UX Designer': 5, 'UI Designer': 4, 'Data Analyst': 6, 'Business Intelligence Analyst': 7, 'Product Manager': 10, 'Project Manager': 10 }
+                    },
+                    techLevel: {
+                        beginner: { 'Software Developer': 2, 'DevOps Engineer': 2, 'UX Designer': 5, 'UI Designer': 6, 'Data Analyst': 3, 'Business Intelligence Analyst': 4, 'Product Manager': 2, 'Project Manager': 3 },
+                        intermediate: { 'Software Developer': 5, 'DevOps Engineer': 5, 'UX Designer': 6, 'UI Designer': 7, 'Data Analyst': 6, 'Business Intelligence Analyst': 6, 'Product Manager': 5, 'Project Manager': 5 },
+                        advanced: { 'Software Developer': 8, 'DevOps Engineer': 9, 'UX Designer': 7, 'UI Designer': 7, 'Data Analyst': 8, 'Business Intelligence Analyst': 8, 'Product Manager': 7, 'Project Manager': 6 },
+                        expert: { 'Software Developer': 10, 'DevOps Engineer': 10, 'UX Designer': 8, 'UI Designer': 8, 'Data Analyst': 10, 'Business Intelligence Analyst': 10, 'Product Manager': 9, 'Project Manager': 8 }
+                    },
+                    priority: {
+                        salary: { 'Software Developer': 8, 'DevOps Engineer': 9, 'UX Designer': 6, 'UI Designer': 5, 'Data Analyst': 7, 'Business Intelligence Analyst': 8, 'Product Manager': 10, 'Project Manager': 7 },
+                        balance: { 'Software Developer': 6, 'DevOps Engineer': 5, 'UX Designer': 8, 'UI Designer': 9, 'Data Analyst': 7, 'Business Intelligence Analyst': 7, 'Product Manager': 6, 'Project Manager': 7 },
+                        impact: { 'Software Developer': 7, 'DevOps Engineer': 7, 'UX Designer': 7, 'UI Designer': 6, 'Data Analyst': 6, 'Business Intelligence Analyst': 7, 'Product Manager': 9, 'Project Manager': 8 },
+                        growth: { 'Software Developer': 9, 'DevOps Engineer': 10, 'UX Designer': 8, 'UI Designer': 7, 'Data Analyst': 8, 'Business Intelligence Analyst': 8, 'Product Manager': 10, 'Project Manager': 9 }
+                    }
+                },
+                nextStep() { if(this.currentStep < this.totalSteps) this.currentStep++; },
+                prevStep() { if(this.currentStep > 1) this.currentStep--; },
+                calculateResults() {
+                    this.careers.forEach(c => c.score = 0);
+                    this.groups.forEach(g => g.score = 0);
+                    
+                    for (const question in this.answers) {
+                        const answer = this.answers[question];
+                        const weights = this.answerWeights[question][answer];
+                        for (const career in weights) {
+                            const c = this.careers.find(c => c.name === career);
+                            if (c) c.score += weights[career];
+                        }
+                    }
+                    
+                    const maxCareerScore = Math.max(...this.careers.map(c => c.score));
+                    this.careers.forEach(c => c.match = Math.round((c.score / maxCareerScore) * 100));
+                    
+                    this.groups.forEach(group => {
+                        const groupCareers = this.careers.filter(c => group.careers.includes(c.name));
+                        group.score = groupCareers.reduce((sum, c) => sum + c.score, 0) / groupCareers.length;
+                    });
+                    
+                    const maxGroupScore = Math.max(...this.groups.map(g => g.score));
+                    this.groups.forEach(g => g.match = Math.round((g.score / maxGroupScore) * 100));
+                    
+                    this.showResults = true;
+                    this.currentStep = this.totalSteps + 1;
+                },
+                sortedGroups() {
+                    return this.groups.sort((a,b) => b.match - a.match);
+                },
+                getCareersInGroup(group) {
+                    return this.careers.filter(c => group.careers.includes(c.name)).sort((a,b) => b.match - a.match);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

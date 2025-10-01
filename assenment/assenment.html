@@ -66,7 +66,7 @@
         <nav class="container">
             <div class="logo">🎯 Career Navigator</div>
             <ul class="nav-links">
-                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="../Dashboard/dashboard.html">Home</a></li>
                 <li><a href="#demo">Assessment</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#testimonials">Success Stories</a></li>
@@ -273,13 +273,12 @@
                 answers: {},
                 showResults: false,
                 selectedCareer: null,
-                groups: [
-    { name: 'Tech Builders', careers: ['Software Developer'], score: 0, match: 0 },
-    { name: 'Creative Designers', careers: ['UX Designer'], score: 0, match: 0 },
-    { name: 'Analytical Thinkers', careers: ['Data Analyst'], score: 0, match: 0 },
-    { name: 'Strategic Leaders', careers: ['Product Manager'], score: 0, match: 0 }
-],
-
+                careers: [
+                    { name: 'Software Developer', salary: '$95k', growth: 'Very High', score: 0, match: 0 },
+                    { name: 'UX Designer', salary: '$78k', growth: 'High', score: 0, match: 0 },
+                    { name: 'Data Analyst', salary: '$82k', growth: 'High', score: 0, match: 0 },
+                    { name: 'Product Manager', salary: '$115k', growth: 'High', score: 0, match: 0 }
+                ],
                 questions: {
                     environment: {
                         collaborative: 'Collaborative team environment',
@@ -334,7 +333,7 @@
                 },
                 nextStep() { if(this.currentStep < this.totalSteps) this.currentStep++; },
                 prevStep() { if(this.currentStep > 1) this.currentStep--; },
-                calculateResults() {
+                 calculateResults() {
                     this.careers.forEach(c => c.score = 0);
                     for (const question in this.answers) {
                         const answer = this.answers[question];
@@ -358,7 +357,7 @@
     <script>
   // Redirect if not logged in
   if (!localStorage.getItem("isLoggedIn")) {
-    window.location.href = "login.html";
+    window.location.href = "Login/login.html";
   }
 </script>
 
