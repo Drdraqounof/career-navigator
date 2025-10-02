@@ -1,4 +1,3 @@
-<!-- student.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,79 +106,32 @@
                     <button x-show="currentStep===totalSteps" @click="calculateResults()" class="main-cta">Get My Results</button>
                 </div>
 
-                <!-- Results -->
+                <!-- Results - Simple Confirmation -->
                 <div x-show="showResults" class="results-container">
-                    <h3 style="margin-bottom:2rem; font-size:1.8rem;">Your Career Matches</h3>
-                    <template x-for="career in sortedCareers()" :key="career.name">
-                        <div class="career-match" @click="selectedCareer = career">
-                            <div class="match-percentage" x-text="career.match + '%'"></div>
-                            <h4 x-text="career.name" style="margin-bottom:0.5rem;"></h4>
-                            <p>Average Salary: <span x-text="career.salary"></span> | Growth: <span x-text="career.growth"></span></p>
-                        </div>
-                    </template>
+                    <h3 style="margin-bottom:1rem; font-size:1.8rem;">Assessment Complete! ✓</h3>
+                    <p style="margin-bottom:1.5rem; font-size:1.1rem;">Scroll down to see your personalized career matches.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features-showcase container fade-in">
+    <!-- Why This Test Section -->
+    <section id="features" class="features-showcase container">
         <div class="feature-demo">
-            <h3>🔍 Explore Careers</h3>
-            <p>Search through thousands of career paths with real salary data, job growth projections, and skill requirements.</p>
-            <div class="mockup-screen">
-                <div>
-                    <p><strong>Software Developer</strong> - $95k avg salary</p>
-                    <p>Skills needed: JavaScript, Python, React</p>
-                    <p>23% job growth expected</p>
-                </div>
-            </div>
+            <h3>🎯 Discover Your True Potential</h3>
+            <p>Many people spend years in careers that don't align with their natural strengths and interests. Our assessment helps you identify career paths where you'll naturally excel and find fulfillment, saving you years of trial and error.</p>
         </div>
         <div class="feature-demo">
-            <h3>📊 Skills Gap Analysis</h3>
-            <p>See exactly what skills you need to develop and get personalized learning recommendations.</p>
-            <div class="skills-gap">
-                <div class="skill-item">
-                    <span>JavaScript</span>
-                    <div class="skill-level">
-                        <div class="skill-dot filled"></div>
-                        <div class="skill-dot filled"></div>
-                        <div class="skill-dot filled"></div>
-                        <div class="skill-dot"></div>
-                        <div class="skill-dot"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <span>React</span>
-                    <div class="skill-level">
-                        <div class="skill-dot filled"></div>
-                        <div class="skill-dot filled"></div>
-                        <div class="skill-dot"></div>
-                        <div class="skill-dot"></div>
-                        <div class="skill-dot"></div>
-                    </div>
-                </div>
-            </div>
+            <h3>📊 Data-Driven Insights</h3>
+            <p>The test analyzes your work preferences, skills, and priorities against real-world career data. Instead of guessing what might fit, you get personalized matches based on proven success patterns in each field.</p>
         </div>
         <div class="feature-demo">
-            <h3>💾 Save & Compare</h3>
-            <p>Save interesting careers and compare them side-by-side to make informed decisions.</p>
-            <div class="mockup-screen">
-                Saved: Software Dev, UX Designer, Data Analyst<br>
-                Compare salaries, growth, and requirements
-            </div>
+            <h3>💡 Avoid Costly Mistakes</h3>
+            <p>Choosing the wrong career path can cost you time, money, and happiness. This assessment helps you make informed decisions before investing in education or training, ensuring your efforts lead to a career you'll love.</p>
         </div>
         <div class="feature-demo">
-            <h3>📋 Personalized Action Plan</h3>
-            <p>Get a step-by-step roadmap with courses, certifications, and milestones to reach your career goals.</p>
-            <div class="mockup-screen">
-                <div style="text-align:left;">
-                    ✅ Complete JavaScript fundamentals<br>
-                    🔄 Learn React framework<br>
-                    ⏳ Build portfolio projects<br>
-                    ⏳ Apply for junior positions
-                </div>
-            </div>
+            <h3>🚀 Fast-Track Your Success</h3>
+            <p>Understanding which careers match your profile means you can focus your energy on the right opportunities. Get clarity on your path forward, connect with relevant resources, and start building the career that's meant for you.</p>
         </div>
     </section>
 
@@ -221,12 +173,45 @@
                 showResults: false,
                 selectedCareer: null,
                 groups: [
-    { name: 'Tech Builders', careers: ['Software Developer'], score: 0, match: 0 },
-    { name: 'Creative Designers', careers: ['UX Designer'], score: 0, match: 0 },
-    { name: 'Analytical Thinkers', careers: ['Data Analyst'], score: 0, match: 0 },
-    { name: 'Strategic Leaders', careers: ['Product Manager'], score: 0, match: 0 }
-],
-
+                    { 
+                        name: 'Tech Builders', 
+                        description: 'You excel at creating technical solutions and building digital products. Careers in this group focus on coding, architecture, and system design.',
+                        careers: ['Software Developer', 'DevOps Engineer'],
+                        score: 0, 
+                        match: 0 
+                    },
+                    { 
+                        name: 'Creative Designers', 
+                        description: 'You thrive in visual and user-centered design. These careers blend creativity with user experience to craft engaging digital experiences.',
+                        careers: ['UX Designer', 'UI Designer'],
+                        score: 0, 
+                        match: 0 
+                    },
+                    { 
+                        name: 'Analytical Thinkers', 
+                        description: 'You love working with data and uncovering insights. These careers involve analysis, pattern recognition, and data-driven decision making.',
+                        careers: ['Data Analyst', 'Business Intelligence Analyst'],
+                        score: 0, 
+                        match: 0 
+                    },
+                    { 
+                        name: 'Strategic Leaders', 
+                        description: 'You excel at big-picture thinking and leading teams. These careers focus on strategy, stakeholder management, and product vision.',
+                        careers: ['Product Manager', 'Project Manager'],
+                        score: 0, 
+                        match: 0 
+                    }
+                ],
+                careers: [
+                    { name: 'Software Developer', salary: '$95,000', growth: '23%', score: 0, match: 0, group: 'Tech Builders' },
+                    { name: 'DevOps Engineer', salary: '$105,000', growth: '28%', score: 0, match: 0, group: 'Tech Builders' },
+                    { name: 'UX Designer', salary: '$85,000', growth: '16%', score: 0, match: 0, group: 'Creative Designers' },
+                    { name: 'UI Designer', salary: '$80,000', growth: '14%', score: 0, match: 0, group: 'Creative Designers' },
+                    { name: 'Data Analyst', salary: '$75,000', growth: '25%', score: 0, match: 0, group: 'Analytical Thinkers' },
+                    { name: 'Business Intelligence Analyst', salary: '$82,000', growth: '22%', score: 0, match: 0, group: 'Analytical Thinkers' },
+                    { name: 'Product Manager', salary: '$115,000', growth: '19%', score: 0, match: 0, group: 'Strategic Leaders' },
+                    { name: 'Project Manager', salary: '$90,000', growth: '18%', score: 0, match: 0, group: 'Strategic Leaders' }
+                ],
                 questions: {
                     environment: {
                         collaborative: 'Collaborative team environment',
@@ -255,59 +240,67 @@
                 },
                 answerWeights: {
                     environment: {
-                        collaborative: { 'Software Developer': 5, 'UX Designer': 10, 'Data Analyst': 5, 'Product Manager': 10 },
-                        independent:  { 'Software Developer': 10, 'UX Designer': 5, 'Data Analyst': 10, 'Product Manager': 5 },
-                        mixed:        { 'Software Developer': 8, 'UX Designer': 8, 'Data Analyst': 8, 'Product Manager': 8 },
-                        'client-facing': { 'Software Developer': 5, 'UX Designer': 5, 'Data Analyst': 5, 'Product Manager': 10 }
+                        collaborative: { 'Software Developer': 5, 'DevOps Engineer': 6, 'UX Designer': 10, 'UI Designer': 9, 'Data Analyst': 5, 'Business Intelligence Analyst': 6, 'Product Manager': 10, 'Project Manager': 10 },
+                        independent:  { 'Software Developer': 10, 'DevOps Engineer': 9, 'UX Designer': 5, 'UI Designer': 6, 'Data Analyst': 10, 'Business Intelligence Analyst': 9, 'Product Manager': 5, 'Project Manager': 4 },
+                        mixed:        { 'Software Developer': 8, 'DevOps Engineer': 8, 'UX Designer': 8, 'UI Designer': 8, 'Data Analyst': 8, 'Business Intelligence Analyst': 8, 'Product Manager': 8, 'Project Manager': 8 },
+                        'client-facing': { 'Software Developer': 5, 'DevOps Engineer': 4, 'UX Designer': 5, 'UI Designer': 5, 'Data Analyst': 5, 'Business Intelligence Analyst': 7, 'Product Manager': 10, 'Project Manager': 9 }
                     },
                     activities: {
-                        'problem-solving': { 'Software Developer': 10, 'UX Designer': 3, 'Data Analyst': 8, 'Product Manager': 7 },
-                        'creative': { 'Software Developer': 3, 'UX Designer': 10, 'Data Analyst': 2, 'Product Manager': 5 },
-                        'data': { 'Software Developer': 5, 'UX Designer': 3, 'Data Analyst': 10, 'Product Manager': 6 },
-                        'strategy': { 'Software Developer': 4, 'UX Designer': 5, 'Data Analyst': 6, 'Product Manager': 10 }
+                        'problem-solving': { 'Software Developer': 10, 'DevOps Engineer': 10, 'UX Designer': 3, 'UI Designer': 2, 'Data Analyst': 8, 'Business Intelligence Analyst': 9, 'Product Manager': 7, 'Project Manager': 6 },
+                        'creative': { 'Software Developer': 3, 'DevOps Engineer': 2, 'UX Designer': 10, 'UI Designer': 10, 'Data Analyst': 2, 'Business Intelligence Analyst': 3, 'Product Manager': 5, 'Project Manager': 4 },
+                        'data': { 'Software Developer': 5, 'DevOps Engineer': 6, 'UX Designer': 3, 'UI Designer': 2, 'Data Analyst': 10, 'Business Intelligence Analyst': 10, 'Product Manager': 6, 'Project Manager': 5 },
+                        'strategy': { 'Software Developer': 4, 'DevOps Engineer': 5, 'UX Designer': 5, 'UI Designer': 4, 'Data Analyst': 6, 'Business Intelligence Analyst': 7, 'Product Manager': 10, 'Project Manager': 10 }
                     },
                     techLevel: {
-                        beginner: { 'Software Developer': 2, 'UX Designer': 5, 'Data Analyst': 3, 'Product Manager': 2 },
-                        intermediate: { 'Software Developer': 5, 'UX Designer': 6, 'Data Analyst': 6, 'Product Manager': 5 },
-                        advanced: { 'Software Developer': 8, 'UX Designer': 7, 'Data Analyst': 8, 'Product Manager': 7 },
-                        expert: { 'Software Developer': 10, 'UX Designer': 8, 'Data Analyst': 10, 'Product Manager': 9 }
+                        beginner: { 'Software Developer': 2, 'DevOps Engineer': 2, 'UX Designer': 5, 'UI Designer': 6, 'Data Analyst': 3, 'Business Intelligence Analyst': 4, 'Product Manager': 2, 'Project Manager': 3 },
+                        intermediate: { 'Software Developer': 5, 'DevOps Engineer': 5, 'UX Designer': 6, 'UI Designer': 7, 'Data Analyst': 6, 'Business Intelligence Analyst': 6, 'Product Manager': 5, 'Project Manager': 5 },
+                        advanced: { 'Software Developer': 8, 'DevOps Engineer': 9, 'UX Designer': 7, 'UI Designer': 7, 'Data Analyst': 8, 'Business Intelligence Analyst': 8, 'Product Manager': 7, 'Project Manager': 6 },
+                        expert: { 'Software Developer': 10, 'DevOps Engineer': 10, 'UX Designer': 8, 'UI Designer': 8, 'Data Analyst': 10, 'Business Intelligence Analyst': 10, 'Product Manager': 9, 'Project Manager': 8 }
                     },
                     priority: {
-                        salary: { 'Software Developer': 8, 'UX Designer': 6, 'Data Analyst': 7, 'Product Manager': 10 },
-                        balance: { 'Software Developer': 6, 'UX Designer': 8, 'Data Analyst': 7, 'Product Manager': 6 },
-                        impact: { 'Software Developer': 7, 'UX Designer': 7, 'Data Analyst': 6, 'Product Manager': 9 },
-                        growth: { 'Software Developer': 9, 'UX Designer': 8, 'Data Analyst': 8, 'Product Manager': 10 }
+                        salary: { 'Software Developer': 8, 'DevOps Engineer': 9, 'UX Designer': 6, 'UI Designer': 5, 'Data Analyst': 7, 'Business Intelligence Analyst': 8, 'Product Manager': 10, 'Project Manager': 7 },
+                        balance: { 'Software Developer': 6, 'DevOps Engineer': 5, 'UX Designer': 8, 'UI Designer': 9, 'Data Analyst': 7, 'Business Intelligence Analyst': 7, 'Product Manager': 6, 'Project Manager': 7 },
+                        impact: { 'Software Developer': 7, 'DevOps Engineer': 7, 'UX Designer': 7, 'UI Designer': 6, 'Data Analyst': 6, 'Business Intelligence Analyst': 7, 'Product Manager': 9, 'Project Manager': 8 },
+                        growth: { 'Software Developer': 9, 'DevOps Engineer': 10, 'UX Designer': 8, 'UI Designer': 7, 'Data Analyst': 8, 'Business Intelligence Analyst': 8, 'Product Manager': 10, 'Project Manager': 9 }
                     }
                 },
                 nextStep() { if(this.currentStep < this.totalSteps) this.currentStep++; },
                 prevStep() { if(this.currentStep > 1) this.currentStep--; },
                 calculateResults() {
                     this.careers.forEach(c => c.score = 0);
+                    this.groups.forEach(g => g.score = 0);
+                    
                     for (const question in this.answers) {
                         const answer = this.answers[question];
                         const weights = this.answerWeights[question][answer];
                         for (const career in weights) {
                             const c = this.careers.find(c => c.name === career);
-                            c.score += weights[career];
+                            if (c) c.score += weights[career];
                         }
                     }
-                    const maxScore = Math.max(...this.careers.map(c => c.score));
-                    this.careers.forEach(c => c.match = Math.round((c.score / maxScore) * 100));
+                    
+                    const maxCareerScore = Math.max(...this.careers.map(c => c.score));
+                    this.careers.forEach(c => c.match = Math.round((c.score / maxCareerScore) * 100));
+                    
+                    this.groups.forEach(group => {
+                        const groupCareers = this.careers.filter(c => group.careers.includes(c.name));
+                        group.score = groupCareers.reduce((sum, c) => sum + c.score, 0) / groupCareers.length;
+                    });
+                    
+                    const maxGroupScore = Math.max(...this.groups.map(g => g.score));
+                    this.groups.forEach(g => g.match = Math.round((g.score / maxGroupScore) * 100));
+                    
                     this.showResults = true;
                     this.currentStep = this.totalSteps + 1;
                 },
-                sortedCareers() {
-                    return this.careers.sort((a,b) => b.match - a.match);
+                sortedGroups() {
+                    return this.groups.sort((a,b) => b.match - a.match);
+                },
+                getCareersInGroup(group) {
+                    return this.careers.filter(c => group.careers.includes(c.name)).sort((a,b) => b.match - a.match);
                 }
             }
         }
     </script>
-    <script>
-  // Redirect if not logged in
-  if (!localStorage.getItem("isLoggedIn")) {
-    window.location.href = "login.html";
-  }
-</script>
-
 </body>
 </html>
