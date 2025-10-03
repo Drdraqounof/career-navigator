@@ -57,10 +57,16 @@
         }
         
         .hero {
-            text-align: center;
-            padding: 4rem 0;
-            color: white;
-        }
+  display: flex;
+  justify-content: center;   /* horizontal center */
+  align-items: center;       /* vertical center */
+  flex-direction: column;    /* stack content vertically */
+  
+  text-align: center;
+  color: white;
+  min-height: 100vh;         /* make hero fill the screen height */
+  padding: 0 1rem;           /* adjust padding so vertical centering works */
+}
         
         .hero h1 {
             font-size: 3.5rem;
