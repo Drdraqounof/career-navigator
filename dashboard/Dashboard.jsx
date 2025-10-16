@@ -11,21 +11,22 @@ function Dashboard() {
   const [modalBody, setModalBody] = useState("");
   const [selectedUserType, setSelectedUserType] = useState("student");
   const [showCareerChat, setShowCareerChat] = useState(false);
+  const [overallProgress] = useState(45); // 👈 overall progress value
 
-  // ✅ Navigate to Net page
+  // ===== Navigation =====
   const handleExploreClick = (e) => {
     e.preventDefault();
     navigate("/net");
   };
 
-  // ===== User menu toggle =====
+  // ===== User menu =====
   const toggleUserMenu = () => setUserMenuOpen((prev) => !prev);
 
   // ===== Chat modal control =====
   const showMyPlan = () => setShowCareerChat(true);
   const closeCareerChat = () => setShowCareerChat(false);
 
-  // ===== Other user menu actions =====
+  // ===== User actions =====
   const showSettings = () => alert("Settings clicked");
   const editProfile = () => alert("Edit Profile clicked");
   const viewProgress = () => alert("View Progress clicked");
@@ -35,7 +36,7 @@ function Dashboard() {
   // ===== User type selection =====
   const selectUserType = (type) => setSelectedUserType(type);
 
-  // ===== Info modal control =====
+  // ===== Modal control =====
   const openModal = (title, body) => {
     setModalTitle(title);
     setModalBody(body);
@@ -50,35 +51,15 @@ function Dashboard() {
         <nav className="container">
           <div className="logo">🚀 Find Me Career Navigator</div>
           <ul className="nav-links">
+            <li><a href="#" onClick={(e) => e.preventDefault()}>Dashboard</a></li>
+            <li><a href="#" onClick={handleExploreClick}>Explore</a></li>
             <li>
-              <a href="#" onClick={(e) => e.preventDefault()}>
-                Dashboard
-              </a>
-            </li>
-            <li>
-              <a href="#" onClick={handleExploreClick}>
-                Explore
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showMyPlan();
-                }}
-              >
+              <a href="#" onClick={(e) => { e.preventDefault(); showMyPlan(); }}>
                 My Plan
               </a>
             </li>
             <li>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showSettings();
-                }}
-              >
+              <a href="#" onClick={(e) => { e.preventDefault(); showSettings(); }}>
                 Settings
               </a>
             </li>
@@ -128,6 +109,18 @@ function Dashboard() {
               Choose your profile to get personalized career guidance, tailored
               resources, and actionable next steps for your unique situation.
             </p>
+          </section>
+
+          {/* ===== OVERALL PROGRESS BAR ===== */}
+          <section className="overall-progress fade-in">
+            <h2>📈 Your Overall Career Progress</h2>
+            <p>You’re currently {overallProgress}% through your roadmap!</p>
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: `${overallProgress}%` }}
+              ></div>
+            </div>
           </section>
 
           {/* ===== USER TYPE SELECTION ===== */}
@@ -193,10 +186,7 @@ function Dashboard() {
                   </p>
 
                   <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "30%" }}
-                    ></div>
+                    <div className="progress-fill" style={{ width: "30%" }}></div>
                   </div>
 
                   <div className="stats-grid">
@@ -247,10 +237,7 @@ function Dashboard() {
       {/* ===== INFO MODAL ===== */}
       {modalVisible && (
         <div id="featureModal" className="modal" onClick={closeModal}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{modalTitle}</h2>
               <span className="close" onClick={closeModal}>

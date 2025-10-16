@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Net.css";
+import CareerChat from "../CareerChat";
 
 export default function NetworkPage() {
-  const [page] = useState("case.html");
-  const [loggedIn, setLoggedIn] = useState(
-    localStorage.getItem("loggedIn") === "true"
-  );
+  const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
   const [groups, setGroups] = useState([]);
+  const [showCareerChat, setShowCareerChat] = useState(false);
+
   const heroRef = useRef(null);
   const ctaRef = useRef(null);
 
@@ -32,16 +34,14 @@ export default function NetworkPage() {
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     };
     links.forEach((a) => a.addEventListener("click", handleClick));
-    return () =>
-      links.forEach((a) => a.removeEventListener("click", handleClick));
+    return () => links.forEach((a) => a.removeEventListener("click", handleClick));
   }, []);
 
   // --- Parallax hero ---
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.pageYOffset;
-      if (heroRef.current)
-        heroRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
+      if (heroRef.current) heroRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -73,11 +73,25 @@ export default function NetworkPage() {
     setLoggedIn(false);
   };
 
-  // --- Protected link click handler ---
-  const handleTestClick = (e) => {
+  // --- Navigation handlers ---
+  const handleDashboardClick = (e) => {
     e.preventDefault();
-    if (loggedIn) window.location.href = "groupsheet.html";
-    else window.location.href = "login.html";
+    navigate("/dashboard");
+  };
+
+  const handleExploreClick = (e) => {
+    e.preventDefault();
+    navigate("/network"); // or wherever your Explore page is
+  };
+
+  const handleMyPlanClick = (e) => {
+    e.preventDefault();
+    setShowCareerChat(true);
+  };
+
+  const handleSettingsClick = (e) => {
+    e.preventDefault();
+    alert("Settings clicked"); // Replace with your settings page
   };
 
   // --- Generate random career groups ---
@@ -94,19 +108,26 @@ export default function NetworkPage() {
       "DevOps Engineers",
       "Blockchain Developers",
     ];
-
     const shuffled = careers.sort(() => 0.5 - Math.random());
-    const randomGroups = shuffled.slice(0, 5); // pick 5 random groups
-    setGroups(randomGroups);
+    setGroups(shuffled.slice(0, 5)); // pick 5 random groups
   };
 
-  // --- Automatically generate groups on page load ---
   useEffect(() => {
     generateGroups();
   }, []);
 
   return (
     <div>
+      {/* Top Navigation */}
+      <nav className="top-nav">
+        <ul className="nav-links">
+          <li><a href="#" onClick={handleDashboardClick}>Dashboard</a></li>
+          <li><a href="#" onClick={handleExploreClick}>Explore</a></li>
+          <li><a href="#" onClick={handleMyPlanClick}>My Plan</a></li>
+          <li><a href="#" onClick={handleSettingsClick}>Settings</a></li>
+        </ul>
+      </nav>
+
       {/* Hero Section */}
       <section ref={heroRef} className="hero fade-in">
         <h1>Welcome to Find Me</h1>
@@ -116,27 +137,30 @@ export default function NetworkPage() {
         </button>
       </section>
 
-      {/* Navigation */}
-      <nav>
-        <a href="#overview">Overview</a>
-        <a href="#features">Features</a>
-        <a href="#tech">Tech Stack</a>
-        <a id="testLink" href="#test" onClick={handleTestClick}>
-          Take the Test
-        </a>
-      </nav>
+      {/* CareerChat Modal */}
+      {showCareerChat && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-3xl w-full relative">
+            <button
+              onClick={() => setShowCareerChat(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✖
+            </button>
+            <CareerChat />
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="main-content fade-in">
         <h2>Random Career Groups</h2>
-
         <div style={{ marginTop: "2rem" }}>
           {groups.map((group, idx) => (
             <div key={idx} className="group-card">
               <strong>{group}</strong>
               <p>
-                Explore opportunities, connect with professionals, and discover
-                new paths in the {group} field.
+                Explore opportunities, connect with professionals, and discover new paths in the {group} field.
               </p>
             </div>
           ))}
@@ -146,13 +170,9 @@ export default function NetworkPage() {
       {/* Auth Buttons */}
       <div className="text-center mt-8">
         {loggedIn ? (
-          <button onClick={logoutUser} className="auth-btn auth-btn-logout">
-            Logout
-          </button>
+          <button onClick={logoutUser} className="auth-btn auth-btn-logout">Logout</button>
         ) : (
-          <button onClick={loginUser} className="auth-btn auth-btn-login">
-            Login
-          </button>
+          <button onClick={loginUser} className="auth-btn auth-btn-login">Login</button>
         )}
       </div>
 
