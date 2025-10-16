@@ -13,7 +13,7 @@ export async function findAI(input) {
           {
             role: "system",
             content:
-              "You are an AI mentor that helps users build their career goals,  Be clear, positive, and practical. give user one to two intructions or steps be super breif",
+              "You are an AI mentor that helps users build their career goals,  Be clear, positive, and practical. give user one to two intructions",
           },
           { role: "user", content: input },
         ],

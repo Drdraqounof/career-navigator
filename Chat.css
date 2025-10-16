@@ -129,8 +129,8 @@
 
 /* Makes text larger (1.25rem/20px) - used for the header to make it prominent */
 .text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+  font-size: 1rem;
+  line-height: 1rem;
 }
 
 /* Makes text semi-bold (weight 600) - emphasizes the header */
@@ -171,7 +171,9 @@
 /* Aligns text to the left side - used for AI messages */
 .text-left {
   text-align: left;
+  padding-left: 16px; /* or 1rem */
 }
+
 
 /* Makes text italicized - used for "Thinking..." to show temporary status */
 .italic {
