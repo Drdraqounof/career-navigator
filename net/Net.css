@@ -1,0 +1,29 @@
+/* Container for groups */
+.groups-container {
+  display: flex;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  overflow-x: auto; /* horizontal scroll if too wide */
+  padding-bottom: 1rem;
+}
+
+/* Each group card */
+.group-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 250px;
+  min-width: 250px; /* ensures cards stay consistent width */
+  color: black; /* ensure text is visible */
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0; /* prevents shrinking in a horizontal row */
+}
+
+.group-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
