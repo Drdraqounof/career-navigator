@@ -1,16 +1,23 @@
-import React, { useEffect, useMemo, useState } from "react";
-import "./Groupsheet.css";
+import React, { useMemo, useState } from "react";
 
+// Constants
+const TOTAL_STEPS = 4;
+
+const QUESTION_KEYS = {
+  ENVIRONMENT: 'environment',
+  ACTIVITIES: 'activities',
+  TECH_LEVEL: 'techLevel',
+  PRIORITY: 'priority'
+};
 
 export default function CareerNavigator() {
   // --- State ---
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
-  const [redirectCountdownMs] = useState(3500); // ms before redirecting to dashboard
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // --- Static data (copied from your Alpine config) ---
+  // --- Static data ---
   const groupsInit = [
     {
       name: "Tech Builders",
@@ -58,25 +65,25 @@ export default function CareerNavigator() {
   ];
 
   const questions = {
-    environment: {
+    [QUESTION_KEYS.ENVIRONMENT]: {
       collaborative: "Collaborative team environment",
       independent: "Independent work",
       mixed: "Mix of both",
       "client-facing": "Client-facing role",
     },
-    activities: {
+    [QUESTION_KEYS.ACTIVITIES]: {
       "problem-solving": "Solving complex problems",
       creative: "Creative design work",
       data: "Analyzing data and patterns",
       strategy: "Strategic planning",
     },
-    techLevel: {
+    [QUESTION_KEYS.TECH_LEVEL]: {
       beginner: "Beginner",
       intermediate: "Intermediate",
       advanced: "Advanced",
       expert: "Expert",
     },
-    priority: {
+    [QUESTION_KEYS.PRIORITY]: {
       salary: "High salary",
       balance: "Work-life balance",
       impact: "Positive impact",
@@ -87,198 +94,155 @@ export default function CareerNavigator() {
   const answerWeights = {
     environment: {
       collaborative: {
-        "Software Developer": 5,
-        "DevOps Engineer": 6,
-        "UX Designer": 10,
-        "UI Designer": 9,
-        "Data Analyst": 5,
-        "Business Intelligence Analyst": 6,
-        "Product Manager": 10,
-        "Project Manager": 10,
+        "Software Developer": 5, "DevOps Engineer": 6, "UX Designer": 10, "UI Designer": 9,
+        "Data Analyst": 5, "Business Intelligence Analyst": 6, "Product Manager": 10, "Project Manager": 10,
       },
       independent: {
-        "Software Developer": 10,
-        "DevOps Engineer": 9,
-        "UX Designer": 5,
-        "UI Designer": 6,
-        "Data Analyst": 10,
-        "Business Intelligence Analyst": 9,
-        "Product Manager": 5,
-        "Project Manager": 4,
+        "Software Developer": 10, "DevOps Engineer": 9, "UX Designer": 5, "UI Designer": 6,
+        "Data Analyst": 10, "Business Intelligence Analyst": 9, "Product Manager": 5, "Project Manager": 4,
       },
       mixed: {
-        "Software Developer": 8,
-        "DevOps Engineer": 8,
-        "UX Designer": 8,
-        "UI Designer": 8,
-        "Data Analyst": 8,
-        "Business Intelligence Analyst": 8,
-        "Product Manager": 8,
-        "Project Manager": 8,
+        "Software Developer": 8, "DevOps Engineer": 8, "UX Designer": 8, "UI Designer": 8,
+        "Data Analyst": 8, "Business Intelligence Analyst": 8, "Product Manager": 8, "Project Manager": 8,
       },
       "client-facing": {
-        "Software Developer": 5,
-        "DevOps Engineer": 4,
-        "UX Designer": 5,
-        "UI Designer": 5,
-        "Data Analyst": 5,
-        "Business Intelligence Analyst": 7,
-        "Product Manager": 10,
-        "Project Manager": 9,
+        "Software Developer": 5, "DevOps Engineer": 4, "UX Designer": 5, "UI Designer": 5,
+        "Data Analyst": 5, "Business Intelligence Analyst": 7, "Product Manager": 10, "Project Manager": 9,
       },
     },
     activities: {
       "problem-solving": {
-        "Software Developer": 10,
-        "DevOps Engineer": 10,
-        "UX Designer": 3,
-        "UI Designer": 2,
-        "Data Analyst": 8,
-        "Business Intelligence Analyst": 9,
-        "Product Manager": 7,
-        "Project Manager": 6,
+        "Software Developer": 10, "DevOps Engineer": 10, "UX Designer": 3, "UI Designer": 2,
+        "Data Analyst": 8, "Business Intelligence Analyst": 9, "Product Manager": 7, "Project Manager": 6,
       },
       creative: {
-        "Software Developer": 3,
-        "DevOps Engineer": 2,
-        "UX Designer": 10,
-        "UI Designer": 10,
-        "Data Analyst": 2,
-        "Business Intelligence Analyst": 3,
-        "Product Manager": 5,
-        "Project Manager": 4,
+        "Software Developer": 3, "DevOps Engineer": 2, "UX Designer": 10, "UI Designer": 10,
+        "Data Analyst": 2, "Business Intelligence Analyst": 3, "Product Manager": 5, "Project Manager": 4,
       },
       data: {
-        "Software Developer": 5,
-        "DevOps Engineer": 6,
-        "UX Designer": 3,
-        "UI Designer": 2,
-        "Data Analyst": 10,
-        "Business Intelligence Analyst": 10,
-        "Product Manager": 6,
-        "Project Manager": 5,
+        "Software Developer": 5, "DevOps Engineer": 6, "UX Designer": 3, "UI Designer": 2,
+        "Data Analyst": 10, "Business Intelligence Analyst": 10, "Product Manager": 6, "Project Manager": 5,
       },
       strategy: {
-        "Software Developer": 4,
-        "DevOps Engineer": 5,
-        "UX Designer": 5,
-        "UI Designer": 4,
-        "Data Analyst": 6,
-        "Business Intelligence Analyst": 7,
-        "Product Manager": 10,
-        "Project Manager": 10,
+        "Software Developer": 4, "DevOps Engineer": 5, "UX Designer": 5, "UI Designer": 4,
+        "Data Analyst": 6, "Business Intelligence Analyst": 7, "Product Manager": 10, "Project Manager": 10,
       },
     },
     techLevel: {
       beginner: {
-        "Software Developer": 2,
-        "DevOps Engineer": 2,
-        "UX Designer": 5,
-        "UI Designer": 6,
-        "Data Analyst": 3,
-        "Business Intelligence Analyst": 4,
-        "Product Manager": 2,
-        "Project Manager": 3,
+        "Software Developer": 2, "DevOps Engineer": 2, "UX Designer": 5, "UI Designer": 6,
+        "Data Analyst": 3, "Business Intelligence Analyst": 4, "Product Manager": 2, "Project Manager": 3,
       },
       intermediate: {
-        "Software Developer": 5,
-        "DevOps Engineer": 5,
-        "UX Designer": 6,
-        "UI Designer": 7,
-        "Data Analyst": 6,
-        "Business Intelligence Analyst": 6,
-        "Product Manager": 5,
-        "Project Manager": 5,
+        "Software Developer": 5, "DevOps Engineer": 5, "UX Designer": 6, "UI Designer": 7,
+        "Data Analyst": 6, "Business Intelligence Analyst": 6, "Product Manager": 5, "Project Manager": 5,
       },
       advanced: {
-        "Software Developer": 8,
-        "DevOps Engineer": 9,
-        "UX Designer": 7,
-        "UI Designer": 7,
-        "Data Analyst": 8,
-        "Business Intelligence Analyst": 8,
-        "Product Manager": 7,
-        "Project Manager": 6,
+        "Software Developer": 8, "DevOps Engineer": 9, "UX Designer": 7, "UI Designer": 7,
+        "Data Analyst": 8, "Business Intelligence Analyst": 8, "Product Manager": 7, "Project Manager": 6,
       },
       expert: {
-        "Software Developer": 10,
-        "DevOps Engineer": 10,
-        "UX Designer": 8,
-        "UI Designer": 8,
-        "Data Analyst": 10,
-        "Business Intelligence Analyst": 10,
-        "Product Manager": 9,
-        "Project Manager": 8,
+        "Software Developer": 10, "DevOps Engineer": 10, "UX Designer": 8, "UI Designer": 8,
+        "Data Analyst": 10, "Business Intelligence Analyst": 10, "Product Manager": 9, "Project Manager": 8,
       },
     },
     priority: {
       salary: {
-        "Software Developer": 8,
-        "DevOps Engineer": 9,
-        "UX Designer": 6,
-        "UI Designer": 5,
-        "Data Analyst": 7,
-        "Business Intelligence Analyst": 8,
-        "Product Manager": 10,
-        "Project Manager": 7,
+        "Software Developer": 8, "DevOps Engineer": 9, "UX Designer": 6, "UI Designer": 5,
+        "Data Analyst": 7, "Business Intelligence Analyst": 8, "Product Manager": 10, "Project Manager": 7,
       },
       balance: {
-        "Software Developer": 6,
-        "DevOps Engineer": 5,
-        "UX Designer": 8,
-        "UI Designer": 9,
-        "Data Analyst": 7,
-        "Business Intelligence Analyst": 7,
-        "Product Manager": 6,
-        "Project Manager": 7,
+        "Software Developer": 6, "DevOps Engineer": 5, "UX Designer": 8, "UI Designer": 9,
+        "Data Analyst": 7, "Business Intelligence Analyst": 7, "Product Manager": 6, "Project Manager": 7,
       },
       impact: {
-        "Software Developer": 7,
-        "DevOps Engineer": 7,
-        "UX Designer": 7,
-        "UI Designer": 6,
-        "Data Analyst": 6,
-        "Business Intelligence Analyst": 7,
-        "Product Manager": 9,
-        "Project Manager": 8,
+        "Software Developer": 7, "DevOps Engineer": 7, "UX Designer": 7, "UI Designer": 6,
+        "Data Analyst": 6, "Business Intelligence Analyst": 7, "Product Manager": 9, "Project Manager": 8,
       },
       growth: {
-        "Software Developer": 9,
-        "DevOps Engineer": 10,
-        "UX Designer": 8,
-        "UI Designer": 7,
-        "Data Analyst": 8,
-        "Business Intelligence Analyst": 8,
-        "Product Manager": 10,
-        "Project Manager": 9,
+        "Software Developer": 9, "DevOps Engineer": 10, "UX Designer": 8, "UI Designer": 7,
+        "Data Analyst": 8, "Business Intelligence Analyst": 8, "Product Manager": 10, "Project Manager": 9,
       },
     },
   };
 
-  // --- Derived state: careers & groups (we make copies to mutate scores) ---
   const [careers, setCareers] = useState(() => careersInit.map(c => ({ ...c })));
   const [groups, setGroups] = useState(() => groupsInit.map(g => ({ ...g })));
 
-  // --- Navigation helpers ---
-  const nextStep = () => {
-    setCurrentStep((s) => Math.min(s + 1, totalSteps));
-  };
-  const prevStep = () => {
-    setCurrentStep((s) => Math.max(s - 1, 1));
+  // --- Question configuration ---
+  const questionConfig = {
+    1: { 
+      key: QUESTION_KEYS.ENVIRONMENT, 
+      title: 'What type of work environment energizes you most?', 
+      options: questions[QUESTION_KEYS.ENVIRONMENT] 
+    },
+    2: { 
+      key: QUESTION_KEYS.ACTIVITIES, 
+      title: 'Which activities do you find most engaging?', 
+      options: questions[QUESTION_KEYS.ACTIVITIES] 
+    },
+    3: { 
+      key: QUESTION_KEYS.TECH_LEVEL, 
+      title: "What's your current experience level with technology?", 
+      options: questions[QUESTION_KEYS.TECH_LEVEL] 
+    },
+    4: { 
+      key: QUESTION_KEYS.PRIORITY, 
+      title: "What's most important to you in a career?", 
+      options: questions[QUESTION_KEYS.PRIORITY] 
+    },
   };
 
   // --- Handle answer selection ---
   function setAnswer(questionKey, value) {
     setAnswers((prev) => ({ ...prev, [questionKey]: value }));
+    setErrorMessage("");
   }
 
-  // --- Calculate results logic (mirrors your Alpine method) ---
+  // --- Validation ---
+  const isStepAnswered = (stepNum) => {
+    const config = questionConfig[stepNum];
+    return config ? !!answers[config.key] : true;
+  };
+
+  // --- Navigation ---
+  const nextStep = () => {
+    setCurrentStep((s) => Math.min(s + 1, TOTAL_STEPS));
+  };
+
+  const prevStep = () => {
+    setCurrentStep((s) => Math.max(s - 1, 1));
+  };
+
+  const goToDashboard = () => {
+    window.location.href = "/dashboard";
+  };
+
+  function handleNext() {
+    if (!isStepAnswered(currentStep)) {
+      setErrorMessage("Please select an option before continuing.");
+      return;
+    }
+    setErrorMessage("");
+    nextStep();
+  }
+
+  function handlePrevious() {
+    setErrorMessage("");
+    prevStep();
+  }
+
+  // --- Calculate results ---
   function calculateResults() {
-    // Reset scores
+    if (!isStepAnswered(TOTAL_STEPS)) {
+      setErrorMessage("Please select an option before continuing.");
+      return;
+    }
+
     const updatedCareers = careers.map(c => ({ ...c, score: 0, match: 0 }));
     const updatedGroups = groups.map(g => ({ ...g, score: 0, match: 0 }));
 
-    // Accumulate career scores based on answers
+    // Accumulate career scores
     for (const questionKey of Object.keys(answers)) {
       const answerValue = answers[questionKey];
       const weightsForQuestion = answerWeights[questionKey]?.[answerValue];
@@ -291,344 +255,342 @@ export default function CareerNavigator() {
       }
     }
 
-    // Determine max career score to compute % match
+    // Calculate career match percentages
     const maxCareerScore = Math.max(...updatedCareers.map(c => c.score), 1);
-    updatedCareers.forEach(c => {
-      c.match = Math.round((c.score / maxCareerScore) * 100);
-    });
+    if (maxCareerScore > 0) {
+      updatedCareers.forEach(c => {
+        c.match = Math.round((c.score / maxCareerScore) * 100);
+      });
+    }
 
-    // Compute group scores and match %
+    // Calculate group scores
     updatedGroups.forEach(group => {
       const groupCareers = updatedCareers.filter(c => group.careers.includes(c.name));
-      group.score = groupCareers.reduce((sum, c) => sum + c.score, 0) / Math.max(groupCareers.length, 1);
-    });
-    const maxGroupScore = Math.max(...updatedGroups.map(g => g.score), 1);
-    updatedGroups.forEach(g => {
-      g.match = Math.round((g.score / maxGroupScore) * 100);
+      if (groupCareers.length > 0) {
+        group.score = groupCareers.reduce((sum, c) => sum + c.score, 0) / groupCareers.length;
+      }
     });
 
-    // Commit updated scores
+    const maxGroupScore = Math.max(...updatedGroups.map(g => g.score), 1);
+    if (maxGroupScore > 0) {
+      updatedGroups.forEach(g => {
+        g.match = Math.round((g.score / maxGroupScore) * 100);
+      });
+    }
+
     setCareers(updatedCareers);
     setGroups(updatedGroups);
-
-    // Show results and advance step beyond totalSteps
     setShowResults(true);
-    setCurrentStep(totalSteps + 1);
-
-    // After a short delay, redirect to dashboard
-    setTimeout(() => {
-      window.location.href = "/dashboard";
-    }, redirectCountdownMs);
+    setCurrentStep(TOTAL_STEPS + 1);
   }
 
-  // --- Computed helpers for rendering ---
+  // --- Memoized sorted data ---
   const sortedGroups = useMemo(() => {
     return [...groups].sort((a, b) => b.match - a.match);
   }, [groups]);
 
-  const getCareersInGroup = (group) => {
-    return [...careers]
-      .filter(c => group.careers.includes(c.name))
-      .sort((a, b) => b.match - a.match);
-  };
+  const careersByGroup = useMemo(() => {
+    const map = {};
+    groups.forEach(group => {
+      map[group.name] = [...careers]
+        .filter(c => group.careers.includes(c.name))
+        .sort((a, b) => b.match - a.match);
+    });
+    return map;
+  }, [careers, groups]);
 
-  // Progress percentage (clamp to 100)
+  // --- Progress ---
   const progressPercent = Math.round(
-    Math.min(100, ((Math.min(currentStep, totalSteps) / totalSteps) * 100))
+    Math.min(100, ((Math.min(currentStep, TOTAL_STEPS) / TOTAL_STEPS) * 100))
   );
 
-  // --- Basic validation: disable Next if current question unanswered ---
-  const isStepAnswered = (stepNum) => {
-    switch (stepNum) {
-      case 1: return !!answers.environment;
-      case 2: return !!answers.activities;
-      case 3: return !!answers.techLevel;
-      case 4: return !!answers.priority;
-      default: return true;
-    }
+  // --- Render question ---
+  const renderQuestion = (step) => {
+    const config = questionConfig[step];
+    if (!config) return null;
+
+    return (
+      <div className="quiz-container active">
+        <div className="question">
+          <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", color: "#2c3e50" }}>
+            {config.title}
+          </h3>
+          <div className="options" role="radiogroup" aria-label={config.title}>
+            {Object.entries(config.options).map(([value, label]) => (
+              <label
+                key={value}
+                className={`option ${answers[config.key] === value ? "selected" : ""}`}
+                style={{
+                  display: "block",
+                  marginBottom: "0.75rem",
+                  padding: "1rem",
+                  border: "2px solid",
+                  borderColor: answers[config.key] === value ? "#3498db" : "#e0e0e0",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  backgroundColor: answers[config.key] === value ? "#e3f2fd" : "#fff",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <input
+                  type="radio"
+                  name={config.key}
+                  value={value}
+                  checked={answers[config.key] === value}
+                  onChange={() => setAnswer(config.key, value)}
+                  style={{ marginRight: "0.75rem" }}
+                />
+                <span style={{ fontSize: "1.05rem" }}>{label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   };
 
-  // optional: show a small warning if user tries to advance without selecting
-  function handleNext() {
-    if (!isStepAnswered(currentStep)) {
-      // simple alert (you can replace with nicer UI)
-      alert("Please select an option before continuing.");
-      return;
-    }
-    if (currentStep < totalSteps) setCurrentStep(currentStep + 1);
-  }
-
-  // Render
   return (
-    <div className="career-quiz">
-      <header>
-        <nav className="container">
-          <div className="logo">🎯 Career Navigator</div>
-          <ul className="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#demo">Assessment</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#testimonials">Success Stories</a></li>
-          </ul>
+    <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+      {/* Header */}
+      <header style={{ backgroundColor: "#fff", borderBottom: "1px solid #e0e0e0", padding: "1rem 0" }}>
+        <nav style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#3498db" }}>🎯 Career Navigator</div>
         </nav>
       </header>
 
-      <section id="home" className="hero">
-        <div className="container">
-          <h1>Find Your Perfect Career Path</h1>
-          <p>Stop guessing about your future. Get personalized career recommendations based on your interests, skills, and real job market data.</p>
-          <a href="#demo" className="main-cta">Take Free Career Assessment</a>
-        </div>
-      </section>
-
-      <section id="demo" className="demo-section">
-        <div className="container">
-          <h2 style={{ textAlign: "center", color: "#2c3e50", fontSize: "2.5rem", marginBottom: "2rem" }}>
-            Try It Now - Career Assessment
+      {/* Assessment */}
+      <section style={{ padding: "4rem 1rem" }}>
+        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+          <h2 style={{ textAlign: "center", color: "#2c3e50", fontSize: "2.5rem", marginBottom: "1rem" }}>
+            Career Assessment
           </h2>
+          <p style={{ textAlign: "center", color: "#555", fontSize: "1.1rem", marginBottom: "2rem", maxWidth: "600px", margin: "0 auto 2rem" }}>
+            Answer 4 quick questions to discover your ideal career path. Our assessment analyzes your work preferences, skills, and priorities to match you with careers where you'll thrive. Takes less than 2 minutes!
+          </p>
 
-          <div className="demo-container">
-            <div className="progress-bar" aria-hidden>
-              <div
-                className="progress-fill"
-                style={{ width: `${progressPercent}%`, transition: "width 300ms ease" }}
-              />
+          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "2rem", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
+            {/* Progress Bar */}
+            <div style={{ marginBottom: "1rem" }}>
+              <div style={{ height: "8px", backgroundColor: "#e0e0e0", borderRadius: "4px", overflow: "hidden" }}>
+                <div
+                  style={{
+                    width: `${progressPercent}%`,
+                    height: "100%",
+                    backgroundColor: "#3498db",
+                    transition: "width 300ms ease"
+                  }}
+                  role="progressbar"
+                  aria-valuenow={progressPercent}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                />
+              </div>
             </div>
 
             <p style={{ textAlign: "center", marginBottom: "2rem", color: "#6c757d" }}>
-              Step <strong>{Math.min(currentStep, totalSteps)}</strong> of <strong>{totalSteps}</strong>
+              Step <strong>{Math.min(currentStep, TOTAL_STEPS)}</strong> of <strong>{TOTAL_STEPS}</strong>
             </p>
 
-            {/* Step 1 */}
-            {currentStep === 1 && (
-              <div className="quiz-container active">
-                <div className="question">
-                  <h3>What type of work environment energizes you most?</h3>
-                  <div className="options">
-                    {Object.entries(questions.environment).map(([value, label]) => (
-                      <label
-                        key={value}
-                        className={`option ${answers.environment === value ? "selected" : ""}`}
-                        style={{ display: "block", marginBottom: "0.5rem", cursor: "pointer" }}
-                      >
-                        <input
-                          type="radio"
-                          name="environment"
-                          value={value}
-                          checked={answers.environment === value}
-                          onChange={() => setAnswer("environment", value)}
-                          style={{ marginRight: "0.5rem" }}
-                        />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+            {/* Error Message */}
+            {errorMessage && (
+              <div style={{ padding: "1rem", backgroundColor: "#fee", border: "1px solid #fcc", borderRadius: "8px", marginBottom: "1rem", color: "#c33" }} role="alert">
+                {errorMessage}
               </div>
             )}
 
-            {/* Step 2 */}
-            {currentStep === 2 && (
-              <div className="quiz-container active">
-                <div className="question">
-                  <h3>Which activities do you find most engaging?</h3>
-                  <div className="options">
-                    {Object.entries(questions.activities).map(([value, label]) => (
-                      <label
-                        key={value}
-                        className={`option ${answers.activities === value ? "selected" : ""}`}
-                        style={{ display: "block", marginBottom: "0.5rem", cursor: "pointer" }}
-                      >
-                        <input
-                          type="radio"
-                          name="activities"
-                          value={value}
-                          checked={answers.activities === value}
-                          onChange={() => setAnswer("activities", value)}
-                          style={{ marginRight: "0.5rem" }}
-                        />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3 */}
-            {currentStep === 3 && (
-              <div className="quiz-container active">
-                <div className="question">
-                  <h3>What's your current experience level with technology?</h3>
-                  <div className="options">
-                    {Object.entries(questions.techLevel).map(([value, label]) => (
-                      <label
-                        key={value}
-                        className={`option ${answers.techLevel === value ? "selected" : ""}`}
-                        style={{ display: "block", marginBottom: "0.5rem", cursor: "pointer" }}
-                      >
-                        <input
-                          type="radio"
-                          name="techLevel"
-                          value={value}
-                          checked={answers.techLevel === value}
-                          onChange={() => setAnswer("techLevel", value)}
-                          style={{ marginRight: "0.5rem" }}
-                        />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4 */}
-            {currentStep === 4 && (
-              <div className="quiz-container active">
-                <div className="question">
-                  <h3>What's most important to you in a career?</h3>
-                  <div className="options">
-                    {Object.entries(questions.priority).map(([value, label]) => (
-                      <label
-                        key={value}
-                        className={`option ${answers.priority === value ? "selected" : ""}`}
-                        style={{ display: "block", marginBottom: "0.5rem", cursor: "pointer" }}
-                      >
-                        <input
-                          type="radio"
-                          name="priority"
-                          value={value}
-                          checked={answers.priority === value}
-                          onChange={() => setAnswer("priority", value)}
-                          style={{ marginRight: "0.5rem" }}
-                        />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Questions */}
+            {currentStep <= TOTAL_STEPS && renderQuestion(currentStep)}
 
             {/* Navigation */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2rem" }}>
-              <button
-                onClick={() => setCurrentStep((s) => Math.max(1, s - 1))}
-                className="secondary-cta"
-                style={{ visibility: currentStep > 1 ? "visible" : "hidden" }}
-              >
-                Previous
-              </button>
+            {!showResults && (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2rem" }}>
+                <button
+                  onClick={handlePrevious}
+                  style={{
+                    padding: "0.75rem 1.5rem",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    visibility: currentStep > 1 ? "visible" : "hidden"
+                  }}
+                >
+                  Previous
+                </button>
 
-              <div>
-                {currentStep < totalSteps && (
-                  <button onClick={handleNext} className="main-cta">Next</button>
-                )}
-                {currentStep === totalSteps && (
-                  <button
-                    onClick={() => {
-                      if (!isStepAnswered(totalSteps)) {
-                        alert("Please select an option before continuing.");
-                        return;
-                      }
-                      calculateResults();
-                    }}
-                    className="main-cta"
-                  >
-                    Get My Results
-                  </button>
-                )}
+                <div>
+                  {currentStep < TOTAL_STEPS && (
+                    <button
+                      onClick={handleNext}
+                      style={{
+                        padding: "0.75rem 1.5rem",
+                        backgroundColor: "#3498db",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      Next
+                    </button>
+                  )}
+                  {currentStep === TOTAL_STEPS && (
+                    <button
+                      onClick={calculateResults}
+                      style={{
+                        padding: "0.75rem 1.5rem",
+                        backgroundColor: "#27ae60",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      Get My Results
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ width: 90 }} />
               </div>
-
-              <div style={{ width: 90 }} /> {/* spacer */}
-            </div>
+            )}
 
             {/* Results */}
             {showResults && (
-              <div className="results-container" style={{ marginTop: 24 }}>
-                <h3 style={{ marginBottom: 8, fontSize: "1.8rem" }}>Assessment Complete! ✓</h3>
-                <p style={{ marginBottom: 12, fontSize: "1.05rem" }}>
-                  Great — we found career matches for you. You will be redirected to the Dashboard shortly.
+              <div style={{ marginTop: "2rem" }} role="region" aria-live="polite">
+                <h3 style={{ marginBottom: "1rem", fontSize: "1.8rem", color: "#27ae60" }}>
+                  Assessment Complete! ✓
+                </h3>
+                <p style={{ marginBottom: "1.5rem", fontSize: "1.05rem" }}>
+                  Great — we found career matches for you. Review your results below!
                 </p>
 
-                <div style={{ display: "grid", gap: 12 }}>
-                  <div>
-                    <h4 style={{ marginBottom: 8 }}>Top career groups</h4>
-                    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                      {sortedGroups.map((g) => (
-                        <div key={g.name} style={{ minWidth: 220, padding: 12, borderRadius: 8, background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-                          <div style={{ fontWeight: 800 }}>{g.name}</div>
-                          <div style={{ color: "#64748b", fontSize: 13 }}>{g.description}</div>
-                          <div style={{ marginTop: 8, fontSize: 12 }}>Match: <strong>{g.match}%</strong></div>
+                {/* Dashboard Button */}
+                <div style={{ marginBottom: "2rem", textAlign: "center" }}>
+                  <button
+                    onClick={goToDashboard}
+                    style={{
+                      padding: "1rem 2.5rem",
+                      backgroundColor: "#3498db",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                      fontSize: "1.1rem",
+                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseOver={(e) => e.target.style.backgroundColor = "#2980b9"}
+                    onMouseOut={(e) => e.target.style.backgroundColor = "#3498db"}
+                  >
+                    Go to Dashboard →
+                  </button>
+                  <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#6c757d" }}>
+                    View your full career roadmap and personalized recommendations
+                  </p>
+                </div>
 
-                          <div style={{ marginTop: 8 }}>
-                            <div style={{ fontSize: 13, color: "#334155", fontWeight: 700 }}>Careers</div>
-                            {getCareersInGroup(g).map(c => (
-                              <div key={c.name} style={{ marginTop: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <div>
-                                  <div style={{ fontWeight: 700 }}>{c.name}</div>
-                                  <div style={{ fontSize: 12, color: "#64748b" }}>{c.salary} • growth: {c.growth}</div>
-                                </div>
-                                <div style={{ fontSize: 12, fontWeight: 700 }}>{c.match}%</div>
-                              </div>
-                            ))}
-                          </div>
+                <div style={{ marginTop: "1.5rem" }}>
+                  <h4 style={{ marginBottom: "1rem", fontSize: "1.3rem" }}>Top Career Groups</h4>
+                  <div style={{ display: "grid", gap: "1rem" }}>
+                    {sortedGroups.map((g) => (
+                      <div key={g.name} style={{ padding: "1.5rem", borderRadius: "8px", backgroundColor: "#f8f9fa", border: "1px solid #e0e0e0" }}>
+                        <div style={{ fontWeight: "bold", fontSize: "1.2rem", marginBottom: "0.5rem" }}>{g.name}</div>
+                        <div style={{ color: "#64748b", fontSize: "0.95rem", marginBottom: "0.75rem" }}>{g.description}</div>
+                        <div style={{ marginBottom: "1rem", fontSize: "0.9rem" }}>
+                          Match: <strong style={{ color: "#3498db", fontSize: "1.1rem" }}>{g.match}%</strong>
                         </div>
-                      ))}
-                    </div>
+
+                        <div>
+                          <div style={{ fontSize: "0.95rem", color: "#334155", fontWeight: "bold", marginBottom: "0.5rem" }}>
+                            Top Careers
+                          </div>
+                          {careersByGroup[g.name]?.map(c => (
+                            <div key={c.name} style={{ marginTop: "0.75rem", padding: "0.75rem", backgroundColor: "#fff", borderRadius: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <div>
+                                <div style={{ fontWeight: "bold" }}>{c.name}</div>
+                                <div style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                                  {c.salary} • Growth: {c.growth}
+                                </div>
+                              </div>
+                              <div style={{ fontSize: "1rem", fontWeight: "bold", color: "#3498db" }}>
+                                {c.match}%
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             )}
-
           </div>
         </div>
       </section>
 
-      {/* Features & Testimonials (static from original) */}
-      <section id="features" className="features-showcase container" style={{ marginTop: 36 }}>
-        <div className="feature-demo">
-          <h3>🎯 Discover Your True Potential</h3>
-          <p>Many people spend years in careers that don't align with their natural strengths and interests. Our assessment helps you identify career paths where you'll naturally excel and find fulfillment, saving you years of trial and error.</p>
-        </div>
-        <div className="feature-demo">
-          <h3>📊 Data-Driven Insights</h3>
-          <p>The test analyzes your work preferences, skills, and priorities against real-world career data. Instead of guessing what might fit, you get personalized matches based on proven success patterns in each field.</p>
-        </div>
-        <div className="feature-demo">
-          <h3>💡 Avoid Costly Mistakes</h3>
-          <p>Choosing the wrong career path can cost you time, money, and happiness. This assessment helps you make informed decisions before investing in education or training, ensuring your efforts lead to a career you'll love.</p>
-        </div>
-        <div className="feature-demo">
-          <h3>🚀 Fast-Track Your Success</h3>
-          <p>Understanding which careers match your profile means you can focus your energy on the right opportunities. Get clarity on your path forward, connect with relevant resources, and start building the career that's meant for you.</p>
-        </div>
-      </section>
-
-      <section id="testimonials" className="testimonials container" style={{ marginTop: 36 }}>
-        <h2 style={{ marginBottom: 16, fontSize: "2rem" }}>Success Stories</h2>
-        <div className="testimonial-grid" style={{ display: "grid", gap: 12 }}>
-          <div className="testimonial">
-            <p className="testimonial-text">"This tool helped me find a career I truly enjoy. I landed my dream job in just 3 months!"</p>
-            <p className="testimonial-author">— Alex P., Software Engineer</p>
-          </div>
-          <div className="testimonial">
-            <p className="testimonial-text">"The skills gap analysis showed me exactly what I needed to learn to get promoted."</p>
-            <p className="testimonial-author">— Maria R., UX Designer</p>
-          </div>
-          <div className="testimonial">
-            <p className="testimonial-text">"I never knew which career fit me best until I took this assessment."</p>
-            <p className="testimonial-author">— James L., Data Analyst</p>
+      {/* Features */}
+      <section style={{ padding: "4rem 1rem", backgroundColor: "#fff" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textAlign: "center" }}>Why Career Assessment Matters</h2>
+          <div style={{ display: "grid", gap: "2rem", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
+            <div style={{ padding: "1.5rem" }}>
+              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>🎯 Discover Your True Potential</h3>
+              <p style={{ color: "#555" }}>
+                Many people spend years in careers that don't align with their natural strengths and interests. Our assessment helps you identify career paths where you'll naturally excel and find fulfillment, saving you years of trial and error.
+              </p>
+            </div>
+            <div style={{ padding: "1.5rem" }}>
+              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>📊 Data-Driven Insights</h3>
+              <p style={{ color: "#555" }}>
+                The test analyzes your work preferences, skills, and priorities against real-world career data. Instead of guessing what might fit, you get personalized matches based on proven success patterns in each field.
+              </p>
+            </div>
+            <div style={{ padding: "1.5rem" }}>
+              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>💡 Avoid Costly Mistakes</h3>
+              <p style={{ color: "#555" }}>
+                Choosing the wrong career path can cost you time, money, and happiness. This assessment helps you make informed decisions before investing in education or training, ensuring your efforts lead to a career you'll love.
+              </p>
+            </div>
+            <div style={{ padding: "1.5rem" }}>
+              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>🚀 Fast-Track Your Success</h3>
+              <p style={{ color: "#555" }}>
+                Understanding which careers match your profile means you can focus your energy on the right opportunities. Get clarity on your path forward, connect with relevant resources, and start building the career that's meant for you.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="cta-section container" style={{ marginTop: 36, marginBottom: 48 }}>
-        <h2>Ready to Discover Your Career?</h2>
-        <p>Take the free assessment now and unlock your personalized roadmap to success.</p>
-        <a href="#demo" className="secondary-cta" style={{ marginRight: 8 }}>Start Assessment</a>
-        <a href="#features" className="secondary-cta">Explore Features</a>
+      {/* Testimonials */}
+      <section style={{ padding: "4rem 1rem" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <h2 style={{ marginBottom: "2rem", fontSize: "2rem", textAlign: "center" }}>Success Stories</h2>
+          <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            <div style={{ padding: "1.5rem", backgroundColor: "#fff", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+              <p style={{ fontStyle: "italic", marginBottom: "1rem" }}>
+                "This tool helped me find a career I truly enjoy. I landed my dream job in just 3 months!"
+              </p>
+              <p style={{ fontWeight: "bold", color: "#3498db" }}>— Alex P., Software Engineer</p>
+            </div>
+            <div style={{ padding: "1.5rem", backgroundColor: "#fff", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+              <p style={{ fontStyle: "italic", marginBottom: "1rem" }}>
+                "The skills gap analysis showed me exactly what I needed to learn to get promoted."
+              </p>
+              <p style={{ fontWeight: "bold", color: "#3498db" }}>— Maria R., UX Designer</p>
+            </div>
+            <div style={{ padding: "1.5rem", backgroundColor: "#fff", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+              <p style={{ fontStyle: "italic", marginBottom: "1rem" }}>
+                "I never knew which career fit me best until I took this assessment."
+              </p>
+              <p style={{ fontWeight: "bold", color: "#3498db" }}>— James L., Data Analyst</p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

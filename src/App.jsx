@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // ✅ Import your pages/components
-import Case from "./components/pages/Case";
+import Home from "./components/pages/Home";
 import Profile from "./components/profile/Profile";
 import Net from "./components/net/Net";
 import Login from "./components/login/Login";
@@ -18,7 +18,7 @@ function App() {
     <Router>
       <div className="app-container">
         <Routes>
-          <Route path="/" element={<Case />} />
+          <Route path="/" element={<Home />} />
           <Route path="/groupsheet" element={<Groupsheet />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />

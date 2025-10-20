@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Case() {
+export default function Home() {
   const heroRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -347,7 +347,7 @@ export default function Case() {
       <div className="min-h-screen">
         <header>
           <nav className="container">
-            <div className="nav-title">🚀 Find Me Career Navigator</div>
+            <div className="nav-title">🚀 Wayvian your Career Navigator</div>
             <ul>
               <li><a href="#overview">Overview</a></li>
               <li><a href="#features">Features</a></li>
