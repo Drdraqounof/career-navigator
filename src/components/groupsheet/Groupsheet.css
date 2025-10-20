@@ -102,3 +102,12 @@
   color: #b91c1c;
   margin-top: 0.5rem;
 }
+.options label {
+  display: block;
+  margin-bottom: 1rem; /* adds vertical spacing */
+  cursor: pointer;
+}
+
+.options input {
+  margin-right: 0.5rem; /* adds space between radio and text */
+}
