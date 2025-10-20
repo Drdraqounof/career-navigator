@@ -1,0 +1,344 @@
+/* ==========================
+   Header & Navigation
+   ========================== */
+header {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: white;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #fffae5;
+}
+
+/* ==========================
+   User Profile Menu
+   ========================== */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  position: relative;
+  color: white;
+}
+
+.user-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background: white;
+  color: #333;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: fadeIn 0.25s ease;
+}
+
+.user-menu button {
+  background: none;
+  border: none;
+  padding: 0.8rem 1rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.user-menu button:hover {
+  background: #f3f3f3;
+}
+
+/* ==========================
+   Main Layout
+   ========================== */
+.main-content {
+  padding: 2rem 0;
+  color: #222;
+}
+
+
+/* ==========================
+   Welcome Section
+   ========================== */
+.welcome-section {
+  text-align: center;
+  color: #111; /* changed from white to black */
+  margin-bottom: 3rem;
+}
+
+.welcome-section h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-section p {
+  font-size: 1rem;
+  color: #333; /* slightly lighter black for paragraph */
+}
+
+
+/* ==========================
+   Overall Progress Section
+   ========================== */
+.overall-progress {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left; /* align text to left for readability */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: inline-block; /* make it inline for horizontal scrolling container */
+  min-width: 300px;
+}
+
+/* ==========================
+   User Type Selection (horizontal)
+   ========================== */
+.user-type-selector {
+  display: flex; /* horizontal layout */
+  gap: 1.5rem;
+  overflow-x: auto; /* allow horizontal scroll if needed */
+  padding-bottom: 1rem;
+}
+
+.user-type-card {
+  min-width: 250px; /* fixed width for horizontal scrolling */
+  flex: 0 0 auto; /* prevent shrinking */
+}
+
+/* ==========================
+   Dashboard Cards (horizontal)
+   ========================== */
+.dashboard-grid {
+  display: flex; /* horizontal layout */
+  gap: 2rem;
+  overflow-x: auto; /* scroll if too many cards */
+  padding-bottom: 1rem;
+}
+
+.dashboard-card {
+  min-width: 300px; /* each card fixed width */
+  flex: 0 0 auto; /* prevent shrinking */
+}
+
+/* Optional: hide scrollbar for a cleaner look */
+.user-type-selector::-webkit-scrollbar,
+.dashboard-grid::-webkit-scrollbar {
+  display: none;
+}
+
+
+.user-type-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.user-type-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.user-type-card .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-type-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-type-card p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ==========================
+   Dashboard Cards
+   ========================== */
+.dashboard-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-header .icon {
+  font-size: 1.5rem;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0;
+}
+
+.stat-item {
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.stat-item:hover {
+  transform: scale(1.05);
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ==========================
+   Buttons
+   ========================== */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: #eee;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #ddd;
+}
+
+/* ==========================
+   Modal Styling
+   ========================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+  z-index: 50;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  padding: 2rem;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.close {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* ==========================
+   Animations
+   ========================== */
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
