@@ -1,236 +1,189 @@
-/* Chat.css */
+/* Chat.css - Enhanced styles for CareerChat */
 
-/* ========== BACKGROUND COLORS ========== */
-/* Full page background container - centers the white chat card with gradient background */
 .page-container {
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-/* Makes the element background pure white */
-.bg-white {
-  background-color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
 }
 
-/* Light gray background - used for the messages container to create subtle contrast */
-.bg-gray-50 {
-  background-color: #f9fafb;
+/* Navigation Bar Styles */
+.page-container .bg-gray-100 {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
 }
 
-/* Blue background - used for the Send button to make it stand out */
-.bg-blue-600 {
-  background-color: #2563eb;
+/* Chat Container */
+.page-container .bg-white {
+  background: white;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
 }
 
-/* ========== PADDING (internal spacing inside elements) ========== */
-
-/* Adds 1.5rem (24px) padding on all sides - used for the main chat card */
-.p-6 {
-  padding: 1.5rem;
+.page-container .bg-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
 }
 
-/* Adds 0.75rem (12px) padding on all sides - used for the messages container */
-.p-3 {
-  padding: 0.75rem;
+/* Chat Messages Area */
+.page-container .bg-gray-50 {
+  background: linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%);
+  border: 1px solid #e5e7eb;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f3f4f6;
 }
 
-/* Adds 0.75rem (12px) padding on left and right only - used for input field */
-.px-3 {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
+.page-container .bg-gray-50::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Adds 1rem (16px) padding on left and right only - used for the Send button */
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
+.page-container .bg-gray-50::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
 }
 
-/* Adds 0.5rem (8px) padding on top and bottom only - used for input and button */
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+.page-container .bg-gray-50::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  transition: background 0.2s;
 }
 
-/* ========== MARGIN (external spacing outside elements) ========== */
-
-/* Adds 1rem (16px) margin at the bottom - separates the header from content */
-.mb-4 {
-  margin-bottom: 1rem;
+.page-container .bg-gray-50::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-/* Adds 0.75rem (12px) margin at the bottom - separates messages area from input */
-.mb-3 {
-  margin-bottom: 0.75rem;
-}
-
-/* Adds 0.5rem (8px) margin on top and bottom - spaces out individual messages */
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-/* ========== BORDER RADIUS (rounded corners) ========== */
-
-/* Large rounded corners (0.5rem/8px) - makes the chat card look smooth and modern */
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
-/* Small rounded corners (0.25rem/4px) - used for input, button, and messages container */
-.rounded {
-  border-radius: 0.25rem;
-}
-
-/* ========== SHADOW (creates depth and elevation) ========== */
-
-/* Large shadow effect - makes the chat card appear to float above the background */
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-/* ========== WIDTH (horizontal sizing) ========== */
-
-/* Makes element take up 200% of its parent's width */
-.w-full {
-  width: 300%;
-}
-
-/* Limits maximum width to 400rem (Something like 672px) - To keeps the chat card readable on large screens */
-.max-w-2xl {
-  max-width: 400rem;
-}
-
-/* ========== HEIGHT (vertical sizing) ========== */
-
-/* Sets fixed height of 20rem (320px) - creates scrollable area for messages */
-.h-80 {
-  height: 25rem;
-}
-
-/* ========== OVERFLOW (how content behaves when it exceeds container size) ========== */
-
-/* Allows vertical scrolling when messages exceed container height */
-.overflow-y-auto {
-  overflow-y: auto;
-}
-
-/* ========== BORDER (creates outline around elements) ========== */
-
-/* Adds a 1px solid light gray border - outlines the messages container and input */
-.border {
-  border: 1px solid #d1d5db;
-}
-
-/* ========== TEXT STYLES (typography and text appearance) ========== */
-
-/* Makes text larger (1.25rem/20px) - used for the header to make it prominent */
-.text-xl {
-  font-size: 1rem;
-  line-height: 1rem;
-}
-
-/* Makes text semi-bold (weight 600) - emphasizes the header */
-.font-semibold {
-  font-weight: 600;
-}
-
-/* Dark gray text color - used for the header for good readability */
-.text-gray-700 {
-  color: #374151;
-}
-
-/* Darker gray text - used for AI messages to distinguish from user messages */
-.text-gray-800 {
-  color: #1f2937;
-}
-
-/* Medium gray text - used for "Thinking..." loading text, less prominent */
-.text-gray-500 {
-  color: #6b7280;
-}
-
-/* Blue text color - used for user messages to distinguish from AI messages */
-.text-blue-600 {
-  color: #2563eb;
-}
-
-/* Pure white text - used for button text to contrast with blue background */
-.text-white {
+/* Message Styling */
+.page-container .text-blue-600 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
+  padding: 10px 16px;
+  border-radius: 18px;
+  display: inline-block;
+  max-width: 80%;
+  margin-left: auto;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  font-weight: 500;
 }
 
-/* Aligns text to the right side - used for user messages */
-.text-right {
-  text-align: right;
+.page-container .text-gray-800 {
+  background: white;
+  color: #1f2937;
+  padding: 10px 16px;
+  border-radius: 18px;
+  display: inline-block;
+  max-width: 80%;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Aligns text to the left side - used for AI messages */
-.text-left {
-  text-align: left;
-  padding-left: 16px; /* or 1rem */
+/* Input Field */
+.page-container input[type="text"] {
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+  font-size: 15px;
 }
 
-
-/* Makes text italicized - used for "Thinking..." to show temporary status */
-.italic {
-  font-style: italic;
-}
-
-/* ========== FLEXBOX (layout system for arranging elements) ========== */
-
-/* Enables flexbox layout - allows horizontal arrangement of input and button */
-.flex {
-  display: flex;
-}
-
-/* Makes element grow to fill available space - input field expands to use space */
-.flex-grow {
-  flex-grow: 1;
-}
-
-/* Adds 0.5rem (8px) gap between flex items - spaces input and button apart */
-.gap-2 {
-  gap: 0.5rem;
-}
-
-/* ========== BUTTON STYLES (interactive button appearance) ========== */
-
-/* Makes button appear clickable with pointer cursor */
-button {
-  cursor: pointer;
-  /* Removes default browser button border */
-  border: none;
-  /* Smooth color transition when hovering (0.2 seconds) */
-  transition: background-color 0.2s;
-}
-
-/* Darker blue when hovering over button (unless disabled) - provides feedback */
-button:hover:not(:disabled) {
-  background-color: #1d4ed8;
-}
-
-/* Gray appearance when button is disabled - shows it can't be clicked */
-button:disabled {
-  background-color: #9ca3af;
-  /* Changes cursor to show button is not clickable */
-  cursor: not-allowed;
-}
-
-/* ========== INPUT STYLES (text input field appearance) ========== */
-
-/* Removes default browser outline around input */
-input {
+.page-container input[type="text"]:focus {
   outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Blue border and subtle shadow when input is focused - shows active state */
-input:focus {
-  /* Changes border to blue to indicate focus */
-  border-color: #3b82f6;
-  /* Adds subtle blue glow around input for visual feedback */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+/* Send Button */
+.page-container .bg-blue-600 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.page-container .bg-blue-600:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.page-container .bg-blue-600:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Navigation Buttons */
+.page-container button {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.page-container button::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.page-container button:hover::after {
+  width: 80%;
+}
+
+/* Loading Animation */
+.page-container .italic {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Title Styling */
+.page-container h2 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container .max-w-2xl {
+    margin: 0 1rem;
+  }
+  
+  .page-container .text-blue-600,
+  .page-container .text-gray-800 {
+    max-width: 90%;
+  }
+}
+
+/* Markdown Content Styling */
+.page-container .text-gray-800 p {
+  margin: 0.5em 0;
+  line-height: 1.6;
+}
+
+.page-container .text-gray-800 code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: 'Courier New', monospace;
+}
+
+.page-container .text-gray-800 ul,
+.page-container .text-gray-800 ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.page-container .text-gray-800 li {
+  margin: 0.25em 0;
 }

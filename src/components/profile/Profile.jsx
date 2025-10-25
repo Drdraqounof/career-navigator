@@ -248,7 +248,7 @@ print(stats)`,
     <div className="profile-page">
       <header>
         <nav className="container">
-          <div className="logo">🚀 Find Me Career Navigator</div>
+          <div className="logo">🚀 Wayvian Career Navigator</div>
           <div className="search-bar">
             <span className="search-icon">🔍</span>
             <input
