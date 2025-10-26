@@ -97,17 +97,8 @@ export default function Home() {
     return () => anchors.forEach((a) => a.removeEventListener("click", handleClick));
   }, []);
 
-  // === Parallax effect ===
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.pageYOffset;
-      if (heroRef.current) {
-        heroRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // === Parallax effect (disabled for hero section) ===
+  // Removed parallax effect to prevent hero section from moving on scroll
 
   // === Login / Test link logic ===
   const handleTestLink = (e) => {
@@ -523,7 +514,7 @@ export default function Home() {
           <div className="hero-overlay"></div>
           
           <div className="container hero-content">
-            <h1>Find Me</h1>
+            <h1>Wayvian</h1>
             <p>
               Empowering students, graduates, and career changers with personalized guidance based on real job market trends
             </p>

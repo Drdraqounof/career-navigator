@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 // DashboardCard Component
-
 function DashboardCard({ title, progressText, careersSaved, skillsIdentified, progressPercent, actionLabel, onAction }) {
   return (
     <div style={{
@@ -175,7 +173,6 @@ function CareerChat() {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalBody, setModalBody] = useState("");
@@ -183,22 +180,7 @@ export default function Dashboard() {
   const [showCareerChat, setShowCareerChat] = useState(false);
   const [overallProgress] = useState(45);
   const [notification, setNotification] = useState(null);
-  
-  const userMenuRef = useRef(null);
-
-  // Close user menu when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setUserMenuOpen(false);
-      }
-    }
-    
-    if (userMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [userMenuOpen]);
+  const [loggedIn, setLoggedIn] = useState(true);
 
   // Close modals on Escape key
   useEffect(() => {
@@ -206,7 +188,6 @@ export default function Dashboard() {
       if (event.key === 'Escape') {
         setShowCareerChat(false);
         setModalVisible(false);
-        setUserMenuOpen(false);
       }
     }
     
@@ -219,50 +200,30 @@ export default function Dashboard() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  // Navigation handlers - These would use useNavigate() in your actual app
-const handleExploreClick = (e) => {
-  e.preventDefault();
-  navigate("/net");
-};
+  // Navigation handlers
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
-  const handleDashboardClick = (e) => {
-    e.preventDefault();
-    // In your actual app: navigate("/dashboard");
+  const handleDashboardClick = () => {
     showNotification("Already on Dashboard");
   };
 
-    const handleMyPlanClick = (e) => {
-    e.preventDefault();
+  const handleExploreClick = () => {
+    navigate("/net");
+  };
+
+  const handleMyPlanClick = () => {
     navigate("/careerchat");
   };
-  
+
   const showSettings = () => {
-    // In your actual app: navigate("/settings");
     showNotification("Opening Settings...");
   };
 
-  const editProfile = () => {
-    // In your actual app: navigate("/profile/edit");
-    showNotification("Opening Profile Editor...");
-    setUserMenuOpen(false);
-  };
-
-  const viewProgress = () => {
-    // In your actual app: navigate("/progress");
-    showNotification("Loading Progress Report...");
-    setUserMenuOpen(false);
-  };
-
-  const exportData = () => {
-    // In your actual app: trigger data export API call
-    showNotification("Exporting your data...");
-    setUserMenuOpen(false);
-  };
-
-  const logoutUser = () => {
-    // In your actual app: clear auth state and navigate("/login");
-    showNotification("Logging out...");
-    setUserMenuOpen(false);
+  const toggleAuth = () => {
+    setLoggedIn(!loggedIn);
+    showNotification(loggedIn ? "Logged out successfully" : "Logged in successfully");
   };
 
   const selectUserType = (type) => {
@@ -270,17 +231,8 @@ const handleExploreClick = (e) => {
     showNotification(`Switched to ${userTypes.find(t => t.key === type)?.label} mode`);
   };
 
-  const openModal = (title, body) => {
-    setModalTitle(title);
-    setModalBody(body);
-    setModalVisible(true);
-  };
-
-  const toggleUserMenu = () => {
-  setUserMenuOpen((prev) => !prev);
-};
-
   const closeModal = () => setModalVisible(false);
+  const closeCareerChat = () => setShowCareerChat(false);
 
   const userTypes = [
     { key: "student", label: "High School Student", icon: "🎓", description: "Planning your college path and exploring future career options" },
@@ -330,87 +282,71 @@ const handleExploreClick = (e) => {
         </div>
       )}
 
-      {/* TOP NAV */}
-      <header style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        padding: '18px 0',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      {/* TOP NAV - Updated to match Network Page */}
+      <nav style={{
+        width: '100%',
+        background: 'rgba(255, 255, 255, 0.98)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid #e5e7eb',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
         position: 'sticky',
         top: 0,
         zIndex: 100
       }}>
-        <div style={{ 
-          maxWidth: '1400px', 
-          margin: '0 auto', 
-          padding: '0 24px',
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center' 
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '1rem 2rem'
         }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            🚀 <span>Wayvian Career Navigator</span>
-          </div>
-          <nav style={{ 
-            display: 'flex', 
-            gap: '8px',
-            alignItems: 'center'
+          <div style={{
+            fontSize: '1.5rem',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
           }}>
-            <NavButton onClick={handleDashboardClick} active={true}>Dashboard</NavButton>
+            🚀 Wayvian
+          </div>
+          
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <NavButton onClick={handleDashboardClick}>Dashboard</NavButton>
             <NavButton onClick={handleExploreClick}>Explore</NavButton>
             <NavButton onClick={handleMyPlanClick}>My Plan</NavButton>
             <NavButton onClick={showSettings}>Settings</NavButton>
-            
-            
-            <div ref={userMenuRef} style={{ position: 'relative', marginLeft: '12px' }}>
-              <button 
-                onClick={toggleUserMenu}
-                aria-label="User menu"
-                aria-expanded={userMenuOpen}
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  border: 'none',
-                  color: 'white',
-                  cursor: 'pointer',
-                  fontSize: '0.95rem',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontWeight: '500',
-                  transition: 'background 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-              >
-                <span style={{ fontSize: '1.2rem' }}>👤</span>
-                <span>John Doe</span>
-                <span style={{ fontSize: '0.7rem' }}>▼</span>
-              </button>
-              
-              {userMenuOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  right: 0,
-                  background: 'white',
-                  borderRadius: '12px',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                  minWidth: '200px',
-                  overflow: 'hidden',
-                  animation: 'fadeIn 0.2s ease'
-                }}>
-                  <DropdownButton onClick={editProfile}>✏️ Edit Profile</DropdownButton>
-                  <DropdownButton onClick={viewProgress}>📊 View Progress</DropdownButton>
-                  <DropdownButton onClick={exportData}>💾 Export Data</DropdownButton>
-                  <DropdownButton onClick={logoutUser} danger={true}>🚪 Logout</DropdownButton>
-                </div>
-              )}
-            </div>
-          </nav>
+            <button 
+              onClick={toggleAuth}
+              style={{
+                background: loggedIn 
+                  ? 'linear-gradient(135deg, #ef4444, #dc2626)' 
+                  : 'linear-gradient(135deg, #667eea, #764ba2)',
+                color: 'white',
+                border: 'none',
+                padding: '0.6rem 1.5rem',
+                borderRadius: '8px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                marginLeft: '1rem',
+                fontSize: '0.95rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              {loggedIn ? '👋 Logout' : '🔐 Login'}
+            </button>
+          </div>
         </div>
-      </header>
+      </nav>
 
       {/* MAIN CONTENT */}
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '40px 24px' }}>
@@ -661,49 +597,31 @@ const handleExploreClick = (e) => {
 }
 
 // Reusable Navigation Button Component
-function NavButton({ onClick, active, children }) {
+function NavButton({ onClick, children }) {
   return (
     <button
       onClick={onClick}
       style={{
-        background: active ? 'rgba(255,255,255,0.2)' : 'transparent',
-        border: 'none',
-        color: 'white',
-        cursor: 'pointer',
-        fontSize: '0.95rem',
-        padding: '10px 16px',
-        borderRadius: '8px',
-        transition: 'background 0.2s',
-        fontWeight: active ? '600' : '500'
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-      onMouseLeave={(e) => e.currentTarget.style.background = active ? 'rgba(255,255,255,0.2)' : 'transparent'}
-    >
-      {children}
-    </button>
-  );
-}
-
-// Reusable Dropdown Button Component
-function DropdownButton({ onClick, children, danger }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '14px 20px',
         background: 'none',
         border: 'none',
-        borderTop: danger ? '1px solid #e2e8f0' : 'none',
-        textAlign: 'left',
+        fontWeight: '600',
         cursor: 'pointer',
-        color: danger ? '#e53e3e' : '#2d3748',
-        fontSize: '0.95rem',
-        transition: 'background 0.2s',
-        fontWeight: '500'
+        transition: 'all 0.3s ease',
+        padding: '0.6rem 1.2rem',
+        borderRadius: '8px',
+        color: '#4b5563',
+        fontSize: '0.95rem'
       }}
-      onMouseEnter={(e) => e.currentTarget.style.background = danger ? '#fff5f5' : '#f7fafc'}
-      onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+        e.currentTarget.style.color = 'white';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'none';
+        e.currentTarget.style.color = '#4b5563';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
     >
       {children}
     </button>

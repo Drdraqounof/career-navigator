@@ -5,13 +5,75 @@ export default function NetworkPage() {
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
   const [groups, setGroups] = useState([]);
-  const [showCareerChat, setShowCareerChat] = useState(false);
   const [joinedGroups, setJoinedGroups] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+  const canvasRef = useRef(null);
 
-  const heroRef = useRef(null);
-  const ctaRef = useRef(null);
+  // Canvas Wave Animation for Hero
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  // --- Intersection Observer: fade-in elements ---
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let time = 0;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = 300;
+    };
+    resizeCanvas();
+
+    const waves = [
+      { color: 'rgba(59, 130, 246, 0.3)', speed: 0.02, amplitude: 50, frequency: 0.003, offset: 0 },
+      { color: 'rgba(37, 99, 235, 0.2)', speed: 0.025, amplitude: 60, frequency: 0.0025, offset: 40 },
+      { color: 'rgba(147, 51, 234, 0.15)', speed: 0.018, amplitude: 55, frequency: 0.0035, offset: 80 }
+    ];
+
+    function drawWave(wave, time) {
+      ctx.beginPath();
+      
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + 
+          Math.sin(x * wave.frequency + time * wave.speed) * wave.amplitude +
+          Math.sin(x * wave.frequency * 0.5 + time * wave.speed * 0.7) * wave.amplitude * 0.5 +
+          wave.offset;
+        
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.quadraticCurveTo(canvas.width / 2, canvas.height, 0, canvas.height);
+      ctx.closePath();
+      ctx.fillStyle = wave.color;
+      ctx.fill();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 1;
+
+      waves.forEach(wave => drawWave(wave, time));
+
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  // Fade-in animation
   useEffect(() => {
     const options = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
     const observer = new IntersectionObserver((entries) => {
@@ -24,85 +86,23 @@ export default function NetworkPage() {
     return () => observer.disconnect();
   }, []);
 
-  // --- Smooth scrolling for internal links ---
-  useEffect(() => {
-    const links = document.querySelectorAll('a[href^="#"]');
-
-    const handleClick = (e) => {
-      e.preventDefault();
-      const href = e.target.getAttribute("href");
-      if (!href || href === "#") return;
-
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    };
-
-    links.forEach((link) => link.addEventListener("click", handleClick));
-    return () => links.forEach((link) => link.removeEventListener("click", handleClick));
-  }, []);
-
-  // --- Parallax hero ---
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.pageYOffset;
-      if (heroRef.current) heroRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // --- CTA hide/show on scroll ---
-  useEffect(() => {
-    let lastScroll = 0;
-    const handleScroll = () => {
-      const currentScroll = window.pageYOffset;
-      if (ctaRef.current) {
-        if (currentScroll > lastScroll) ctaRef.current.classList.add("hidden");
-        else ctaRef.current.classList.remove("hidden");
-      }
-      lastScroll = Math.max(currentScroll, 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // --- Login/Logout logic ---
-  const loginUser = () => {
-    setLoggedIn(true);
+  // Login/Logout
+  const toggleAuth = () => {
+    setLoggedIn(!loggedIn);
+    if (loggedIn) {
+      setJoinedGroups(new Set());
+    }
   };
 
-  const logoutUser = () => {
-    setLoggedIn(false);
-    setJoinedGroups(new Set());
+  // Navigation
+  const handleNavigation = (path) => {
+    navigate(path);
   };
 
-  // --- Navigation handlers ---
-  const handleDashboardClick = (e) => {
-    e.preventDefault();
-    navigate("/dashboard");
-  };
-
-  const handleExploreClick = (e) => {
-    e.preventDefault();
-    alert("Already on Explore page");
-  };
-
-  const handleMyPlanClick = (e) => {
-    e.preventDefault();
-    navigate("/careerchat");
-  };
-
-  const handleSettingsClick = (e) => {
-    e.preventDefault();
-    alert("Settings clicked");
-  };
-
-  // --- Join/Leave Group ---
+  // Join/Leave Group
   const toggleJoinGroup = (groupId) => {
     if (!loggedIn) {
-      alert("Group joined!");
+      alert("Please login to join groups!");
       return;
     }
     
@@ -117,99 +117,129 @@ export default function NetworkPage() {
     });
   };
 
-  // --- Generate random career groups with descriptions ---
-  const generateGroups = () => {
-    const careerData = [
-      {
-        id: 1,
-        name: "Software Engineers",
-        description: "Connect with developers building the future of technology. Share code, discuss best practices, and collaborate on innovative projects.",
-        members: 12500,
-        isHot: true,
-        icon: "💻"
-      },
-      {
-        id: 2,
-        name: "Data Scientists",
-        description: "Join data professionals analyzing trends and making data-driven decisions. Learn ML, AI, and statistical modeling techniques.",
-        members: 8900,
-        isHot: true,
-        icon: "📊"
-      },
-      {
-        id: 3,
-        name: "UX Designers",
-        description: "A creative community focused on user experience and interface design. Share portfolios and get feedback from peers.",
-        members: 6700,
-        isHot: false,
-        icon: "🎨"
-      },
-      {
-        id: 4,
-        name: "Product Managers",
-        description: "Strategic thinkers driving product vision and roadmaps. Discuss frameworks, methodologies, and leadership strategies.",
-        members: 5400,
-        isHot: false,
-        icon: "📱"
-      },
-      {
-        id: 5,
-        name: "Marketing Specialists",
-        description: "Digital marketers sharing campaigns, strategies, and growth hacks. From SEO to social media, we cover it all.",
-        members: 9200,
-        isHot: false,
-        icon: "📈"
-      },
-      {
-        id: 6,
-        name: "AI Researchers",
-        description: "Cutting-edge AI and machine learning research community. Discuss papers, models, and breakthrough innovations.",
-        members: 4800,
-        isHot: true,
-        icon: "🤖"
-      },
-      {
-        id: 7,
-        name: "Cybersecurity Analysts",
-        description: "Security professionals protecting digital assets. Share threat intelligence, tools, and defense strategies.",
-        members: 7100,
-        isHot: true,
-        icon: "🔒"
-      },
-      {
-        id: 8,
-        name: "Business Analysts",
-        description: "Bridge the gap between business and technology. Discuss requirements gathering, process improvement, and analytics.",
-        members: 5900,
-        isHot: false,
-        icon: "💼"
-      },
-      {
-        id: 9,
-        name: "DevOps Engineers",
-        description: "Infrastructure and automation experts. Share CI/CD pipelines, cloud architectures, and deployment strategies.",
-        members: 6300,
-        isHot: true,
-        icon: "⚙️"
-      },
-      {
-        id: 10,
-        name: "Blockchain Developers",
-        description: "Pioneers of decentralized technology. Explore Web3, smart contracts, DeFi, and blockchain innovations.",
-        members: 3200,
-        isHot: true,
-        icon: "⛓️"
-      },
-    ];
+  // Career groups data
+  const allGroups = [
+    {
+      id: 1,
+      name: "Software Engineers",
+      description: "Connect with developers building the future of technology. Share code, discuss best practices, and collaborate on innovative projects.",
+      members: 12500,
+      isHot: true,
+      icon: "💻",
+      category: "tech"
+    },
+    {
+      id: 2,
+      name: "Data Scientists",
+      description: "Join data professionals analyzing trends and making data-driven decisions. Learn ML, AI, and statistical modeling techniques.",
+      members: 8900,
+      isHot: true,
+      icon: "📊",
+      category: "tech"
+    },
+    {
+      id: 3,
+      name: "UX Designers",
+      description: "A creative community focused on user experience and interface design. Share portfolios and get feedback from peers.",
+      members: 6700,
+      isHot: false,
+      icon: "🎨",
+      category: "design"
+    },
+    {
+      id: 4,
+      name: "Product Managers",
+      description: "Strategic thinkers driving product vision and roadmaps. Discuss frameworks, methodologies, and leadership strategies.",
+      members: 5400,
+      isHot: false,
+      icon: "📱",
+      category: "business"
+    },
+    {
+      id: 5,
+      name: "Marketing Specialists",
+      description: "Digital marketers sharing campaigns, strategies, and growth hacks. From SEO to social media, we cover it all.",
+      members: 9200,
+      isHot: false,
+      icon: "📈",
+      category: "business"
+    },
+    {
+      id: 6,
+      name: "AI Researchers",
+      description: "Cutting-edge AI and machine learning research community. Discuss papers, models, and breakthrough innovations.",
+      members: 4800,
+      isHot: true,
+      icon: "🤖",
+      category: "tech"
+    },
+    {
+      id: 7,
+      name: "Cybersecurity Analysts",
+      description: "Security professionals protecting digital assets. Share threat intelligence, tools, and defense strategies.",
+      members: 7100,
+      isHot: true,
+      icon: "🔒",
+      category: "tech"
+    },
+    {
+      id: 8,
+      name: "Business Analysts",
+      description: "Bridge the gap between business and technology. Discuss requirements gathering, process improvement, and analytics.",
+      members: 5900,
+      isHot: false,
+      icon: "💼",
+      category: "business"
+    },
+    {
+      id: 9,
+      name: "DevOps Engineers",
+      description: "Infrastructure and automation experts. Share CI/CD pipelines, cloud architectures, and deployment strategies.",
+      members: 6300,
+      isHot: true,
+      icon: "⚙️",
+      category: "tech"
+    },
+    {
+      id: 10,
+      name: "Blockchain Developers",
+      description: "Pioneers of decentralized technology. Explore Web3, smart contracts, DeFi, and blockchain innovations.",
+      members: 3200,
+      isHot: true,
+      icon: "⛓️",
+      category: "tech"
+    },
+    {
+      id: 11,
+      name: "Graphic Designers",
+      description: "Visual artists creating stunning designs. Share your work, get inspiration, and learn new design techniques.",
+      members: 8500,
+      isHot: false,
+      icon: "🖌️",
+      category: "design"
+    },
+    {
+      id: 12,
+      name: "Healthcare Professionals",
+      description: "Medical professionals discussing patient care, innovations, and healthcare technology advancements.",
+      members: 11200,
+      isHot: false,
+      icon: "🏥",
+      category: "healthcare"
+    },
+  ];
 
-    // Shuffle and select random groups
-    const shuffled = careerData.sort(() => 0.5 - Math.random());
-    setGroups(shuffled.slice(0, 6));
-  };
+  // Filter groups based on search and category
+  const filteredGroups = allGroups.filter(group => {
+    const matchesSearch = group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         group.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = filterCategory === "all" || group.category === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   useEffect(() => {
-    generateGroups();
-  }, []);
+    setGroups(filteredGroups);
+  }, [searchQuery, filterCategory]);
 
   return (
     <div>
@@ -222,6 +252,89 @@ export default function NetworkPage() {
         
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          background: #f5f7fa;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(10px);
+          padding: 1rem 2rem;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .nav-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .nav-brand {
+          font-size: 1.5rem;
+          font-weight: 800;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .nav-links {
+          list-style: none;
+          display: flex;
+          gap: 0.5rem;
+          margin: 0;
+          padding: 0;
+          align-items: center;
+        }
+
+        .nav-links li {
+          display: inline-block;
+        }
+
+        .nav-links button {
+          text-decoration: none;
+          font-weight: 600;
+          color: #4b5563;
+          padding: 0.6rem 1.2rem;
+          transition: all 0.3s ease;
+          border-radius: 8px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 0.95rem;
+        }
+
+        .nav-links button:hover {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          transform: translateY(-2px);
+        }
+
+        .auth-button {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          border: none;
+          padding: 0.6rem 1.5rem;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-left: 1rem;
+        }
+
+        .auth-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .auth-button.logout {
+          background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
         /* Hero Section */
@@ -230,78 +343,103 @@ export default function NetworkPage() {
           background: linear-gradient(135deg, #667eea, #764ba2);
           color: white;
           text-align: center;
-          padding: 6rem 2rem 4rem;
+          padding: 4rem 2rem;
           overflow: hidden;
+          height: 300px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .hero-canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+        }
+
+        .hero-content {
+          position: relative;
+          z-index: 10;
         }
 
         .hero h1 {
-          font-size: 2.5rem;
+          font-size: 3rem;
           margin-bottom: 1rem;
+          font-weight: 800;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .hero p {
-          font-size: 1.2rem;
-          margin-bottom: 2rem;
-          opacity: 0.9;
+          font-size: 1.3rem;
+          opacity: 0.95;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        .cta-button {
+        /* Search and Filter Section */
+        .search-filter-section {
+          max-width: 1200px;
+          margin: -2rem auto 2rem;
+          padding: 0 2rem;
+          position: relative;
+          z-index: 10;
+        }
+
+        .search-filter-card {
           background: white;
-          color: #667eea;
-          border: none;
-          padding: 0.8rem 2rem;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: 0.3s ease;
+          border-radius: 16px;
+          padding: 1.5rem;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+          display: flex;
+          gap: 1rem;
+          flex-wrap: wrap;
         }
 
-        .cta-button:hover {
-          background: #f0f0f0;
-        }
-
-        .cta-button.hidden {
-          opacity: 0;
-          transform: translateY(-20px);
+        .search-input {
+          flex: 1;
+          min-width: 250px;
+          padding: 0.9rem 1.2rem;
+          border: 2px solid #e5e7eb;
+          border-radius: 10px;
+          font-size: 1rem;
           transition: all 0.3s ease;
         }
 
-        /* Top Navigation Bar */
-        .top-nav {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          padding: 1rem 2rem;
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        .search-input:focus {
+          outline: none;
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .nav-links {
-          list-style: none;
+        .filter-buttons {
           display: flex;
-          justify-content: center;
-          gap: 2rem;
-          margin: 0;
-          padding: 0;
+          gap: 0.75rem;
+          flex-wrap: wrap;
         }
 
-        .nav-links li {
-          display: inline-block;
-        }
-
-        .nav-links a {
-          text-decoration: none;
+        .filter-btn {
+          padding: 0.9rem 1.5rem;
+          border: 2px solid #e5e7eb;
+          background: white;
+          border-radius: 10px;
           font-weight: 600;
-          color: #333;
-          padding: 0.5rem 1rem;
-          transition: 0.3s ease;
-          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.95rem;
         }
 
-        .nav-links a:hover {
-          background: #667eea;
+        .filter-btn:hover {
+          border-color: #667eea;
+          color: #667eea;
+        }
+
+        .filter-btn.active {
+          background: linear-gradient(135deg, #667eea, #764ba2);
           color: white;
+          border-color: transparent;
         }
 
         /* Main Content */
@@ -311,11 +449,22 @@ export default function NetworkPage() {
           padding: 0 2rem;
         }
 
-        .main-content h2 {
-          font-size: 2rem;
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           margin-bottom: 2rem;
-          text-align: center;
-          color: #333;
+        }
+
+        .section-header h2 {
+          font-size: 2rem;
+          color: #1f2937;
+        }
+
+        .results-count {
+          color: #6b7280;
+          font-size: 1rem;
+          font-weight: 500;
         }
 
         .groups-grid {
@@ -328,16 +477,23 @@ export default function NetworkPage() {
         .group-card {
           background: white;
           border-radius: 16px;
-          padding: 1.5rem;
+          padding: 1.75rem;
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-          transition: transform 0.3s, box-shadow 0.3s;
+          transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
+          border: 2px solid transparent;
         }
 
         .group-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+          border-color: #667eea;
+        }
+
+        .group-card.joined {
+          border-color: #48bb78;
+          background: linear-gradient(to bottom, #f0fdf4, white);
         }
 
         .group-header {
@@ -354,26 +510,27 @@ export default function NetworkPage() {
         }
 
         .group-icon {
-          font-size: 2rem;
+          font-size: 2.5rem;
         }
 
         .group-title h3 {
-          font-size: 1.3rem;
-          color: #333;
+          font-size: 1.4rem;
+          color: #1f2937;
           margin: 0;
+          font-weight: 700;
         }
 
         .hot-badge {
           background: linear-gradient(135deg, #ff6b6b, #ff8787);
           color: white;
-          padding: 0.3rem 0.75rem;
+          padding: 0.4rem 0.9rem;
           border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 600;
+          font-size: 0.8rem;
+          font-weight: 700;
           display: flex;
           align-items: center;
           gap: 0.3rem;
-          box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+          box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
           animation: pulse 2s ease-in-out infinite;
         }
 
@@ -387,97 +544,91 @@ export default function NetworkPage() {
         }
 
         .group-description {
-          color: #666;
+          color: #6b7280;
           font-size: 0.95rem;
-          line-height: 1.6;
-          margin-bottom: 1rem;
+          line-height: 1.7;
+          margin-bottom: 1.25rem;
         }
 
         .group-meta {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
           padding-top: 1rem;
-          border-top: 1px solid #f0f0f0;
+          border-top: 2px solid #f3f4f6;
         }
 
         .members-count {
-          color: #888;
-          font-size: 0.9rem;
+          color: #9ca3af;
+          font-size: 0.95rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          font-weight: 600;
         }
 
         .join-button {
           background: linear-gradient(135deg, #667eea, #764ba2);
           color: white;
           border: none;
-          padding: 0.7rem 1.5rem;
-          border-radius: 8px;
-          font-weight: 600;
+          padding: 0.8rem 1.8rem;
+          border-radius: 10px;
+          font-weight: 700;
           cursor: pointer;
           transition: all 0.3s ease;
           font-size: 0.95rem;
+          width: 100%;
         }
 
         .join-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
         }
 
         .join-button.joined {
-          background: #48bb78;
+          background: linear-gradient(135deg, #48bb78, #38a169);
         }
 
         .join-button.joined:hover {
-          background: #38a169;
+          background: linear-gradient(135deg, #38a169, #2f855a);
         }
 
-        /* Auth Buttons */
-        .auth-btn {
-          border: none;
-          padding: 0.8rem 1.5rem;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: 0.3s;
-          margin: 0.5rem;
+        .empty-state {
+          text-align: center;
+          padding: 4rem 2rem;
+          color: #6b7280;
         }
 
-        .auth-btn-login {
-          background: #667eea;
-          color: white;
+        .empty-state-icon {
+          font-size: 4rem;
+          margin-bottom: 1rem;
         }
 
-        .auth-btn-login:hover {
-          opacity: 0.9;
-        }
-
-        .auth-btn-logout {
-          background: #e74c3c;
-          color: white;
-        }
-
-        .auth-btn-logout:hover {
-          opacity: 0.9;
+        .empty-state h3 {
+          font-size: 1.5rem;
+          color: #374151;
+          margin-bottom: 0.5rem;
         }
 
         /* Footer */
         footer {
-          background: #f1f1f1;
+          background: #1f2937;
+          color: white;
           text-align: center;
-          padding: 2rem 1rem;
-          color: #555;
+          padding: 2.5rem 1rem;
           margin-top: 4rem;
+        }
+
+        footer p {
+          opacity: 0.8;
         }
 
         /* Fade-in Animation */
         .fade-in {
           opacity: 0;
-          transform: translateY(20px);
-          transition: opacity 0.6s ease, transform 0.6s ease;
+          transform: translateY(30px);
+          transition: opacity 0.7s ease, transform 0.7s ease;
         }
 
         .fade-in.visible {
@@ -495,9 +646,23 @@ export default function NetworkPage() {
             font-size: 1rem;
           }
 
-          .nav-links {
+          .nav-container {
             flex-direction: column;
             gap: 1rem;
+          }
+
+          .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+
+          .search-filter-card {
+            flex-direction: column;
+          }
+
+          .filter-buttons {
+            width: 100%;
+            justify-content: center;
           }
 
           .groups-grid {
@@ -505,138 +670,146 @@ export default function NetworkPage() {
             gap: 1.5rem;
           }
 
-          .group-card {
-            padding: 1rem;
-          }
-
           .main-content {
             padding: 0 1rem;
           }
-        }
-
-        .text-center {
-          text-align: center;
-        }
-
-        .mt-8 {
-          margin-top: 2rem;
         }
       `}</style>
 
       {/* Top Navigation */}
       <nav className="top-nav">
-        <ul className="nav-links">
-          <li><a href="#" onClick={handleDashboardClick}>Dashboard</a></li>
-          <li><a href="#" onClick={handleExploreClick}>Explore</a></li>
-          <li><a href="#" onClick={handleMyPlanClick}>My Plan</a></li>
-          <li><a href="#" onClick={handleSettingsClick}>Settings</a></li>
-        </ul>
+        <div className="nav-container">
+          <div className="nav-brand">🚀 Wayvian</div>
+          <ul className="nav-links">
+            <li><button onClick={() => handleNavigation("/dashboard")}>Dashboard</button></li>
+            <li><button onClick={() => handleNavigation("/net")}>Explore</button></li>
+            <li><button onClick={() => handleNavigation("/careerchat")}>My Plan</button></li>
+            <li><button onClick={() => handleNavigation("/settings")}>Settings</button></li>
+            <li>
+              <button 
+                onClick={toggleAuth}
+                className={`auth-button ${loggedIn ? 'logout' : ''}`}
+              >
+                {loggedIn ? '👋 Logout' : '🔐 Login'}
+              </button>
+            </li>
+          </ul>
+        </div>
       </nav>
 
-      {/* Hero Section */}
-      <section ref={heroRef} className="hero fade-in">
-        <h1>Welcome to Find Me</h1>
-        <p>Your AI-powered Career Navigator</p>
-        <button ref={ctaRef} className="cta-button">
-          Get Started
-        </button>
+      {/* Hero Section with Waves */}
+      <section className="hero">
+        <canvas ref={canvasRef} className="hero-canvas"></canvas>
+        <div className="hero-content">
+          <h1>Discover Career Communities</h1>
+          <p>Connect, learn, and grow with professionals worldwide</p>
+        </div>
       </section>
 
-      {/* CareerChat Modal */}
-      {showCareerChat && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '8px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-            padding: '2rem',
-            maxWidth: '48rem',
-            width: '90%',
-            position: 'relative'
-          }}>
-            <button
-              onClick={() => setShowCareerChat(false)}
-              style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: 'none',
-                border: 'none',
-                fontSize: '1.5rem',
-                cursor: 'pointer',
-                color: '#666'
-              }}
+      {/* Search and Filter Section */}
+      <div className="search-filter-section">
+        <div className="search-filter-card fade-in">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="🔍 Search groups..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="filter-buttons">
+            <button 
+              className={`filter-btn ${filterCategory === 'all' ? 'active' : ''}`}
+              onClick={() => setFilterCategory('all')}
             >
-              ✖
+              All
             </button>
-            <h2 style={{ marginBottom: '1rem' }}>Career Chat</h2>
-            <p style={{ color: '#666' }}>
-              This is where your CareerChat component would appear. 
-              Connect with mentors, explore career paths, and get personalized guidance.
-            </p>
+            <button 
+              className={`filter-btn ${filterCategory === 'tech' ? 'active' : ''}`}
+              onClick={() => setFilterCategory('tech')}
+            >
+              Tech
+            </button>
+            <button 
+              className={`filter-btn ${filterCategory === 'design' ? 'active' : ''}`}
+              onClick={() => setFilterCategory('design')}
+            >
+              Design
+            </button>
+            <button 
+              className={`filter-btn ${filterCategory === 'business' ? 'active' : ''}`}
+              onClick={() => setFilterCategory('business')}
+            >
+              Business
+            </button>
+            <button 
+              className={`filter-btn ${filterCategory === 'healthcare' ? 'active' : ''}`}
+              onClick={() => setFilterCategory('healthcare')}
+            >
+              Healthcare
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <main className="main-content fade-in">
-        <h2>🌟 Discover Career Communities</h2>
-        <div className="groups-grid">
-          {groups.map((group) => (
-            <div key={group.id} className="group-card">
-              <div className="group-header">
-                <div className="group-title">
-                  <span className="group-icon">{group.icon}</span>
-                  <h3>{group.name}</h3>
-                </div>
-                {group.isHot && (
-                  <div className="hot-badge">
-                    🔥 Hot
-                  </div>
-                )}
-              </div>
-              
-              <p className="group-description">
-                {group.description}
-              </p>
-              
-              <div className="group-meta">
-                <span className="members-count">
-                  👥 {group.members.toLocaleString()} members
-                </span>
-              </div>
-              
-              <button 
-                className={`join-button ${joinedGroups.has(group.id) ? 'joined' : ''}`}
-                onClick={() => toggleJoinGroup(group.id)}
-              >
-                {joinedGroups.has(group.id) ? '✓ Joined' : 'Join Group'}
-              </button>
-            </div>
-          ))}
+        <div className="section-header">
+          <h2>🌟 Career Groups</h2>
+          <span className="results-count">
+            {groups.length} {groups.length === 1 ? 'group' : 'groups'} found
+          </span>
         </div>
-      </main>
 
-      {/* Auth Buttons */}
-      <div className="text-center mt-8">
-        {loggedIn ? (
-          <button onClick={logoutUser} className="auth-btn auth-btn-logout">Logout</button>
+        {groups.length > 0 ? (
+          <div className="groups-grid">
+            {groups.map((group) => (
+              <div 
+                key={group.id} 
+                className={`group-card ${joinedGroups.has(group.id) ? 'joined' : ''}`}
+              >
+                <div className="group-header">
+                  <div className="group-title">
+                    <span className="group-icon">{group.icon}</span>
+                    <h3>{group.name}</h3>
+                  </div>
+                  {group.isHot && (
+                    <div className="hot-badge">
+                      🔥 Hot
+                    </div>
+                  )}
+                </div>
+                
+                <p className="group-description">
+                  {group.description}
+                </p>
+                
+                <div className="group-meta">
+                  <span className="members-count">
+                    👥 {group.members.toLocaleString()}
+                  </span>
+                </div>
+                
+                <button 
+                  className={`join-button ${joinedGroups.has(group.id) ? 'joined' : ''}`}
+                  onClick={() => toggleJoinGroup(group.id)}
+                >
+                  {joinedGroups.has(group.id) ? '✓ Joined' : 'Join Group'}
+                </button>
+              </div>
+            ))}
+          </div>
         ) : (
-          <button onClick={loginUser} className="auth-btn auth-btn-login">Login</button>
+          <div className="empty-state">
+            <div className="empty-state-icon">🔍</div>
+            <h3>No groups found</h3>
+            <p>Try adjusting your search or filters</p>
+          </div>
         )}
-      </div>
+      </main>
 
       {/* Footer */}
       <footer>
-        <p>© 2025 Find Me — All rights reserved.</p>
+        <p>© 2025 Wayvian — Empowering Your Career Journey</p>
       </footer>
     </div>
   );
