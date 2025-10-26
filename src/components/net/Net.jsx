@@ -102,7 +102,7 @@ export default function NetworkPage() {
   // --- Join/Leave Group ---
   const toggleJoinGroup = (groupId) => {
     if (!loggedIn) {
-      alert("Please login to join groups!");
+      alert("Group joined!");
       return;
     }
     

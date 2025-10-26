@@ -1,9 +1,73 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const heroRef = useRef(null);
+  const canvasRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // === Canvas Wave Animation ===
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let time = 0;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+
+    const waves = [
+      { color: 'rgba(59, 130, 246, 0.4)', speed: 0.02, amplitude: 30, frequency: 0.005, offset: 0 },
+      { color: 'rgba(37, 99, 235, 0.3)', speed: 0.025, amplitude: 40, frequency: 0.004, offset: 50 },
+      { color: 'rgba(147, 51, 234, 0.2)', speed: 0.018, amplitude: 35, frequency: 0.006, offset: 100 }
+    ];
+
+    function drawWave(wave, time) {
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + 
+          Math.sin(x * wave.frequency + time * wave.speed) * wave.amplitude +
+          Math.sin(x * wave.frequency * 0.5 + time * wave.speed * 0.7) * wave.amplitude * 0.5 +
+          wave.offset;
+        
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.lineTo(0, canvas.height);
+      ctx.closePath();
+      ctx.fillStyle = wave.color;
+      ctx.fill();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 1;
+
+      waves.forEach(wave => drawWave(wave, time));
+
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   // === Fade-in on scroll ===
   useEffect(() => {
@@ -130,10 +194,19 @@ export default function Home() {
 
         .hero-section {
           position: relative;
-          background: linear-gradient(to bottom right, #3b82f6, #2563eb, #9333ea);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: #ffffff;
           padding: 8rem 0;
           overflow: hidden;
+        }
+
+        .wave-canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
         }
 
         .hero-content {
@@ -147,7 +220,8 @@ export default function Home() {
           font-size: 3.75rem;
           font-weight: 800;
           margin-bottom: 1.5rem;
-          filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
+          filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.3));
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .hero-section p {
@@ -155,12 +229,85 @@ export default function Home() {
           max-width: 48rem;
           margin: 0 auto;
           line-height: 1.75;
+          filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .hero-overlay {
           position: absolute;
           inset: 0;
           background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
+          z-index: 5;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        .floating-shape {
+          position: absolute;
+          z-index: 2;
+          animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-1 {
+          top: 10%;
+          left: 10%;
+          width: 80px;
+          height: 80px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          animation-delay: 0s;
+        }
+
+        .shape-2 {
+          top: 60%;
+          right: 15%;
+          width: 60px;
+          height: 60px;
+          background: rgba(255, 255, 255, 0.15);
+          border-radius: 10px;
+          animation: pulse 5s ease-in-out infinite;
+          animation-delay: 1s;
+        }
+
+        .shape-3 {
+          bottom: 15%;
+          left: 20%;
+          width: 100px;
+          height: 100px;
+          background: rgba(255, 255, 255, 0.1);
+          clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+          animation-delay: 2s;
+          animation-duration: 8s;
+        }
+
+        .shape-4 {
+          top: 30%;
+          right: 30%;
+          width: 70px;
+          height: 70px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          animation-delay: 1.5s;
+          animation-duration: 6.5s;
+        }
+
+        .shape-5 {
+          bottom: 30%;
+          right: 10%;
+          width: 50px;
+          height: 50px;
+          background: rgba(255, 255, 255, 0.25);
+          border-radius: 8px;
+          animation: pulse 7s ease-in-out infinite;
+          animation-delay: 0.5s;
         }
 
         @media (max-width: 768px) {
@@ -364,13 +511,23 @@ export default function Home() {
         </header>
 
         <section ref={heroRef} className="hero-section">
+          <canvas ref={canvasRef} className="wave-canvas"></canvas>
+          
+          {/* Floating 2D shapes */}
+          <div className="floating-shape shape-1"></div>
+          <div className="floating-shape shape-2"></div>
+          <div className="floating-shape shape-3"></div>
+          <div className="floating-shape shape-4"></div>
+          <div className="floating-shape shape-5"></div>
+          
+          <div className="hero-overlay"></div>
+          
           <div className="container hero-content">
             <h1>Find Me</h1>
             <p>
               Empowering students, graduates, and career changers with personalized guidance based on real job market trends
             </p>
           </div>
-          <div className="hero-overlay"></div>
         </section>
 
         <main className="container">

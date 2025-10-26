@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { findAI } from "./FindAI"; // Ensure correct file name & path
+import { findAI } from "./FindAI";
 import { useNavigate } from "react-router-dom";
 
 export default function CareerChat() {
@@ -13,7 +13,11 @@ export default function CareerChat() {
     }
   ]);
   const [loading, setLoading] = useState(false);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [resumeText, setResumeText] = useState("");
   const chatRef = useRef(null);
+  const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Starter prompts for users
   const starterPrompts = [
@@ -25,6 +29,70 @@ export default function CareerChat() {
     "🚀 How can I advance in my current career?"
   ];
 
+  // Canvas Wave Animation
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let time = 0;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = 200;
+    };
+    resizeCanvas();
+
+    const waves = [
+      { color: 'rgba(59, 130, 246, 0.3)', speed: 0.02, amplitude: 20, frequency: 0.005, offset: 0 },
+      { color: 'rgba(37, 99, 235, 0.2)', speed: 0.025, amplitude: 25, frequency: 0.004, offset: 30 },
+      { color: 'rgba(147, 51, 234, 0.15)', speed: 0.018, amplitude: 22, frequency: 0.006, offset: 60 }
+    ];
+
+    function drawWave(wave, time) {
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + 
+          Math.sin(x * wave.frequency + time * wave.speed) * wave.amplitude +
+          Math.sin(x * wave.frequency * 0.5 + time * wave.speed * 0.7) * wave.amplitude * 0.5 +
+          wave.offset;
+        
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.lineTo(0, canvas.height);
+      ctx.closePath();
+      ctx.fillStyle = wave.color;
+      ctx.fill();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 1;
+
+      waves.forEach(wave => drawWave(wave, time));
+
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   // Auto-scroll when messages update
   useEffect(() => {
     if (chatRef.current) {
@@ -32,11 +100,54 @@ export default function CareerChat() {
     }
   }, [messages]);
 
+  // Handle resume file upload
+  const handleResumeUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setResumeFile(file);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result;
+      setResumeText(text);
+      
+      // Add system message about resume upload
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "system",
+          text: `✅ Resume "${file.name}" uploaded successfully! I can now provide personalized advice based on your experience.`
+        }
+      ]);
+    };
+
+    if (file.type === "text/plain") {
+      reader.readAsText(file);
+    } else {
+      // For other file types, just store the file name
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "system",
+          text: `✅ Resume "${file.name}" uploaded! Note: For best results, upload a .txt file or paste your resume text directly.`
+        }
+      ]);
+    }
+  };
+
   async function handleSend() {
     if (!input.trim()) return;
+    
+    // Include resume context if available
+    let messageToSend = input;
+    if (resumeText) {
+      messageToSend = `[Resume Context: ${resumeText.substring(0, 500)}...]\n\nUser Question: ${input}`;
+    }
+
     const userMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
-    const currentInput = input;
+    const currentInput = messageToSend;
     setInput("");
     setLoading(true);
 
@@ -55,23 +166,75 @@ export default function CareerChat() {
     }
   }
 
+  const handleStarterPrompt = (prompt) => {
+    setInput(prompt.substring(2));
+    setTimeout(() => handleSend(), 100);
+  };
+
   return (
     <>
       <style>{`
-        /* Page Container */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        /* Page Container with Waves */
         .page-container {
           min-height: 100vh;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           padding-bottom: 40px;
+          position: relative;
+        }
+
+        .wave-header {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          overflow: hidden;
+          margin-bottom: 2rem;
+        }
+
+        .wave-canvas {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .wave-content {
+          position: relative;
+          z-index: 10;
+          text-align: center;
+          padding: 3rem 1rem;
+          color: white;
+        }
+
+        .wave-content h1 {
+          font-size: 2.5rem;
+          font-weight: 800;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+          margin-bottom: 0.5rem;
+        }
+
+        .wave-content p {
+          font-size: 1.1rem;
+          opacity: 0.95;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         /* Navigation Bar */
         .nav-bar {
           width: 100%;
-          background-color: #f7fafc;
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
           border-bottom: 2px solid #e2e8f0;
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-          margin-bottom: 1.5rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          position: sticky;
+          top: 0;
+          z-index: 50;
         }
 
         .nav-container {
@@ -80,13 +243,16 @@ export default function CareerChat() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 0.75rem;
+          padding: 0.75rem 1rem;
         }
 
         .nav-title {
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: #4a5568;
+          font-size: 1.25rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .nav-buttons {
@@ -99,16 +265,18 @@ export default function CareerChat() {
           border: none;
           font-weight: 500;
           cursor: pointer;
-          transition: color 0.2s ease;
+          transition: all 0.2s ease;
           padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
         }
 
         .nav-button.primary {
-          color: #3182ce;
+          color: #667eea;
+          background: rgba(102, 126, 234, 0.1);
         }
 
         .nav-button.primary:hover {
-          color: #2c5282;
+          background: rgba(102, 126, 234, 0.2);
         }
 
         .nav-button.secondary {
@@ -116,7 +284,7 @@ export default function CareerChat() {
         }
 
         .nav-button.secondary:hover {
-          color: #2d3748;
+          background: rgba(0, 0, 0, 0.05);
         }
 
         /* Chat Container */
@@ -125,20 +293,57 @@ export default function CareerChat() {
           padding: 1.5rem;
           border-radius: 1rem;
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-          max-width: 42rem;
+          max-width: 50rem;
           margin: 0 auto;
+        }
+
+        .chat-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
         }
 
         .chat-title {
           font-size: 1.25rem;
           font-weight: 600;
           color: #4a5568;
-          margin-bottom: 1rem;
+        }
+
+        .resume-upload-btn {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 0.9rem;
+          box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        }
+
+        .resume-upload-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .resume-status {
+          margin-top: 0.5rem;
+          padding: 0.5rem;
+          background: #f0fdf4;
+          border: 1px solid #86efac;
+          border-radius: 0.5rem;
+          font-size: 0.875rem;
+          color: #166534;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
         }
 
         /* Messages Area */
         .messages-area {
-          height: 20rem;
+          height: 22rem;
           overflow-y: auto;
           border: 1px solid #e2e8f0;
           padding: 0.75rem;
@@ -191,6 +396,15 @@ export default function CareerChat() {
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
           color: #2d3748;
           text-align: left;
+        }
+
+        .message-system {
+          margin: 0 auto;
+          background: #f0fdf4;
+          border: 1px solid #86efac;
+          color: #166534;
+          text-align: center;
+          max-width: 90%;
         }
 
         .message p {
@@ -268,6 +482,8 @@ export default function CareerChat() {
         .prompt-button:active {
           transform: translateY(0);
         }
+
+        /* Input Area */
         .input-area {
           display: flex;
           gap: 0.5rem;
@@ -345,13 +561,27 @@ export default function CareerChat() {
             padding-bottom: 20px;
           }
 
+          .wave-content h1 {
+            font-size: 2rem;
+          }
+
+          .wave-content p {
+            font-size: 1rem;
+          }
+
           .chat-container {
             margin: 0 1rem;
             padding: 1rem;
           }
 
+          .chat-header {
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-start;
+          }
+
           .messages-area {
-            height: 16rem;
+            height: 18rem;
           }
 
           .message {
@@ -377,7 +607,7 @@ export default function CareerChat() {
         {/* Top Navigation Bar */}
         <div className="nav-bar">
           <div className="nav-container">
-            <h1 className="nav-title">Career Navigator</h1>
+            <h1 className="nav-title">🚀 Career Navigator</h1>
 
             <div className="nav-buttons">
               <button
@@ -402,16 +632,51 @@ export default function CareerChat() {
           </div>
         </div>
 
+        {/* Wave Header */}
+        <div className="wave-header">
+          <canvas ref={canvasRef} className="wave-canvas"></canvas>
+          <div className="wave-content">
+            <h1>Career Plan Assistant</h1>
+            <p>Get personalized career guidance powered by AI</p>
+          </div>
+        </div>
+
         {/* Chat Container */}
         <div className="chat-container">
-          <h2 className="chat-title">Career Plan Assistant</h2>
+          <div className="chat-header">
+            <h2 className="chat-title">Let's Plan Your Career</h2>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleResumeUpload}
+              accept=".txt,.pdf,.doc,.docx"
+              style={{ display: 'none' }}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="resume-upload-btn"
+            >
+              📄 Upload Resume
+            </button>
+          </div>
+
+          {resumeFile && (
+            <div className="resume-status">
+              <span>✅</span>
+              <span>Resume loaded: <strong>{resumeFile.name}</strong></span>
+            </div>
+          )}
 
           <div ref={chatRef} className="messages-area">
             {messages.map((msg, i) => (
               <div
                 key={i}
                 className={`message ${
-                  msg.sender === "user" ? "message-user" : "message-ai"
+                  msg.sender === "user" 
+                    ? "message-user" 
+                    : msg.sender === "system"
+                    ? "message-system"
+                    : "message-ai"
                 }`}
               >
                 <ReactMarkdown>{msg.text}</ReactMarkdown>
@@ -426,10 +691,7 @@ export default function CareerChat() {
               {starterPrompts.map((prompt, idx) => (
                 <button
                   key={idx}
-                  onClick={() => {
-                    setInput(prompt.substring(2)); // Remove emoji for cleaner input
-                    handleSend();
-                  }}
+                  onClick={() => handleStarterPrompt(prompt)}
                   className="prompt-button"
                 >
                   {prompt}
