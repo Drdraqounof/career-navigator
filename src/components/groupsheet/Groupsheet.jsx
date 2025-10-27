@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Constants
 const TOTAL_STEPS = 4;
@@ -11,7 +12,7 @@ const QUESTION_KEYS = {
 };
 
 export default function CareerNavigator() {
-  
+  const navigate = useNavigate();
   // --- State ---
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState({});
@@ -215,9 +216,7 @@ export default function CareerNavigator() {
     setCurrentStep((s) => Math.max(s - 1, 1));
   };
 
-  const goToDashboard = () => {
-    window.location.href = "/dashboard";
-  };
+  const goToDashboard = () => navigate("/dashboard");
 
   function handleNext() {
     if (!isStepAnswered(currentStep)) {
