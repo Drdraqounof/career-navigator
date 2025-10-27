@@ -1,9 +1,11 @@
+// ✅ All imports at the very top
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
   const heroRef = useRef(null);
   const canvasRef = useRef(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // === Canvas Wave Animation ===
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function Home() {
       ctx.fill();
     }
 
+    
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 1;
@@ -110,9 +113,9 @@ export default function Home() {
     }
   };
 
-  const toggleLogin = () => {
-    setIsLoggedIn(!isLoggedIn);
-  };
+ function toggleLogin() {
+    navigate("/login");
+  }
 
   return (
     <>
@@ -492,8 +495,8 @@ export default function Home() {
               <li><a href="#timeline">Timeline</a></li>
               <li><a href="#tech">Tech Stack</a></li>
               <li>
-                <button onClick={toggleLogin}>
-                  <a href="Login">Login</a>
+                <button onClick={() => navigate("/login")} className="login-btn">
+                  Login
                 </button>
               </li>
               <li><a href="#" onClick={handleTestLink}>Test</a></li>
