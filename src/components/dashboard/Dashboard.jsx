@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 // User Type Configurations
 const userTypeConfigs = {
   student: {
@@ -448,6 +448,7 @@ function NavButton({ onClick, children }) {
 
 // Main Dashboard Component
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState("student");
   const [showCareerChat, setShowCareerChat] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -530,7 +531,7 @@ export default function Dashboard() {
           
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <NavButton onClick={() => showNotification("Already on Dashboard")}>Dashboard</NavButton>
-            <NavButton onClick={() => window.location.href = '/net'}>Network</NavButton>
+            <Button onClick={() => navigate("/net")}> Network</Button>
             <NavButton onClick={() => window.location.href = '/careerchat'}>My Plan</NavButton>
             <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
             <button 

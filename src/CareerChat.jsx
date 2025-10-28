@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-
+import { Navigate } from "react-router-dom";
 // Mock AI function for demo
 async function findAI(message) {
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -90,6 +90,7 @@ function NavButton({ onClick, children }) {
 }
 
 export default function CareerChat() {
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
     {
@@ -636,7 +637,7 @@ export default function CareerChat() {
             
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <NavButton onClick={() => window.location.href = '/dashboard'}>Dashboard</NavButton>
-              <NavButton onClick={() => window.location.href = '/net'}>Network</NavButton>
+              <Button onClick={() => navigate("/net")}> Network</Button>
               <NavButton onClick={() => showNotification("Already on My Plan")}>My Plan</NavButton>
               <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
               <button 
