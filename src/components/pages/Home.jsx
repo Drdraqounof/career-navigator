@@ -107,9 +107,9 @@ export default function Home() {
   const handleTestLink = (e) => {
     e.preventDefault();
     if (isLoggedIn) {
-      alert("Logged in! Would navigate to groupsheet.html");
+      alert("Logged in! Navigating to Test page.");
     } else {
-      alert("Not logged in. Would navigate to login.html");
+      alert("Not logged in. Redirecting to Login page.");
     }
   };
 

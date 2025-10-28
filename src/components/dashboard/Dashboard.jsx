@@ -1,8 +1,206 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+
+// User Type Configurations
+const userTypeConfigs = {
+  student: {
+    prompts: [
+      "What subjects am I strongest in?",
+      "Which colleges match my interests?",
+      "What AP courses should I take?",
+      "How do I prepare for SAT/ACT?",
+      "What extracurriculars boost my profile?"
+    ],
+    features: [
+      {
+        title: "🎓 College Path Finder",
+        description: "Discover colleges that match your interests, grades, and career goals",
+        action: "Explore Colleges",
+        progressText: "You've explored 3 out of 15 recommended colleges.",
+        careersSaved: 8,
+        skillsIdentified: 12,
+        progressPercent: 20
+      },
+      {
+        title: "📊 Academic Strength Analysis",
+        description: "Identify your strongest subjects and how they align with future careers",
+        action: "Analyze My Strengths",
+        progressText: "Complete 2 more assessments to get full insights.",
+        careersSaved: 5,
+        skillsIdentified: 8,
+        progressPercent: 60
+      },
+      {
+        title: "🏆 Extracurricular Planner",
+        description: "Build a profile that stands out to colleges and aligns with your goals",
+        action: "Plan Activities",
+        progressText: "You've added 4 out of 8 recommended activities.",
+        careersSaved: 3,
+        skillsIdentified: 10,
+        progressPercent: 50
+      }
+    ],
+    welcomeMessage: "Hey there! 🎓 I'm here to help you explore college options, discover your strengths, and plan your path to success. What would you like to know?"
+  },
+  graduate: {
+    prompts: [
+      "How do I write a strong resume?",
+      "What entry-level jobs match my degree?",
+      "How do I prepare for interviews?",
+      "Should I get certifications?",
+      "How do I negotiate my first salary?"
+    ],
+    features: [
+      {
+        title: "💼 Job Market Navigator",
+        description: "Find entry-level positions that match your degree and interests",
+        action: "Browse Jobs",
+        progressText: "You've reviewed 12 out of 50 matching job postings.",
+        careersSaved: 15,
+        skillsIdentified: 18,
+        progressPercent: 24
+      },
+      {
+        title: "📝 Resume & Portfolio Builder",
+        description: "Create professional materials that get you noticed by recruiters",
+        action: "Build Resume",
+        progressText: "Your resume is 80% complete. Add 2 more experiences.",
+        careersSaved: 8,
+        skillsIdentified: 14,
+        progressPercent: 80
+      },
+      {
+        title: "🎯 Interview Prep Coach",
+        description: "Practice common interview questions and perfect your pitch",
+        action: "Start Practicing",
+        progressText: "You've completed 5 out of 20 practice interviews.",
+        careersSaved: 6,
+        skillsIdentified: 11,
+        progressPercent: 25
+      }
+    ],
+    welcomeMessage: "Congratulations on graduating! 🎉 I'm here to help you land your first job, polish your resume, and ace those interviews. What can I help with today?"
+  },
+  changer: {
+    prompts: [
+      "What skills transfer to my new field?",
+      "How do I rebrand my experience?",
+      "What certifications do I need?",
+      "How do I explain my career change?",
+      "What's the best entry strategy?"
+    ],
+    features: [
+      {
+        title: "🔄 Skills Translation Tool",
+        description: "Map your current skills to opportunities in your target industry",
+        action: "Translate My Skills",
+        progressText: "You've identified 12 transferable skills across 3 industries.",
+        careersSaved: 10,
+        skillsIdentified: 22,
+        progressPercent: 55
+      },
+      {
+        title: "🎓 Upskilling Roadmap",
+        description: "Get a personalized learning path to bridge skill gaps",
+        action: "View Roadmap",
+        progressText: "You're halfway through your transition roadmap!",
+        careersSaved: 7,
+        skillsIdentified: 16,
+        progressPercent: 50
+      },
+      {
+        title: "💡 Career Pivot Strategy",
+        description: "Plan your transition with timeline, networking, and positioning tactics",
+        action: "Build Strategy",
+        progressText: "You've completed 3 out of 8 strategy milestones.",
+        careersSaved: 9,
+        skillsIdentified: 19,
+        progressPercent: 38
+      }
+    ],
+    welcomeMessage: "Ready to make a change? 🔄 I'm here to help you transition smoothly, leverage your existing skills, and break into your new field. Let's talk strategy!"
+  },
+  professional: {
+    prompts: [
+      "How do I advance to management?",
+      "What skills are trending in my industry?",
+      "How do I negotiate a promotion?",
+      "Should I specialize or generalize?",
+      "How do I build my professional brand?"
+    ],
+    features: [
+      {
+        title: "📈 Career Advancement Planner",
+        description: "Chart your path to leadership and senior roles in your field",
+        action: "Plan Advancement",
+        progressText: "You've completed 4 out of 10 leadership development modules.",
+        careersSaved: 12,
+        skillsIdentified: 25,
+        progressPercent: 40
+      },
+      {
+        title: "🎯 Skills Gap Analysis",
+        description: "Identify emerging skills needed to stay competitive in your industry",
+        action: "Analyze Gaps",
+        progressText: "You're tracking 8 trending skills in your field.",
+        careersSaved: 14,
+        skillsIdentified: 28,
+        progressPercent: 65
+      },
+      {
+        title: "🌟 Executive Presence Builder",
+        description: "Develop leadership skills, personal branding, and influence",
+        action: "Build Presence",
+        progressText: "You've completed 6 out of 12 leadership workshops.",
+        careersSaved: 11,
+        skillsIdentified: 21,
+        progressPercent: 50
+      }
+    ],
+    welcomeMessage: "Welcome back! 💼 I'm here to help you advance your career, develop leadership skills, and stay ahead in your industry. What are your goals today?"
+  }
+};
+
+// Smart Response Generator
+function getSmartResponse(question, userType) {
+  const responses = {
+    student: {
+      default: "Great question! As a high school student, focus on building a strong foundation. I recommend exploring different subjects, maintaining good grades, and getting involved in extracurriculars that genuinely interest you. Would you like specific advice on any of these areas?",
+      college: "When choosing colleges, consider: 1) Academic programs that match your interests, 2) Campus culture and location, 3) Financial aid opportunities, 4) Career services and internship connections. What's most important to you?",
+      subjects: "Your strongest subjects often point to natural aptitudes! Math/Science might lead to STEM careers, while strong Language Arts skills open doors in communications, law, or creative fields. Want to explore specific career paths?",
+    },
+    graduate: {
+      default: "Congratulations on graduating! The job market values both your degree and transferable skills. Focus on: networking actively, tailoring your resume to each position, and practicing your interview skills. What area would you like to focus on first?",
+      resume: "Your resume should highlight: 1) Relevant coursework and projects, 2) Internships or part-time work, 3) Leadership roles in clubs/organizations, 4) Technical and soft skills. Use action verbs and quantify achievements when possible!",
+      interview: "Interview prep tips: Research the company thoroughly, prepare STAR method examples, practice common questions, prepare thoughtful questions to ask, and do mock interviews. Would you like to practice some common questions?",
+    },
+    changer: {
+      default: "Career transitions are challenging but rewarding! Your existing experience is valuable—we just need to reframe it. Focus on: identifying transferable skills, networking in your target industry, and gaining relevant certifications. What's your target field?",
+      skills: "Many skills transfer across industries: project management, communication, problem-solving, leadership, and technical proficiency. Let's map your current skills to your target role. What skills do you bring from your current field?",
+      strategy: "A successful career change strategy includes: 1) Skills gap analysis, 2) Targeted upskilling, 3) Strategic networking, 4) Rebranding your experience, 5) Planning your timeline and finances. Where would you like to start?",
+    },
+    professional: {
+      default: "As a working professional, advancement requires strategic planning. Focus on: developing leadership skills, staying current with industry trends, building your professional network, and demonstrating measurable impact. What's your next career goal?",
+      advancement: "To advance in your career: 1) Take on stretch assignments, 2) Develop leadership and management skills, 3) Build cross-functional relationships, 4) Seek mentorship, 5) Document and communicate your achievements. Ready to create your advancement plan?",
+      skills: "Stay competitive by: monitoring industry trends, pursuing relevant certifications, developing both technical and soft skills, and building expertise in emerging areas. What skills are you looking to develop?",
+    }
+  };
+
+  const typeResponses = responses[userType];
+  const lowerQuestion = question.toLowerCase();
+  
+  if (lowerQuestion.includes('college') || lowerQuestion.includes('school')) return typeResponses.college || typeResponses.default;
+  if (lowerQuestion.includes('subject') || lowerQuestion.includes('strength')) return typeResponses.subjects || typeResponses.default;
+  if (lowerQuestion.includes('resume') || lowerQuestion.includes('cv')) return typeResponses.resume || typeResponses.default;
+  if (lowerQuestion.includes('interview')) return typeResponses.interview || typeResponses.default;
+  if (lowerQuestion.includes('skill')) return typeResponses.skills || typeResponses.default;
+  if (lowerQuestion.includes('strategy') || lowerQuestion.includes('plan')) return typeResponses.strategy || typeResponses.default;
+  if (lowerQuestion.includes('advance') || lowerQuestion.includes('promotion')) return typeResponses.advancement || typeResponses.default;
+  
+  return typeResponses.default;
+}
 
 // DashboardCard Component
-function DashboardCard({ title, progressText, careersSaved, skillsIdentified, progressPercent, actionLabel, onAction }) {
+function DashboardCard({ title, description, progressText, careersSaved, skillsIdentified, progressPercent, action, onAction }) {
   return (
     <div style={{
       background: 'white',
@@ -10,7 +208,10 @@ function DashboardCard({ title, progressText, careersSaved, skillsIdentified, pr
       padding: '28px',
       boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
       transition: 'transform 0.2s, box-shadow 0.2s',
-      cursor: 'default'
+      cursor: 'default',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
     }}
     onMouseEnter={(e) => {
       e.currentTarget.style.transform = 'translateY(-4px)';
@@ -20,21 +221,22 @@ function DashboardCard({ title, progressText, careersSaved, skillsIdentified, pr
       e.currentTarget.style.transform = 'translateY(0)';
       e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
     }}>
-      <h3 style={{ marginBottom: '16px', fontSize: '1.3rem', fontWeight: '600', color: '#2d3748' }}>{title}</h3>
-      <p style={{ marginBottom: '20px', color: '#718096', lineHeight: '1.6' }}>{progressText}</p>
+      <h3 style={{ marginBottom: '12px', fontSize: '1.3rem', fontWeight: '600', color: '#2d3748' }}>{title}</h3>
+      <p style={{ marginBottom: '16px', color: '#4a5568', lineHeight: '1.5', fontSize: '0.95rem' }}>{description}</p>
+      <p style={{ marginBottom: '20px', color: '#718096', lineHeight: '1.6', fontSize: '0.9rem', fontStyle: 'italic' }}>{progressText}</p>
       
       <div style={{ display: 'flex', gap: '32px', marginBottom: '20px' }}>
         <div>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#667eea', marginBottom: '4px' }}>{careersSaved}</div>
-          <div style={{ fontSize: '0.875rem', color: '#718096' }}>Careers Saved</div>
+          <div style={{ fontSize: '0.875rem', color: '#718096' }}>Items Saved</div>
         </div>
         <div>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#764ba2', marginBottom: '4px' }}>{skillsIdentified}</div>
-          <div style={{ fontSize: '0.875rem', color: '#718096' }}>Skills Identified</div>
+          <div style={{ fontSize: '0.875rem', color: '#718096' }}>Skills Tracked</div>
         </div>
       </div>
       
-      <div style={{ marginBottom: '16px' }}>
+      <div style={{ marginBottom: '16px', marginTop: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ fontSize: '0.875rem', color: '#718096' }}>Progress</span>
           <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#667eea' }}>{progressPercent}%</span>
@@ -56,52 +258,92 @@ function DashboardCard({ title, progressText, careersSaved, skillsIdentified, pr
         </div>
       </div>
 
-      {actionLabel && onAction && (
-        <button
-          onClick={onAction}
-          style={{
-            width: '100%',
-            padding: '12px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'opacity 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-        >
-          {actionLabel}
-        </button>
-      )}
+      <button
+        onClick={onAction}
+        style={{
+          width: '100%',
+          padding: '12px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '0.95rem',
+          fontWeight: '600',
+          cursor: 'pointer',
+          transition: 'opacity 0.2s'
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+      >
+        {action}
+      </button>
     </div>
   );
 }
 
 // CareerChat Component
-function CareerChat() {
+function CareerChat({ userType }) {
+  const config = userTypeConfigs[userType];
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi! I\'m your career planning assistant. How can I help you today?' }
+    { role: 'assistant', content: config.welcomeMessage }
   ]);
   const [input, setInput] = useState('');
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = (messageText) => {
+    const text = messageText || input;
+    if (!text.trim()) return;
     
-    setMessages([...messages, 
-      { role: 'user', content: input },
-      { role: 'assistant', content: 'I\'m here to help you with career guidance, skill development, and job market insights. (This is a demo - full AI integration would go here)' }
+    setMessages(prev => [...prev, 
+      { role: 'user', content: text },
+      { role: 'assistant', content: getSmartResponse(text, userType) }
     ]);
     setInput('');
+  };
+
+  const handlePromptClick = (prompt) => {
+    handleSend(prompt);
   };
 
   return (
     <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <h2 style={{ marginBottom: '8px', fontSize: '1.5rem', fontWeight: '600' }}>💬 Career Planning Assistant</h2>
-      <p style={{ color: '#718096', marginBottom: '20px' }}>Ask me anything about your career path, skills development, or job market insights.</p>
+      <p style={{ color: '#718096', marginBottom: '16px' }}>Ask me anything about your career path, skills development, or job market insights.</p>
+      
+      {messages.length <= 1 && (
+        <div style={{ marginBottom: '16px' }}>
+          <p style={{ fontSize: '0.9rem', color: '#4a5568', marginBottom: '10px', fontWeight: '600' }}>Quick questions:</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {config.prompts.map((prompt, idx) => (
+              <button
+                key={idx}
+                onClick={() => handlePromptClick(prompt)}
+                style={{
+                  padding: '8px 14px',
+                  background: '#f7fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  color: '#4a5568'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#667eea';
+                  e.currentTarget.style.color = 'white';
+                  e.currentTarget.style.borderColor = '#667eea';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#f7fafc';
+                  e.currentTarget.style.color = '#4a5568';
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                }}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       
       <div style={{ 
         flex: 1,
@@ -110,7 +352,7 @@ function CareerChat() {
         padding: '20px', 
         marginBottom: '16px',
         overflowY: 'auto',
-        minHeight: '300px',
+        minHeight: '250px',
         maxHeight: '400px'
       }}>
         {messages.map((msg, idx) => (
@@ -120,9 +362,10 @@ function CareerChat() {
             borderRadius: '8px',
             background: msg.role === 'user' ? '#667eea' : 'white',
             color: msg.role === 'user' ? 'white' : '#2d3748',
-            maxWidth: '80%',
+            maxWidth: '85%',
             marginLeft: msg.role === 'user' ? 'auto' : '0',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            lineHeight: '1.5'
           }}>
             {msg.content}
           </div>
@@ -149,7 +392,7 @@ function CareerChat() {
           onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
         />
         <button
-          onClick={handleSend}
+          onClick={() => handleSend()}
           style={{
             padding: '14px 28px',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -171,26 +414,56 @@ function CareerChat() {
   );
 }
 
+// NavButton Component
+function NavButton({ onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: 'none',
+        border: 'none',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        padding: '0.6rem 1.2rem',
+        borderRadius: '8px',
+        color: '#4b5563',
+        fontSize: '0.95rem'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+        e.currentTarget.style.color = 'white';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'none';
+        e.currentTarget.style.color = '#4b5563';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// Main Dashboard Component
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalBody, setModalBody] = useState("");
   const [selectedUserType, setSelectedUserType] = useState("student");
   const [showCareerChat, setShowCareerChat] = useState(false);
-  const [overallProgress] = useState(45);
   const [notification, setNotification] = useState(null);
   const [loggedIn, setLoggedIn] = useState(true);
 
-  // Close modals on Escape key
+  const currentConfig = userTypeConfigs[selectedUserType];
+  const overallProgress = Math.round(
+    currentConfig.features.reduce((sum, f) => sum + f.progressPercent, 0) / currentConfig.features.length
+  );
+
   useEffect(() => {
     function handleEscape(event) {
       if (event.key === 'Escape') {
         setShowCareerChat(false);
-        setModalVisible(false);
       }
     }
-    
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
@@ -200,40 +473,6 @@ export default function Dashboard() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  // Navigation handlers
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-
-  const handleDashboardClick = () => {
-    showNotification("Already on Dashboard");
-  };
-
-  const handleExploreClick = () => {
-    navigate("/net");
-  };
-
-  const handleMyPlanClick = () => {
-    navigate("/careerchat");
-  };
-
-  const showSettings = () => {
-    showNotification("Opening Settings...");
-  };
-
-  const toggleAuth = () => {
-    setLoggedIn(!loggedIn);
-    showNotification(loggedIn ? "Logged out successfully" : "Logged in successfully");
-  };
-
-  const selectUserType = (type) => {
-    setSelectedUserType(type);
-    showNotification(`Switched to ${userTypes.find(t => t.key === type)?.label} mode`);
-  };
-
-  const closeModal = () => setModalVisible(false);
-  const closeCareerChat = () => setShowCareerChat(false);
-
   const userTypes = [
     { key: "student", label: "High School Student", icon: "🎓", description: "Planning your college path and exploring future career options" },
     { key: "graduate", label: "Recent Graduate", icon: "👨‍🎓", description: "Ready to enter the job market with your new degree" },
@@ -241,30 +480,8 @@ export default function Dashboard() {
     { key: "professional", label: "Working Professional", icon: "💼", description: "Advancing your career and developing new skills" },
   ];
 
-  const dashboardData = [
-    {
-      title: "🎯 Career Exploration Progress",
-      progressText: "You've explored 3 out of 10 recommended career paths.",
-      careersSaved: 5,
-      skillsIdentified: 12,
-      progressPercent: 30,
-      actionLabel: "Explore More Careers",
-      onAction: handleExploreClick
-    },
-    {
-      title: "📚 Skill Development Journey",
-      progressText: "You've completed 2 out of 8 recommended courses.",
-      careersSaved: 8,
-      skillsIdentified: 15,
-      progressPercent: 25,
-      actionLabel: "Continue Learning",
-      onAction: () => showNotification("Loading Learning Dashboard...")
-    }
-  ];
-
   return (
     <div style={{ minHeight: '100vh', background: '#f7fafc' }}>
-      {/* Notification Toast */}
       {notification && (
         <div style={{
           position: 'fixed',
@@ -282,7 +499,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* TOP NAV - Updated to match Network Page */}
       <nav style={{
         width: '100%',
         background: 'rgba(255, 255, 255, 0.98)',
@@ -313,12 +529,15 @@ export default function Dashboard() {
           </div>
           
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <NavButton onClick={handleDashboardClick}>Dashboard</NavButton>
-            <NavButton onClick={handleExploreClick}>Explore</NavButton>
-            <NavButton onClick={handleMyPlanClick}>My Plan</NavButton>
-            <NavButton onClick={showSettings}>Settings</NavButton>
+            <NavButton onClick={() => showNotification("Already on Dashboard")}>Dashboard</NavButton>
+            <NavButton onClick={() => window.location.href = '/net'}>Network</NavButton>
+            <NavButton onClick={() => window.location.href = '/careerchat'}>My Plan</NavButton>
+            <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
             <button 
-              onClick={toggleAuth}
+              onClick={() => {
+                setLoggedIn(!loggedIn);
+                showNotification(loggedIn ? "Logged out successfully" : "Logged in successfully");
+              }}
               style={{
                 background: loggedIn 
                   ? 'linear-gradient(135deg, #ef4444, #dc2626)' 
@@ -348,9 +567,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '40px 24px' }}>
-        {/* OVERALL PROGRESS */}
         <section style={{
           background: 'white',
           borderRadius: '16px',
@@ -391,7 +608,6 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* USER TYPE SELECTION */}
         <section style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
@@ -401,8 +617,10 @@ export default function Dashboard() {
           {userTypes.map((type) => (
             <button
               key={type.key}
-              onClick={() => selectUserType(type.key)}
-              aria-pressed={selectedUserType === type.key}
+              onClick={() => {
+                setSelectedUserType(type.key);
+                showNotification(`Switched to ${type.label} mode`);
+              }}
               style={{
                 background: 'white',
                 borderRadius: '16px',
@@ -438,24 +656,26 @@ export default function Dashboard() {
           ))}
         </section>
 
-        {/* DASHBOARD CARDS */}
         <section style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
           gap: '24px'
         }}>
-          {dashboardData.map((card, idx) => (
-            <DashboardCard key={idx} {...card} />
+          {currentConfig.features.map((feature, idx) => (
+            <DashboardCard 
+              key={idx} 
+              {...feature}
+              onAction={() => {
+                showNotification(`Opening ${feature.title}...`);
+                setTimeout(() => setShowCareerChat(true), 500);
+              }}
+            />
           ))}
         </section>
       </main>
 
-      {/* CAREER CHAT MODAL */}
       {showCareerChat && (
         <div 
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="career-chat-title"
           style={{
             position: 'fixed',
             top: 0,
@@ -469,7 +689,7 @@ export default function Dashboard() {
             zIndex: 1000,
             animation: 'fadeIn 0.2s ease'
           }}
-          onClick={closeCareerChat}
+          onClick={() => setShowCareerChat(false)}
         >
           <div 
             style={{
@@ -486,8 +706,7 @@ export default function Dashboard() {
             onClick={(e) => e.stopPropagation()}
           >
             <button 
-              onClick={closeCareerChat}
-              aria-label="Close dialog"
+              onClick={() => setShowCareerChat(false)}
               style={{
                 position: 'absolute',
                 top: '20px',
@@ -517,63 +736,7 @@ export default function Dashboard() {
             >
               ✖
             </button>
-            <CareerChat />
-          </div>
-        </div>
-      )}
-
-      {/* INFO MODAL */}
-      {modalVisible && (
-        <div 
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            animation: 'fadeIn 0.2s ease'
-          }}
-          onClick={closeModal}
-        >
-          <div 
-            style={{
-              background: 'white',
-              borderRadius: '16px',
-              maxWidth: '600px',
-              width: '90%',
-              padding: '32px',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-              animation: 'slideUp 0.3s ease'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600', color: '#2d3748' }}>{modalTitle}</h2>
-              <button 
-                onClick={closeModal}
-                aria-label="Close dialog"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  color: '#718096',
-                  transition: 'color 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#2d3748'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#718096'}
-              >
-                ×
-              </button>
-            </div>
-            <div style={{ color: '#4a5568', lineHeight: '1.6' }}>{modalBody}</div>
+            <CareerChat userType={selectedUserType} />
           </div>
         </div>
       )}
@@ -593,37 +756,5 @@ export default function Dashboard() {
         }
       `}</style>
     </div>
-  );
-}
-
-// Reusable Navigation Button Component
-function NavButton({ onClick, children }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        background: 'none',
-        border: 'none',
-        fontWeight: '600',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        padding: '0.6rem 1.2rem',
-        borderRadius: '8px',
-        color: '#4b5563',
-        fontSize: '0.95rem'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
-        e.currentTarget.style.color = 'white';
-        e.currentTarget.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'none';
-        e.currentTarget.style.color = '#4b5563';
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
-    >
-      {children}
-    </button>
   );
 }

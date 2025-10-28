@@ -682,7 +682,7 @@ export default function NetworkPage() {
           <div className="nav-brand">🚀 Wayvian</div>
           <ul className="nav-links">
             <li><button onClick={() => handleNavigation("/dashboard")}>Dashboard</button></li>
-            <li><button onClick={() => handleNavigation("/net")}>Explore</button></li>
+            <li><button onClick={() => handleNavigation("/net")}>Network</button></li>
             <li><button onClick={() => handleNavigation("/careerchat")}>My Plan</button></li>
             <li><button onClick={() => handleNavigation("/settings")}>Settings</button></li>
             <li>

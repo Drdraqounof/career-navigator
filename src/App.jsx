@@ -6,7 +6,7 @@ import Home from "./components/pages/Home";
 import Profile from "./components/profile/Profile";
 import Net from "./components/net/Net";
 import Login from "./components/login/Login";
-import Groupsheet from "./components/groupsheet/Groupsheet";
+import Test from "./components/Test/Test";
 import Dashboard from "./components/dashboard/Dashboard";
 import ProfessionalEvents from "./components/pages/ProfessionalEvents";
 import EventCard from "./components/pages/EventCard";
@@ -19,7 +19,7 @@ function App() {
       <div className="app-container">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/groupsheet" element={<Groupsheet />} />
+          <Route path="/test" element={<Test />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/net" element={<Net />} />
@@ -34,4 +34,3 @@ function App() {
 }
 
 export default App;
-

@@ -1,70 +1,34 @@
-# Getting Started with Create React App
+Case Study - Wayvian.com
+With the rise of AI reshaping the job market, many people struggle to choose the right career path, identify needed skills, or structure their resumes effectively. Wayvian provides personalized, AI-driven career guidance that helps users discover ideal paths, close skill gaps, and craft resumes tailored to real job market demands.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🌊 Wayvian — Your AI-Powered Career Navigator
 
-## Available Scripts
+Wayvian is an interactive web application that empowers students, graduates, and career changers to explore, plan, and pursue career paths tailored to their skills, goals, and the latest job market trends.
 
-In the project directory, you can run:
+It combines clean, dynamic design with AI-driven guidance to make career exploration simple, personalized, and inspiring.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Getting Started
+1️⃣ Install dependencies
+npm install
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2️⃣ Run the project
+npm run dev
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Then open your browser and go to:
+👉 http://localhost:5173
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+//Key Features//
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+🌐 Interactive Landing Page – Animated waves using HTML Canvas
 
-### `npm run eject`
+🧭 Career Navigation Flow – Personalized onboarding questions
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+💾 Save & Compare – Track and compare favorite career paths
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+📄 My Plan Page – Summarized career plan and skills gap report
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+⬇️ Export as PDF/Markdown – Download your personalized plan

@@ -260,7 +260,7 @@ print(stats)`,
           </div>
           <ul className="nav-links">
             <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Explore</a></li>
+            <li><a href="#">Network</a></li>
             <li><a href="#">Network</a></li>
             <li><a href="#">Events</a></li>
             <li><a href="#" className="active">Profile</a></li>

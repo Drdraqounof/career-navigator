@@ -10,7 +10,7 @@ export default function Login() {
     e.preventDefault();
     // Simulate login success
     localStorage.setItem("isLoggedIn", "true");
-    navigate("/groupsheet"); // redirect to the main app page
+    navigate("/test"); // redirect to the main app page
   };
 
   return (

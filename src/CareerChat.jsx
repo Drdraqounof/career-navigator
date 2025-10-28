@@ -1,10 +1,95 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
-import { findAI } from "./FindAI";
-import { useNavigate } from "react-router-dom";
+
+// Mock AI function for demo
+async function findAI(message) {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return "This is a demo response. In production, this would connect to your AI service to provide personalized career guidance based on your question: " + message;
+}
+
+// Simple markdown-like text formatter
+function formatText(text) {
+  // Split by lines
+  const lines = text.split('\n');
+  
+  return lines.map((line, i) => {
+    // Handle headers
+    if (line.startsWith('### ')) {
+      return <h3 key={i} style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0.5rem 0' }}>{line.substring(4)}</h3>;
+    }
+    if (line.startsWith('## ')) {
+      return <h2 key={i} style={{ fontSize: '1.25rem', fontWeight: '600', margin: '0.5rem 0' }}>{line.substring(3)}</h2>;
+    }
+    
+    // Handle bold **text**
+    let formatted = line;
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = boldRegex.exec(formatted)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(formatted.substring(lastIndex, match.index));
+      }
+      parts.push(<strong key={`bold-${i}-${match.index}`}>{match[1]}</strong>);
+      lastIndex = match.index + match[0].length;
+    }
+    
+    if (lastIndex < formatted.length) {
+      parts.push(formatted.substring(lastIndex));
+    }
+    
+    // Handle list items
+    if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
+      return <li key={i} style={{ marginLeft: '1.5rem' }}>{parts.length > 0 ? parts : line.substring(2)}</li>;
+    }
+    
+    if (line.trim().match(/^\d+\./)) {
+      return <li key={i} style={{ marginLeft: '1.5rem' }}>{parts.length > 0 ? parts : line.substring(line.indexOf('.') + 1)}</li>;
+    }
+    
+    // Regular paragraph
+    if (line.trim()) {
+      return <p key={i} style={{ margin: '0.5rem 0' }}>{parts.length > 0 ? parts : line}</p>;
+    }
+    
+    return <br key={i} />;
+  });
+}
+
+// NavButton Component
+function NavButton({ onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: 'none',
+        border: 'none',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        padding: '0.6rem 1.2rem',
+        borderRadius: '8px',
+        color: '#4b5563',
+        fontSize: '0.95rem'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+        e.currentTarget.style.color = 'white';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'none';
+        e.currentTarget.style.color = '#4b5563';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function CareerChat() {
-  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
     {
@@ -15,6 +100,8 @@ export default function CareerChat() {
   const [loading, setLoading] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeText, setResumeText] = useState("");
+  const [notification, setNotification] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(true);
   const chatRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -28,6 +115,11 @@ export default function CareerChat() {
     "💰 What are high-demand careers right now?",
     "🚀 How can I advance in my current career?"
   ];
+
+  const showNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   // Canvas Wave Animation
   useEffect(() => {
@@ -112,7 +204,6 @@ export default function CareerChat() {
       const text = event.target.result;
       setResumeText(text);
       
-      // Add system message about resume upload
       setMessages((prev) => [
         ...prev,
         {
@@ -125,7 +216,6 @@ export default function CareerChat() {
     if (file.type === "text/plain") {
       reader.readAsText(file);
     } else {
-      // For other file types, just store the file name
       setMessages((prev) => [
         ...prev,
         {
@@ -139,7 +229,6 @@ export default function CareerChat() {
   async function handleSend() {
     if (!input.trim()) return;
     
-    // Include resume context if available
     let messageToSend = input;
     if (resumeText) {
       messageToSend = `[Resume Context: ${resumeText.substring(0, 500)}...]\n\nUser Question: ${input}`;
@@ -180,7 +269,6 @@ export default function CareerChat() {
           box-sizing: border-box;
         }
 
-        /* Page Container with Waves */
         .page-container {
           min-height: 100vh;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -225,69 +313,6 @@ export default function CareerChat() {
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        /* Navigation Bar */
-        .nav-bar {
-          width: 100%;
-          background-color: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-bottom: 2px solid #e2e8f0;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          position: sticky;
-          top: 0;
-          z-index: 50;
-        }
-
-        .nav-container {
-          max-width: 64rem;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem 1rem;
-        }
-
-        .nav-title {
-          font-size: 1.25rem;
-          font-weight: 700;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .nav-buttons {
-          display: flex;
-          gap: 0.75rem;
-        }
-
-        .nav-button {
-          background: none;
-          border: none;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-        }
-
-        .nav-button.primary {
-          color: #667eea;
-          background: rgba(102, 126, 234, 0.1);
-        }
-
-        .nav-button.primary:hover {
-          background: rgba(102, 126, 234, 0.2);
-        }
-
-        .nav-button.secondary {
-          color: #718096;
-        }
-
-        .nav-button.secondary:hover {
-          background: rgba(0, 0, 0, 0.05);
-        }
-
-        /* Chat Container */
         .chat-container {
           background-color: white;
           padding: 1.5rem;
@@ -341,7 +366,6 @@ export default function CareerChat() {
           gap: 0.5rem;
         }
 
-        /* Messages Area */
         .messages-area {
           height: 22rem;
           overflow-y: auto;
@@ -370,7 +394,6 @@ export default function CareerChat() {
           background: #764ba2;
         }
 
-        /* Message Bubbles */
         .message {
           padding: 12px 16px;
           margin: 8px 0;
@@ -435,15 +458,6 @@ export default function CareerChat() {
           background: rgba(255, 255, 255, 0.2);
         }
 
-        .message strong {
-          font-weight: 700;
-        }
-
-        .message em {
-          font-style: italic;
-        }
-
-        /* Loading Indicator */
         .loading-text {
           color: #a0aec0;
           font-style: italic;
@@ -451,7 +465,6 @@ export default function CareerChat() {
           padding: 0.5rem;
         }
 
-        /* Starter Prompts */
         .starter-prompts {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -479,11 +492,6 @@ export default function CareerChat() {
           box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
         }
 
-        .prompt-button:active {
-          transform: translateY(0);
-        }
-
-        /* Input Area */
         .input-area {
           display: flex;
           gap: 0.5rem;
@@ -504,10 +512,6 @@ export default function CareerChat() {
           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .chat-input::placeholder {
-          color: #a0aec0;
-        }
-
         .send-button {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
@@ -525,16 +529,11 @@ export default function CareerChat() {
           box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
         }
 
-        .send-button:active:not(:disabled) {
-          transform: translateY(0);
-        }
-
         .send-button:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
 
-        /* Animations */
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -555,18 +554,14 @@ export default function CareerChat() {
           }
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          .page-container {
-            padding-bottom: 20px;
-          }
+        @keyframes slideIn {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
 
+        @media (max-width: 768px) {
           .wave-content h1 {
             font-size: 2rem;
-          }
-
-          .wave-content p {
-            font-size: 1rem;
           }
 
           .chat-container {
@@ -587,50 +582,96 @@ export default function CareerChat() {
           .message {
             max-width: 90%;
           }
-
-          .nav-title {
-            font-size: 1rem;
-          }
-
-          .nav-buttons {
-            gap: 0.5rem;
-          }
-
-          .nav-button {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-          }
         }
       `}</style>
 
       <div className="page-container">
-        {/* Top Navigation Bar */}
-        <div className="nav-bar">
-          <div className="nav-container">
-            <h1 className="nav-title">🚀 Career Navigator</h1>
+        {/* Notification Toast */}
+        {notification && (
+          <div style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            background: '#48bb78',
+            color: 'white',
+            padding: '16px 24px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            zIndex: 2000,
+            animation: 'slideIn 0.3s ease'
+          }}>
+            {notification}
+          </div>
+        )}
 
-            <div className="nav-buttons">
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="nav-button primary"
+        {/* TOP NAV - Matching Dashboard Style */}
+        <nav style={{
+          width: '100%',
+          background: 'rgba(255, 255, 255, 0.98)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid #e5e7eb',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100
+        }}>
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '1rem 2rem'
+          }}>
+            <div style={{
+              fontSize: '1.5rem',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              🚀 Wayvian
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <NavButton onClick={() => window.location.href = '/dashboard'}>Dashboard</NavButton>
+              <NavButton onClick={() => window.location.href = '/net'}>Network</NavButton>
+              <NavButton onClick={() => showNotification("Already on My Plan")}>My Plan</NavButton>
+              <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
+              <button 
+                onClick={() => {
+                  setLoggedIn(!loggedIn);
+                  showNotification(loggedIn ? "Logged out successfully" : "Logged in successfully");
+                }}
+                style={{
+                  background: loggedIn 
+                    ? 'linear-gradient(135deg, #ef4444, #dc2626)' 
+                    : 'linear-gradient(135deg, #667eea, #764ba2)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.6rem 1.5rem',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  marginLeft: '1rem',
+                  fontSize: '0.95rem'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               >
-                Dashboard
-              </button>
-              <button
-                onClick={() => navigate("/net")}
-                className="nav-button secondary"
-              >
-                Explore
-              </button>
-              <button
-                onClick={() => navigate("/settings")}
-                className="nav-button secondary"
-              >
-                Settings
+                {loggedIn ? '👋 Logout' : '🔐 Login'}
               </button>
             </div>
           </div>
-        </div>
+        </nav>
 
         {/* Wave Header */}
         <div className="wave-header">
@@ -679,13 +720,12 @@ export default function CareerChat() {
                     : "message-ai"
                 }`}
               >
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                {formatText(msg.text)}
               </div>
             ))}
             {loading && <p className="loading-text">Thinking...</p>}
           </div>
 
-          {/* Starter Prompts */}
           {messages.length === 1 && !loading && (
             <div className="starter-prompts">
               {starterPrompts.map((prompt, idx) => (
@@ -700,7 +740,6 @@ export default function CareerChat() {
             </div>
           )}
 
-          {/* Input Field */}
           <div className="input-area">
             <input
               value={input}
