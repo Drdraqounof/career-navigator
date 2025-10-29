@@ -26,9 +26,9 @@ export default function NetworkPage() {
     resizeCanvas();
 
     const waves = [
-      { color: 'rgba(59, 130, 246, 0.3)', speed: 0.02, amplitude: 50, frequency: 0.003, offset: 0 },
-      { color: 'rgba(37, 99, 235, 0.2)', speed: 0.025, amplitude: 60, frequency: 0.0025, offset: 40 },
-      { color: 'rgba(147, 51, 234, 0.15)', speed: 0.018, amplitude: 55, frequency: 0.0035, offset: 80 }
+      { color: 'rgba(59, 130, 246, 0.7)', speed: 0.03, amplitude: 60, frequency: 0.003, offset: -50 },
+      { color: 'rgba(37, 99, 235, 0.6)', speed: 0.035, amplitude: 80, frequency: 0.0055, offset: 20 },
+      { color: 'rgba(147, 51, 234, 0.5)', speed: 0.025, amplitude: 55, frequency: 0.004, offset: 50 }
     ];
 
     function drawWave(wave, time) {
