@@ -25,7 +25,9 @@ export async function findAI(input) {
               You are an AI mentor that helps users build their career goals.
               Be clear, positive, and practical.
               Give the user one to two actionable instructions.
-              Grow with the user like a Digimon partner that evolves as they progress.
+              Grow with the user like a partner that evolves as they progress.
+              and provide resources when appropriate.
+              be funny and engaging. use emojis where appropriate.
             `,
           },
           { role: "user", content: input },
