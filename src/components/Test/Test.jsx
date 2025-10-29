@@ -468,31 +468,39 @@ export default function CareerNavigator() {
                   Great — we found career matches for you. Review your results below!
                 </p>
 
-                {/* Dashboard Button */}
-                <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-                  <button
-                    onClick={goToDashboard}
-                    style={{
-                      padding: "1rem 2.5rem",
-                      backgroundColor: "#3498db",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      fontWeight: "bold",
-                      fontSize: "1.1rem",
-                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                      transition: "all 0.2s ease"
-                    }}
-                    onMouseOver={(e) => e.target.style.backgroundColor = "#2980b9"}
-                    onMouseOut={(e) => e.target.style.backgroundColor = "#3498db"}
-                  >
-                    Go to Dashboard →
-                  </button>
-                  <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#6c757d" }}>
-                    View your full career roadmap and personalized recommendations
-                  </p>
-                </div>
+
+         {/* Dashboard Button */}
+<div style={{ marginBottom: "2rem", textAlign: "center" }}>
+  <button
+    onClick={goToDashboard}
+    style={{
+      padding: "1rem 2.5rem",
+      backgroundColor: "#3498db",
+      color: "#fff",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontWeight: "bold",
+      fontSize: "1.1rem",
+      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+      transition: "all 0.2s ease"
+    }}
+    onMouseOver={(e) => (e.target.style.backgroundColor = "#2980b9")}
+    onMouseOut={(e) => (e.target.style.backgroundColor = "#3498db")}
+  >
+    Go to Dashboard →
+  </button>
+  <p
+    style={{
+      marginTop: "0.5rem",
+      fontSize: "0.9rem",
+      color: "#6c757d"
+    }}
+  >
+    View your full career roadmap and personalized recommendations
+  </p>
+</div>
+
 
                 <div style={{ marginTop: "1.5rem" }}>
                   <h4 style={{ marginBottom: "1rem", fontSize: "1.3rem" }}>Top Career Groups</h4>

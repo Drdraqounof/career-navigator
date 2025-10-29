@@ -531,7 +531,7 @@ export default function Dashboard() {
           
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <NavButton onClick={() => showNotification("Already on Dashboard")}>Dashboard</NavButton>
-            <Button onClick={() => navigate("/net")}> Network</Button>
+            <NavButton onClick={() => navigate("/net")}>Network</NavButton>
             <NavButton onClick={() => window.location.href = '/careerchat'}>My Plan</NavButton>
             <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
             <button 
