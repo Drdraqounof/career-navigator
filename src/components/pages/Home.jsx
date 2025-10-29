@@ -599,7 +599,10 @@ export default function Home() {
       <h3>📄 Export Feature</h3>
       <p>Download your personalized career plan as PDF or Markdown for offline access.</p>
     </div>
-    
+    <div className="card">
+      <h3>Career Testing</h3>
+      <p>After completing the login page, the user is directed to take a quiz that assesses skills and interests for better career alignment.</p>
+    </div>
   </div>
 </section>
 
