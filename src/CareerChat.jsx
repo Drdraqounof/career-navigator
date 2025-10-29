@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {findAI} from "./FindAI";
 // Mock AI function for demo
-async function findAI(message) {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return "This is a demo response. In production, this would connect to your AI service to provide personalized career guidance based on your question: " + message;
-}
+
 
 // Simple markdown-like text formatter
 function formatText(text) {
