@@ -636,7 +636,7 @@ export default function CareerChat() {
             </div>
             
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <NavButton onClick={() => window.location.href = '/dashboard'}>Dashboard</NavButton>
+              <NavButton onClick={() => navigate('/dashboard')}>Dashboard</NavButton>
               <NavButton onClick={() => navigate("/net")}>Network</NavButton>
               <NavButton onClick={() => showNotification("Already on My Plan")}>My Plan</NavButton>
               <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
