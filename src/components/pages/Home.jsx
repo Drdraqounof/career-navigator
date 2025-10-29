@@ -526,135 +526,151 @@ export default function Home() {
 
         <main className="container">
           
-          <section id="overview" className="fade-in">
-            <h2>Project Overview</h2>
-            <div className="grid grid-3">
-              <div className="card">
-                <h3>🎯 What It Does</h3>
-                <p>A web app that helps users figure out which jobs fit them, what skills they need, and what steps to take next. Provides personalized guidance based on real job market trends.</p>
-              </div>
-              <div className="card">
-                <h3>🏗️ Development Approach</h3>
-                <p>Built using Agile methodology with 3 sprints over 6 weeks. Core features first, then advanced functionality. Mock data initially, real APIs later.</p>
-              </div>
-              <div className="card">
-                <h3>📊 Smart Insights</h3>
-                <p>Helps improve resumes, identifies skills gaps, and creates actionable career plans. Adapts recommendations as the job market evolves.</p>
-              </div>
-            </div>
-          </section>
+<section id="overview" className="fade-in">
+  <h2>Project Overview</h2>
+  <div className="grid grid-3">
+    <div className="card">
+      <h3>🎯 What It Does</h3>
+      <p>Wayvian helps users discover which careers suit them best, what skills they need, and the actionable steps to reach their goals, all based on real job market trends.</p>
+    </div>
+    <div className="card">
+      <h3>🏗️ Development Approach</h3>
+      <p>Built with Agile methodology over 6 weeks in 3 sprints. We prioritized core features first, then layered in advanced functionality. Started with mock data, integrated real APIs later.</p>
+    </div>
+    <div className="card">
+      <h3>📊 Smart Insights</h3>
+      <p>Improves resumes, identifies skill gaps, and generates actionable career plans. Recommendations adapt dynamically to evolving job market trends.</p>
+    </div>
+  </div>
+</section>
 
-          <section id="audience" className="fade-in">
-            <h2>Who It's For</h2>
-            <div className="grid grid-2 max-w-4xl">
-              <div className="audience-item">🎓 High school seniors planning college or careers</div>
-              <div className="audience-item">👨‍🎓 Recent graduates entering the job market</div>
-              <div className="audience-item">🔄 Career changers looking for new opportunities</div>
-              <div className="audience-item">🔍 Anyone wanting smarter job search methods</div>
-            </div>
-          </section>
+<section id="audience" className="fade-in">
+  <h2>Who It's For</h2>
+  <div className="grid grid-2 max-w-4xl">
+    <div className="audience-item">🎓 High school seniors planning college or careers</div>
+    <div className="audience-item">👨‍🎓 Recent graduates entering the job market</div>
+    <div className="audience-item">🔄 Career changers exploring new opportunities</div>
+    <div className="audience-item">🔍 Anyone seeking smarter job search strategies</div>
+  </div>
+</section>
 
-          <section id="problems" className="fade-in">
-            <h2>Problems We Solve</h2>
-            <div className="grid grid-2 max-w-4xl">
-              <div className="problem-item">
-                <strong>Resume Struggles:</strong>
-                <p>Don't know how to tailor resumes for specific jobs</p>
-              </div>
-              <div className="problem-item">
-                <strong>Skills Gaps:</strong>
-                <p>Unclear about what skills they're missing</p>
-              </div>
-              <div className="problem-item">
-                <strong>Learning Direction:</strong>
-                <p>Unsure what to learn next in their career</p>
-              </div>
-              <div className="problem-item">
-                <strong>Market Trends:</strong>
-                <p>Don't understand current job market dynamics</p>
-              </div>
-            </div>
-          </section>
+<section id="problems" className="fade-in">
+  <h2>Problems We Solve</h2>
+  <div className="grid grid-2 max-w-4xl">
+    <div className="problem-item">
+      <strong>Resume Challenges:</strong>
+      <p>Helps users tailor resumes for specific roles effectively.</p>
+    </div>
+    <div className="problem-item">
+      <strong>Skills Gaps:</strong>
+      <p>Identifies missing skills to guide learning and growth.</p>
+    </div>
+    <div className="problem-item">
+      <strong>Learning Direction:</strong>
+      <p>Provides clarity on what to learn next for career advancement.</p>
+    </div>
+    <div className="problem-item">
+      <strong>Market Trends:</strong>
+      <p>Informs users about current industry demands and opportunities.</p>
+    </div>
+  </div>
+</section>
 
-          <section id="features" className="fade-in">
-            <h2>Key Features</h2>
-            <div className="grid grid-3">
-              <div className="card">
-                <h3>🛤️ Onboarding Flow</h3>
-                <p>Users answer personalized questions to receive tailored career advice and recommendations.</p>
-              </div>
-              <div className="card">
-                <h3>🔍 Explore Flow</h3>
-                <p>Search and filter careers with detailed information about requirements, salaries, and growth potential.</p>
-              </div>
-              <div className="card">
-                <h3>💾 Save & Compare</h3>
-                <p>Save interesting jobs or career paths and compare multiple options side by side.</p>
-              </div>
-              <div className="card">
-                <h3>📋 My Plan Page</h3>
-                <p>Comprehensive summary of skills gaps and suggested actionable next steps.</p>
-              </div>
-              <div className="card">
-                <h3>📄 Export Feature</h3>
-                <p>Download personalized career plans as PDF or Markdown files for offline reference.</p>
-              </div>
-            </div>
-          </section>
+<section id="features" className="fade-in">
+  <h2>Key Features</h2>
+  <div className="grid grid-3">
+    <div className="card">
+      <h3>🛤️ Onboarding Flow</h3>
+      <p>Answer personalized questions to receive tailored career guidance and recommendations.</p>
+    </div>
+    <div className="card">
+      <h3>🔍 Explore Flow</h3>
+      <p>Search and filter careers with detailed info on requirements, salaries, and growth potential.</p>
+    </div>
+    <div className="card">
+      <h3>💾 Save & Compare</h3>
+      <p>Bookmark careers and compare multiple paths side by side for better decision-making.</p>
+    </div>
+    <div className="card">
+      <h3>📋 My Plan Page</h3>
+      <p>View a summary of skill gaps and actionable next steps personalized to your profile.</p>
+    </div>
+    <div className="card">
+      <h3>📄 Export Feature</h3>
+      <p>Download your personalized career plan as PDF or Markdown for offline access.</p>
+    </div>
+    
+  </div>
+</section>
 
-          <section id="timeline" className="fade-in">
-            <h2>Development Timeline</h2>
-            <div className="max-w-4xl">
-              <div className="timeline-card timeline-sprint1">
-                <h3>Sprint 1: Foundation (Weeks 1-2)</h3>
-                <p><strong>Week 1:</strong> Define problem, analyze competitors, create user personas, plan MVP</p>
-                <p><strong>Week 2:</strong> Create wireframes, set up Trello backlog, scaffold project repository</p>
-              </div>
-              <div className="timeline-card timeline-sprint2">
-                <h3>Sprint 2: Core Setup (Week 3)</h3>
-                <p>Build onboarding flow, set up application state management, implement mock APIs, establish design system</p>
-              </div>
-              <div className="timeline-card timeline-sprint3">
-                <h3>Sprint 3: Main Features (Weeks 4-5)</h3>
-                <p><strong>Week 4:</strong> Build Explore flow, Save & Compare functionality, data persistence</p>
-                <p><strong>Week 5:</strong> Implement My Plan page, export features, conduct usability testing</p>
-              </div>
-              <div className="timeline-card timeline-final">
-                <h3>Final Phase (Week 6)</h3>
-                <p>Complete documentation, create training materials, prepare demo, showcase final project</p>
-              </div>
-            </div>
-          </section>
+<section id="career-assessment" className="fade-in">
+  <h2>Career Assessment Test</h2>
+  <div className="max-w-4xl">
+    <div className="card">
+      <p>
+        After logging in, users are guided through a comprehensive career assessment test. 
+        This test evaluates skills, interests, and values to provide personalized career recommendations. 
+        It includes multiple-choice questions, situational judgment tests, and interest inventories 
+        to ensure a holistic understanding of each user's profile.
+      </p>
+    </div>
+  </div>
+</section>
 
-          <section id="tech" className="fade-in">
-            <h2>Technology Stack</h2>
-            <div className="grid grid-3">
-              <div className="card">
-                <h4>Frontend</h4>
-                <p>React 18+ with TypeScript, Vite</p>
-              </div>
-              <div className="card">
-                <h4>State Management</h4>
-                <p>Zustand or React Context</p>
-              </div>
-              <div className="card">
-                <h4>Styling</h4>
-                <p>TailwindCSS</p>
-              </div>
-              <div className="card">
-                <h4>Routing & Forms</h4>
-                <p>React Router, React Hook Form + Zod</p>
-              </div>
-              <div className="card">
-                <h4>Hosting</h4>
-                <p>Vercel</p>
-              </div>
-              <div className="card">
-                <h4>Project Management</h4>
-                <p>Trello for task tracking</p>
-              </div>
-            </div>
-          </section>
+<section id="development-approach" className="fade-in">
+  <h2>Development Approach</h2>
+  <div className="max-w-4xl">
+    <div className="timeline-card timeline-sprint1">
+      <h3>Sprint 1: Foundation (Weeks 1-2)</h3>
+      <p><strong>Week 1:</strong> Define the problem, analyze competitors, create user personas, plan MVP</p>
+      <p><strong>Week 2:</strong> Design wireframes, set up Trello backlog, scaffold project repository</p>
+    </div>
+    <div className="timeline-card timeline-sprint2">
+      <h3>Sprint 2: Core Setup (Week 3)</h3>
+      <p>Develop onboarding flow, set up state management, implement mock APIs, and establish design system</p>
+    </div>
+    <div className="timeline-card timeline-sprint3">
+      <h3>Sprint 3: Main Features (Weeks 4-5)</h3>
+      <p><strong>Week 4:</strong> Build Explore flow, Save & Compare functionality, and data persistence</p>
+      <p><strong>Week 5:</strong> Implement My Plan page, export features, and conduct usability testing</p>
+    </div>
+    <div className="timeline-card timeline-final">
+      <h3>Final Phase (Week 6)</h3>
+      <p>Complete documentation, create training materials, prepare demo, and showcase final project</p>
+    </div>
+  </div>
+</section>
+
+<section id="tech">
+  <h2>Technology Stack</h2>
+  <div className="grid grid-3">
+    <div className="card">
+      <h4>Frontend</h4>
+      <p>React 18+ with TypeScript, Vite</p>
+    </div>
+    <div className="card">
+      <h4>State Management</h4>
+      <p>Zustand or React Context</p>
+    </div>
+    <div className="card">
+      <h4>Styling</h4>
+      <p>TailwindCSS</p>
+    </div>
+    <div className="card">
+      <h4>Routing & Forms</h4>
+      <p>React Router, React Hook Form + Zod</p>
+    </div>
+    <div className="card">
+      <h4>Hosting</h4>
+      <p>Vercel</p>
+    </div>
+    <div className="card">
+      <h4>Project Management</h4>
+      <p>Trello for task tracking</p>
+    </div>
+  </div>
+</section>
+
         </main>
       </div>
     </>
