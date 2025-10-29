@@ -3,11 +3,14 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
- 
+
   resolve: {
     alias: {
-      // Optional: alias for imports, e.g. '@' to 'src'
       '@': '/src',
     },
+  },
+
+  server: {
+    historyApiFallback: true, // 👈 this fixes React Router refresh 404
   },
 });
