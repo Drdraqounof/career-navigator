@@ -1,4 +1,7 @@
 {
+  "_note1": "This file configures how Vercel builds and serves your app.",
+  "_note2": "Since this is a React/Vite single-page app, we use @vercel/static-build and redirect all routes to index.html.",
+
   "builds": [
     {
       "src": "package.json",
@@ -6,7 +9,11 @@
       "config": { "distDir": "dist" }
     }
   ],
+
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }

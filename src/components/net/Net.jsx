@@ -684,7 +684,7 @@ export default function NetworkPage() {
             <li><button onClick={() => handleNavigation("/dashboard")}>Dashboard</button></li>
             <li><button onClick={() => handleNavigation("/net")}>Network</button></li>
             <li><button onClick={() => handleNavigation("/careerchat")}>My Plan</button></li>
-            <li><button onClick={() => handleNavigation("/settings")}>Settings</button></li>
+            <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
             <li>
               <button 
                 onClick={toggleAuth}
