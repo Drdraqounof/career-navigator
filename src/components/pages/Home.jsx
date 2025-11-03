@@ -496,6 +496,11 @@ export default function Home() {
               <li><a href="#timeline">Timeline</a></li>
               <li><a href="#tech">Tech Stack</a></li>
               <li>
+                <button onClick={() => navigate("/settings")} className="login-btn">
+                  Settings
+                </button>
+              </li>
+              <li>
                 <button onClick={() => navigate("/login")} className="login-btn">
                   Login
                 </button>

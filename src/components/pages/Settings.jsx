@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // NavButton Component
 function NavButton({ onClick, children, active }) {
@@ -180,6 +181,7 @@ function SelectField({ label, value, onChange, options, theme }) {
 export default function Settings() {
   const [notification, setNotification] = useState(null);
   const [loggedIn, setLoggedIn] = useState(true);
+  const navigate = useNavigate();
 
   // Profile Settings
   const [fullName, setFullName] = useState("Alex Johnson");
@@ -308,10 +310,10 @@ export default function Settings() {
           </div>
           
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <NavButton onClick={() => showNotification("Navigating to Dashboard...")}>Dashboard</NavButton>
-            <NavButton onClick={() => showNotification("Navigating to Network...")}>Network</NavButton>
-            <NavButton onClick={() => showNotification("Navigating to My Plan...")}>My Plan</NavButton>
-            <NavButton active={true}>Settings</NavButton>
+            <NavButton onClick={() => navigate("/dashboard")}>Dashboard</NavButton>
+            <NavButton onClick={() => navigate("/net")}>Network</NavButton>
+            <NavButton onClick={() => navigate("/careerchat")}>My Plan</NavButton>
+            <NavButton onClick={() => showNotification("Already Settings...")}>Settings</NavButton>
             <button 
               onClick={() => {
                 setLoggedIn(!loggedIn);

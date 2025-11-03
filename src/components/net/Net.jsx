@@ -1,14 +1,34 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+function NavButton({ active, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`nav-button ${active ? "active" : ""}`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function NetworkPage() {
   const navigate = useNavigate();
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [groups, setGroups] = useState([]);
-  const [joinedGroups, setJoinedGroups] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState("network");
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [posts, setPosts] = useState([]);
+  const [likedPosts, setLikedPosts] = useState(new Set());
+  const [savedPosts, setSavedPosts] = useState(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
+  const [viewMode, setViewMode] = useState("all"); // "all" or "saved"
+  const [notification, setNotification] = useState(null);
   const canvasRef = useRef(null);
+
+  const showNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   // Canvas Wave Animation for Hero
   useEffect(() => {
@@ -90,159 +110,241 @@ export default function NetworkPage() {
   const toggleAuth = () => {
     setLoggedIn(!loggedIn);
     if (loggedIn) {
-      setJoinedGroups(new Set());
+      setLikedPosts(new Set());
+      setSavedPosts(new Set());
     }
   };
 
-  // Navigation
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-
-  // Join/Leave Group
-  const toggleJoinGroup = (groupId) => {
+  // Like/Unlike Post
+  const toggleLikePost = (postId) => {
     if (!loggedIn) {
-      alert("Please login to join groups!");
+      alert("Please login to like posts!");
       return;
     }
     
-    setJoinedGroups(prev => {
+    setLikedPosts(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(groupId)) {
-        newSet.delete(groupId);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
       } else {
-        newSet.add(groupId);
+        newSet.add(postId);
       }
       return newSet;
     });
   };
 
-  // Career groups data
-  const allGroups = [
+  // Save/Unsave Post
+  const toggleSavePost = (postId) => {
+    if (!loggedIn) {
+      alert("Please login to save posts!");
+      return;
+    }
+    
+    setSavedPosts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
+      } else {
+        newSet.add(postId);
+      }
+      return newSet;
+    });
+  };
+
+  // Professional posts data
+  const allPosts = [
     {
       id: 1,
-      name: "Software Engineers",
-      description: "Connect with developers building the future of technology. Share code, discuss best practices, and collaborate on innovative projects.",
-      members: 12500,
-      isHot: true,
-      icon: "💻",
+      author: "Sarah Chen",
+      role: "Senior Software Engineer @ TechCorp",
+      avatar: "👩‍💻",
+      timestamp: "2 hours ago",
+      content: "Excited to announce that our team just launched a revolutionary AI-powered code review tool! After 8 months of development, we're helping developers catch bugs 40% faster. Looking for beta testers - DM me if interested! 🚀",
+      likes: 342,
+      comments: 45,
+      type: "project",
+      tags: ["AI", "DevTools", "Innovation"],
       category: "tech"
     },
     {
       id: 2,
-      name: "Data Scientists",
-      description: "Join data professionals analyzing trends and making data-driven decisions. Learn ML, AI, and statistical modeling techniques.",
-      members: 8900,
-      isHot: true,
-      icon: "📊",
+      author: "Marcus Johnson",
+      role: "Data Science Lead @ Analytics Pro",
+      avatar: "👨‍🔬",
+      timestamp: "5 hours ago",
+      content: "Just published our quarterly insights report on consumer behavior trends. Key finding: 73% shift towards sustainable products in Q4. Our ML models predicted this trend 6 months ago. Data never lies! 📊 Full report in comments.",
+      likes: 567,
+      comments: 89,
+      type: "insight",
+      tags: ["DataScience", "ML", "Analytics"],
       category: "tech"
     },
     {
       id: 3,
-      name: "UX Designers",
-      description: "A creative community focused on user experience and interface design. Share portfolios and get feedback from peers.",
-      members: 6700,
-      isHot: false,
-      icon: "🎨",
+      author: "Emily Rodriguez",
+      role: "UX Design Director @ CreativeFlow",
+      avatar: "🎨",
+      timestamp: "1 day ago",
+      content: "Thrilled to share that our redesign of the HealthTrack app won the UX Design Excellence Award! Our user research showed 92% improvement in task completion rates. Grateful to my amazing team who made this possible. 🏆",
+      likes: 891,
+      comments: 123,
+      type: "achievement",
+      tags: ["UXDesign", "Awards", "Healthcare"],
       category: "design"
     },
     {
       id: 4,
-      name: "Product Managers",
-      description: "Strategic thinkers driving product vision and roadmaps. Discuss frameworks, methodologies, and leadership strategies.",
-      members: 5400,
-      isHot: false,
-      icon: "📱",
+      author: "David Park",
+      role: "Product Manager @ InnovateLabs",
+      avatar: "📱",
+      timestamp: "3 hours ago",
+      content: "Launching our new collaborative workspace platform next month! We've integrated real-time sync, AI meeting notes, and seamless video conferencing. Beta signups are now open. Let's revolutionize remote work together! 💼",
+      likes: 445,
+      comments: 67,
+      type: "project",
+      tags: ["ProductLaunch", "RemoteWork", "SaaS"],
       category: "business"
     },
     {
       id: 5,
-      name: "Marketing Specialists",
-      description: "Digital marketers sharing campaigns, strategies, and growth hacks. From SEO to social media, we cover it all.",
-      members: 9200,
-      isHot: false,
-      icon: "📈",
+      author: "Lisa Thompson",
+      role: "Digital Marketing Strategist @ GrowthHub",
+      avatar: "📈",
+      timestamp: "6 hours ago",
+      content: "Case study alert! 📣 Our latest campaign achieved 340% ROI using a multi-channel approach. Key strategies: personalized email sequences, targeted social ads, and influencer partnerships. Happy to share our playbook with fellow marketers!",
+      likes: 723,
+      comments: 156,
+      type: "insight",
+      tags: ["Marketing", "ROI", "CaseStudy"],
       category: "business"
     },
     {
       id: 6,
-      name: "AI Researchers",
-      description: "Cutting-edge AI and machine learning research community. Discuss papers, models, and breakthrough innovations.",
-      members: 4800,
-      isHot: true,
-      icon: "🤖",
+      author: "Dr. Alex Kumar",
+      role: "AI Research Scientist @ DeepMind Labs",
+      avatar: "🤖",
+      timestamp: "4 hours ago",
+      content: "Our paper on transformer efficiency just got accepted to NeurIPS 2025! We achieved 60% faster inference with minimal accuracy loss. This could change how we deploy large language models. Preprint available now! 🧠",
+      likes: 1234,
+      comments: 234,
+      type: "achievement",
+      tags: ["AI", "Research", "NeurIPS"],
       category: "tech"
     },
     {
       id: 7,
-      name: "Cybersecurity Analysts",
-      description: "Security professionals protecting digital assets. Share threat intelligence, tools, and defense strategies.",
-      members: 7100,
-      isHot: true,
-      icon: "🔒",
+      author: "Rachel Foster",
+      role: "Cybersecurity Lead @ SecureNet",
+      avatar: "🔒",
+      timestamp: "8 hours ago",
+      content: "PSA: We detected a new phishing campaign targeting tech companies. Sharing our threat intelligence report to help the community stay protected. Remember: always verify sender authenticity and use MFA! Stay safe out there. 🛡️",
+      likes: 891,
+      comments: 145,
+      type: "insight",
+      tags: ["Cybersecurity", "ThreatIntel", "InfoSec"],
       category: "tech"
     },
     {
       id: 8,
-      name: "Business Analysts",
-      description: "Bridge the gap between business and technology. Discuss requirements gathering, process improvement, and analytics.",
-      members: 5900,
-      isHot: false,
-      icon: "💼",
+      author: "James Mitchell",
+      role: "Business Analyst @ ConsultCo",
+      avatar: "💼",
+      timestamp: "12 hours ago",
+      content: "Just wrapped up a 6-month digital transformation project for a Fortune 500 client. Results: 45% process efficiency gain, $2M cost savings, and happier employees. Proud of what we accomplished! 📊",
+      likes: 534,
+      comments: 78,
+      type: "project",
+      tags: ["BusinessAnalysis", "Transformation", "Consulting"],
       category: "business"
     },
     {
       id: 9,
-      name: "DevOps Engineers",
-      description: "Infrastructure and automation experts. Share CI/CD pipelines, cloud architectures, and deployment strategies.",
-      members: 6300,
-      isHot: true,
-      icon: "⚙️",
+      author: "Nina Patel",
+      role: "DevOps Engineer @ CloudScale",
+      avatar: "⚙️",
+      timestamp: "10 hours ago",
+      content: "Excited to open source our Kubernetes auto-scaling framework! We've been using it internally for 2 years and it's saved us thousands in cloud costs. GitHub link in comments. Contributions welcome! 🌐",
+      likes: 678,
+      comments: 92,
+      type: "project",
+      tags: ["DevOps", "Kubernetes", "OpenSource"],
       category: "tech"
     },
     {
       id: 10,
-      name: "Blockchain Developers",
-      description: "Pioneers of decentralized technology. Explore Web3, smart contracts, DeFi, and blockchain innovations.",
-      members: 3200,
-      isHot: true,
-      icon: "⛓️",
+      author: "Tom Richards",
+      role: "Blockchain Developer @ CryptoVentures",
+      avatar: "⛓️",
+      timestamp: "1 day ago",
+      content: "Our DeFi protocol just crossed $100M in total value locked! 🎉 Building in Web3 is challenging but rewarding. Massive thanks to our community for the trust. Next milestone: cross-chain compatibility. LFG! 🚀",
+      likes: 1567,
+      comments: 289,
+      type: "achievement",
+      tags: ["Blockchain", "DeFi", "Web3"],
       category: "tech"
     },
     {
       id: 11,
-      name: "Graphic Designers",
-      description: "Visual artists creating stunning designs. Share your work, get inspiration, and learn new design techniques.",
-      members: 8500,
-      isHot: false,
-      icon: "🖌️",
+      author: "Sophie Martinez",
+      role: "Graphic Designer @ PixelPerfect Studio",
+      avatar: "🖌️",
+      timestamp: "7 hours ago",
+      content: "Creating brand identity for sustainable fashion startups has been incredibly fulfilling. Just completed my 10th project this year! Every logo tells a story. Sharing some of my favorite concepts - what do you think? 🎨",
+      likes: 945,
+      comments: 112,
+      type: "project",
+      tags: ["GraphicDesign", "Branding", "Sustainability"],
       category: "design"
     },
     {
       id: 12,
-      name: "Healthcare Professionals",
-      description: "Medical professionals discussing patient care, innovations, and healthcare technology advancements.",
-      members: 11200,
-      isHot: false,
-      icon: "🏥",
+      author: "Dr. Jennifer Lee",
+      role: "Healthcare Innovation Lead @ MedTech Solutions",
+      avatar: "🏥",
+      timestamp: "9 hours ago",
+      content: "Proud to announce our telemedicine platform now serves 50,000+ patients! We're making healthcare more accessible, especially in rural areas. Our AI triage system reduces wait times by 60%. Healthcare + tech = better outcomes! 💙",
+      likes: 1123,
+      comments: 187,
+      type: "achievement",
+      tags: ["HealthTech", "Telemedicine", "Innovation"],
       category: "healthcare"
-    },
+    }
   ];
 
-  // Filter groups based on search and category
-  const filteredGroups = allGroups.filter(group => {
-    const matchesSearch = group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         group.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = filterCategory === "all" || group.category === filterCategory;
-    return matchesSearch && matchesCategory;
+  // Filter posts based on search and category
+  const filteredPosts = allPosts.filter(post => {
+    const matchesSearch = post.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = filterCategory === "all" || post.category === filterCategory;
+    const matchesView = viewMode === "all" || (viewMode === "saved" && savedPosts.has(post.id));
+    return matchesSearch && matchesCategory && matchesView;
   });
 
   useEffect(() => {
-    setGroups(filteredGroups);
-  }, [searchQuery, filterCategory]);
+    setPosts(filteredPosts);
+  }, [searchQuery, filterCategory, viewMode, savedPosts]);
 
   return (
     <div>
+      {/* Notification Toast */}
+      {notification && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: '#667eea',
+          color: 'white',
+          padding: '16px 24px',
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 2000,
+          animation: 'slideIn 0.3s ease'
+        }}>
+          {notification}
+        </div>
+      )}
+
       <style>{`
         * {
           margin: 0;
@@ -252,10 +354,9 @@ export default function NetworkPage() {
         
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-          background: #f5f7fa;
+          background: #f3f2ef;
         }
 
-        /* Top Navigation Bar */
         .top-nav {
           background: rgba(255, 255, 255, 0.98);
           backdrop-filter: blur(10px);
@@ -316,8 +417,13 @@ export default function NetworkPage() {
           transform: translateY(-2px);
         }
 
-        .auth-button {
+        .nav-links button.active {
           background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+        }
+
+        .auth-button {
+          background: linear-gradient(135deg, #ef4444, #dc2626);
           color: white;
           border: none;
           padding: 0.6rem 1.5rem;
@@ -330,14 +436,9 @@ export default function NetworkPage() {
 
         .auth-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
 
-        .auth-button.logout {
-          background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        /* Hero Section */
         .hero {
           position: relative;
           background: linear-gradient(135deg, #667eea, #764ba2);
@@ -379,13 +480,15 @@ export default function NetworkPage() {
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        /* Search and Filter Section */
         .search-filter-section {
-          max-width: 1200px;
+          max-width: 752px;
           margin: -2rem auto 2rem;
           padding: 0 2rem;
           position: relative;
           z-index: 10;
+          width: 100%;
+          display: flex;
+          justify-content: center;
         }
 
         .search-filter-card {
@@ -396,6 +499,8 @@ export default function NetworkPage() {
           display: flex;
           gap: 1rem;
           flex-wrap: wrap;
+          width: 100%;
+          max-width: 752px;
         }
 
         .search-input {
@@ -442,11 +547,41 @@ export default function NetworkPage() {
           border-color: transparent;
         }
 
-        /* Main Content */
+        .view-toggle {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .toggle-btn {
+          padding: 0.7rem 1.3rem;
+          border: 2px solid #e5e7eb;
+          background: white;
+          border-radius: 10px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .toggle-btn:hover {
+          border-color: #667eea;
+        }
+
+        .toggle-btn.active {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          border-color: transparent;
+        }
+
         .main-content {
-          max-width: 1200px;
-          margin: 4rem auto;
-          padding: 0 2rem;
+          max-width: 752px;
+          margin: 2rem auto;
+          padding: 0 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
         }
 
         .section-header {
@@ -454,6 +589,7 @@ export default function NetworkPage() {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 2rem;
+          width: 100%;
         }
 
         .section-header h2 {
@@ -465,133 +601,263 @@ export default function NetworkPage() {
           color: #6b7280;
           font-size: 1rem;
           font-weight: 500;
+          width: 100%;
+          text-align: left;
         }
 
-        .groups-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 2rem;
+        .posts-feed {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
           margin-top: 2rem;
-        }
-
-        .group-card {
-          background: white;
-          border-radius: 16px;
-          padding: 1.75rem;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
-          border: 2px solid transparent;
-        }
-
-        .group-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-          border-color: #667eea;
-        }
-
-        .group-card.joined {
-          border-color: #48bb78;
-          background: linear-gradient(to bottom, #f0fdf4, white);
-        }
-
-        .group-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 1rem;
-        }
-
-        .group-title {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .group-icon {
-          font-size: 2.5rem;
-        }
-
-        .group-title h3 {
-          font-size: 1.4rem;
-          color: #1f2937;
-          margin: 0;
-          font-weight: 700;
-        }
-
-        .hot-badge {
-          background: linear-gradient(135deg, #ff6b6b, #ff8787);
-          color: white;
-          padding: 0.4rem 0.9rem;
-          border-radius: 20px;
-          font-size: 0.8rem;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-          box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-          animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.05);
-          }
-        }
-
-        .group-description {
-          color: #6b7280;
-          font-size: 0.95rem;
-          line-height: 1.7;
-          margin-bottom: 1.25rem;
-        }
-
-        .group-meta {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.25rem;
-          padding-top: 1rem;
-          border-top: 2px solid #f3f4f6;
-        }
-
-        .members-count {
-          color: #9ca3af;
-          font-size: 0.95rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-weight: 600;
-        }
-
-        .join-button {
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: white;
-          border: none;
-          padding: 0.8rem 1.8rem;
-          border-radius: 10px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-size: 0.95rem;
           width: 100%;
         }
 
-        .join-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        .post-card {
+          background: white;
+          border-radius: 8px;
+          padding: 0;
+          border: 1px solid #e0e0e0;
+          box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.08);
+          transition: box-shadow 0.2s ease;
+          margin-bottom: 8px;
         }
 
-        .join-button.joined {
-          background: linear-gradient(135deg, #48bb78, #38a169);
+        .post-card:hover {
+          box-shadow: 0 0 0 1px rgba(0,0,0,.15), 0 2px 8px rgba(0,0,0,.2);
         }
 
-        .join-button.joined:hover {
-          background: linear-gradient(135deg, #38a169, #2f855a);
+        .post-header {
+          display: flex;
+          padding: 12px 16px 8px;
+          align-items: flex-start;
+          position: relative;
+        }
+
+        .author-avatar {
+          font-size: 2rem;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #e9ecef;
+          border-radius: 50%;
+          flex-shrink: 0;
+          margin-right: 8px;
+          border: 2px solid #fff;
+          box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+        }
+
+        .author-info {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .author-name-row {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+          margin-bottom: 2px;
+        }
+
+        .author-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: rgba(0,0,0,.9);
+          line-height: 1.5;
+          text-decoration: none;
+        }
+
+        .author-name:hover {
+          color: #0a66c2;
+          text-decoration: underline;
+        }
+
+        .author-role {
+          font-size: 14px;
+          color: rgba(0,0,0,.6);
+          line-height: 1.5;
+          font-weight: 400;
+        }
+
+        .post-timestamp-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 2px;
+        }
+
+        .post-timestamp {
+          font-size: 12px;
+          color: rgba(0,0,0,.6);
+          line-height: 1.33;
+        }
+
+        .post-type-badge {
+          padding: 2px 8px;
+          border-radius: 16px;
+          font-size: 11px;
+          font-weight: 600;
+          display: inline-block;
+          white-space: nowrap;
+          line-height: 1.33;
+        }
+
+        .post-type-badge.project {
+          background: #057642;
+          color: white;
+        }
+
+        .post-type-badge.achievement {
+          background: #e67e22;
+          color: white;
+        }
+
+        .post-type-badge.insight {
+          background: #0a66c2;
+          color: white;
+        }
+
+        .post-menu-btn {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+          border-radius: 50%;
+          color: rgba(0,0,0,.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          transition: background-color 0.2s ease;
+          width: 32px;
+          height: 32px;
+        }
+
+        .post-menu-btn:hover {
+          background-color: rgba(0,0,0,.05);
+          color: rgba(0,0,0,.9);
+        }
+
+        .post-content {
+          color: rgba(0,0,0,.9);
+          font-size: 14px;
+          line-height: 1.5;
+          margin: 8px 16px;
+          padding: 0;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+
+        .post-tags {
+          display: flex;
+          gap: 4px;
+          flex-wrap: wrap;
+          margin: 8px 16px;
+          padding: 0;
+        }
+
+        .tag {
+          background: #f3f2ef;
+          color: #0a66c2;
+          padding: 4px 12px;
+          border-radius: 16px;
+          font-size: 12px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-block;
+          transition: background-color 0.2s ease;
+        }
+
+        .tag:hover {
+          background: #e7f3ff;
+          text-decoration: underline;
+        }
+
+        .post-stats {
+          padding: 8px 16px;
+          border-top: 1px solid #e0e0e0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 12px;
+          color: rgba(0,0,0,.6);
+          min-height: 32px;
+        }
+
+        .post-stats-left {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .post-stats-right {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .post-actions {
+          display: flex;
+          padding: 0;
+          border-top: 1px solid #e0e0e0;
+        }
+
+        .action-btn {
+          flex: 1;
+          background: none;
+          border: none;
+          padding: 8px 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          color: rgba(0,0,0,.6);
+          border-radius: 0;
+          position: relative;
+        }
+
+        .action-btn:first-child {
+          border-radius: 0 0 0 8px;
+        }
+
+        .action-btn:last-child {
+          border-radius: 0 0 8px 0;
+        }
+
+        .action-btn:hover {
+          background-color: rgba(0,0,0,.05);
+          color: rgba(0,0,0,.9);
+        }
+
+        .action-btn.liked {
+          color: #0a66c2;
+        }
+
+        .action-btn.liked:hover {
+          background-color: #e7f3ff;
+          color: #0a66c2;
+        }
+
+        .action-btn.saved {
+          color: #0a66c2;
+        }
+
+        .action-btn.saved:hover {
+          background-color: #e7f3ff;
+          color: #0a66c2;
+        }
+
+        .action-btn-icon {
+          font-size: 20px;
         }
 
         .empty-state {
@@ -611,7 +877,6 @@ export default function NetworkPage() {
           margin-bottom: 0.5rem;
         }
 
-        /* Footer */
         footer {
           background: #1f2937;
           color: white;
@@ -624,7 +889,6 @@ export default function NetworkPage() {
           opacity: 0.8;
         }
 
-        /* Fade-in Animation */
         .fade-in {
           opacity: 0;
           transform: translateY(30px);
@@ -636,7 +900,11 @@ export default function NetworkPage() {
           transform: translateY(0);
         }
 
-        /* Responsive */
+        @keyframes slideIn {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+
         @media (max-width: 768px) {
           .hero h1 {
             font-size: 2rem;
@@ -665,54 +933,90 @@ export default function NetworkPage() {
             justify-content: center;
           }
 
-          .groups-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-
           .main-content {
             padding: 0 1rem;
+          }
+
+          .post-header {
+            padding: 10px 12px 6px;
+          }
+
+          .author-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            margin-right: 8px;
+          }
+
+          .post-content {
+            margin: 8px 12px;
+            font-size: 14px;
+          }
+
+          .post-tags {
+            margin: 8px 12px;
+          }
+
+          .post-stats {
+            padding: 6px 12px;
+            font-size: 12px;
+          }
+
+          .post-actions {
+            flex-wrap: wrap;
+          }
+
+          .action-btn {
+            flex: 1 1 calc(50% - 1px);
+            min-width: 0;
+            padding: 6px 8px;
+            font-size: 12px;
+          }
+
+          .action-btn-icon {
+            font-size: 18px;
+          }
+
+          .action-btn:nth-child(odd) {
+            border-right: 1px solid #e0e0e0;
           }
         }
       `}</style>
 
-      {/* Top Navigation */}
       <nav className="top-nav">
         <div className="nav-container">
           <div className="nav-brand">🚀 Wayvian</div>
           <ul className="nav-links">
-            <li><button onClick={() => handleNavigation("/dashboard")}>Dashboard</button></li>
-            <li><button onClick={() => handleNavigation("/net")}>Network</button></li>
-            <li><button onClick={() => handleNavigation("/careerchat")}>My Plan</button></li>
-            <li><button onClick={() => handleNavigation("/settings")}>Settings</button></li>
+            <li><NavButton active={false} onClick={() => navigate("/dashboard")}>Dashboard</NavButton></li>
+            <li><NavButton active={true} onClick={() => showNotification("You're already on the Network page!")}>Network</NavButton></li>
+            <li><NavButton active={false} onClick={() => navigate("/careerchat")}>My Plan</NavButton></li>
+            <li><NavButton active={false} onClick={() => navigate("/settings")}>Settings</NavButton></li>
             <li>
               <button 
                 onClick={toggleAuth}
-                className={`auth-button ${loggedIn ? 'logout' : ''}`}
+                className="auth-button"
               >
-                {loggedIn ? '👋 Logout' : '🔐 Login'}
+                👋 Logout
               </button>
             </li>
           </ul>
         </div>
       </nav>
 
-      {/* Hero Section with Waves */}
       <section className="hero">
         <canvas ref={canvasRef} className="hero-canvas"></canvas>
         <div className="hero-content">
-          <h1>Discover Career Communities</h1>
-          <p>Connect, learn, and grow with professionals worldwide</p>
+          <h1>Professional Network</h1>
+          <p>Stay connected with industry leaders and trending projects</p>
         </div>
       </section>
 
-      {/* Search and Filter Section */}
       <div className="search-filter-section">
         <div className="search-filter-card fade-in">
           <input
             type="text"
             className="search-input"
-            placeholder="🔍 Search groups..."
+            placeholder="🔍 Search posts, people, or tags..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -751,63 +1055,125 @@ export default function NetworkPage() {
         </div>
       </div>
 
-      {/* Main Content */}
       <main className="main-content fade-in">
         <div className="section-header">
-          <h2>🌟 Career Groups</h2>
-          <span className="results-count">
-            {groups.length} {groups.length === 1 ? 'group' : 'groups'} found
-          </span>
+          <h2>📰 Network Feed</h2>
+          <div className="view-toggle">
+            <button 
+              className={`toggle-btn ${viewMode === 'all' ? 'active' : ''}`}
+              onClick={() => setViewMode('all')}
+            >
+              All Posts
+            </button>
+            <button 
+              className={`toggle-btn ${viewMode === 'saved' ? 'active' : ''}`}
+              onClick={() => setViewMode('saved')}
+            >
+              🔖 Saved ({savedPosts.size})
+            </button>
+          </div>
         </div>
 
-        {groups.length > 0 ? (
-          <div className="groups-grid">
-            {groups.map((group) => (
-              <div 
-                key={group.id} 
-                className={`group-card ${joinedGroups.has(group.id) ? 'joined' : ''}`}
-              >
-                <div className="group-header">
-                  <div className="group-title">
-                    <span className="group-icon">{group.icon}</span>
-                    <h3>{group.name}</h3>
-                  </div>
-                  {group.isHot && (
-                    <div className="hot-badge">
-                      🔥 Hot
+        <div className="results-count" style={{marginBottom: '1.5rem'}}>
+          {posts.length} {posts.length === 1 ? 'post' : 'posts'} found
+        </div>
+
+        {posts.length > 0 ? (
+          <div className="posts-feed">
+            {posts.map((post) => (
+              <div key={post.id} className="post-card">
+                <div className="post-header">
+                  <div className="author-avatar">{post.avatar}</div>
+                  <div className="author-info">
+                    <div className="author-name-row">
+                      <div className="author-name">{post.author}</div>
+                      <span className={`post-type-badge ${post.type}`}>
+                        {post.type === 'project' && '🚀'}
+                        {post.type === 'achievement' && '🏆'}
+                        {post.type === 'insight' && '💡'}
+                      </span>
                     </div>
-                  )}
+                    <div className="author-role">{post.role}</div>
+                    <div className="post-timestamp-row">
+                      <span className="post-timestamp">{post.timestamp}</span>
+                    </div>
+                  </div>
+                  <button className="post-menu-btn" title="More actions">
+                    ⋯
+                  </button>
                 </div>
                 
-                <p className="group-description">
-                  {group.description}
-                </p>
+                <div className="post-content">{post.content}</div>
                 
-                <div className="group-meta">
-                  <span className="members-count">
-                    👥 {group.members.toLocaleString()}
-                  </span>
+                {post.tags.length > 0 && (
+                  <div className="post-tags">
+                    {post.tags.map((tag, index) => (
+                      <span key={index} className="tag">#{tag}</span>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="post-stats">
+                  <div className="post-stats-left">
+                    {post.likes > 0 && (
+                      <span>
+                        {likedPosts.has(post.id) ? '👍' : '👍'} {post.likes}
+                        {post.comments > 0 && ` • ${post.comments} comments`}
+                      </span>
+                    )}
+                    {post.likes === 0 && post.comments === 0 && (
+                      <span>Be the first to react</span>
+                    )}
+                  </div>
+                  <div className="post-stats-right">
+                    {savedPosts.has(post.id) && <span>🔖</span>}
+                  </div>
                 </div>
                 
-                <button 
-                  className={`join-button ${joinedGroups.has(group.id) ? 'joined' : ''}`}
-                  onClick={() => toggleJoinGroup(group.id)}
-                >
-                  {joinedGroups.has(group.id) ? '✓ Joined' : 'Join Group'}
-                </button>
+                <div className="post-actions">
+                  <button 
+                    className={`action-btn ${likedPosts.has(post.id) ? 'liked' : ''}`}
+                    onClick={() => toggleLikePost(post.id)}
+                  >
+                    <span className="action-btn-icon">👍</span>
+                    <span>{likedPosts.has(post.id) ? 'Liked' : 'Like'}</span>
+                  </button>
+                  <button 
+                    className="action-btn"
+                    onClick={() => {}}
+                  >
+                    <span className="action-btn-icon">💬</span>
+                    <span>Comment</span>
+                  </button>
+                  <button 
+                    className="action-btn"
+                    onClick={() => {}}
+                  >
+                    <span className="action-btn-icon">🔄</span>
+                    <span>Repost</span>
+                  </button>
+                  <button 
+                    className={`action-btn ${savedPosts.has(post.id) ? 'saved' : ''}`}
+                    onClick={() => toggleSavePost(post.id)}
+                  >
+                    <span className="action-btn-icon">
+                      {savedPosts.has(post.id) ? '🔖' : '📤'}
+                    </span>
+                    <span>{savedPosts.has(post.id) ? 'Saved' : 'Send'}</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         ) : (
           <div className="empty-state">
             <div className="empty-state-icon">🔍</div>
-            <h3>No groups found</h3>
+            <h3>No posts found</h3>
             <p>Try adjusting your search or filters</p>
           </div>
         )}
       </main>
 
-      {/* Footer */}
       <footer>
         <p>© 2025 Wayvian — Empowering Your Career Journey</p>
       </footer>

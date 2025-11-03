@@ -638,7 +638,7 @@ export default function CareerChat() {
               <NavButton onClick={() => navigate("/dashboard")}>Dashboard</NavButton>
               <NavButton onClick={() => navigate("/net")}>Network</NavButton>
               <NavButton onClick={() => showNotification("Already on My Plan")}>My Plan</NavButton>
-              <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
+              <NavButton onClick={() => navigate("/settings")}>Settings</NavButton>
               <button 
                 onClick={() => {
                   setLoggedIn(!loggedIn);

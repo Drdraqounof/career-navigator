@@ -533,7 +533,7 @@ export default function Dashboard() {
             <NavButton onClick={() => showNotification("Already on Dashboard")}>Dashboard</NavButton>
             <NavButton onClick={() => navigate("/net")}>Network</NavButton>
             <NavButton onClick={() => navigate("/careerchat")}>My Plan</NavButton>
-            <NavButton onClick={() => showNotification("Opening Settings...")}>Settings</NavButton>
+            <NavButton onClick={() => navigate("/settings")}>Settings</NavButton>
             <button 
               onClick={() => {
                 setLoggedIn(!loggedIn);
