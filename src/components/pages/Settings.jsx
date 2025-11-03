@@ -308,7 +308,7 @@ export default function Settings() {
             }}>
             🚀 Wayvian
           </div>
-          
+          {/* Navigation Buttons */}
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <NavButton onClick={() => navigate("/dashboard")}>Dashboard</NavButton>
             <NavButton onClick={() => navigate("/net")}>Network</NavButton>
