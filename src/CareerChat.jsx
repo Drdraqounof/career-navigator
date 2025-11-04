@@ -104,7 +104,7 @@ export default function CareerChat() {
   const chatRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
-
+  
   // Starter prompts for users
   const starterPrompts = [
     "🎯 What career paths match my interests?",
