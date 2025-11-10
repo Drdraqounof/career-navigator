@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {findAI} from "./FindAI";
+import PaywallPopup from "./components/PaywallPopup";
 // Mock AI function for demo
 
 
@@ -87,26 +88,63 @@ function NavButton({ onClick, children }) {
   );
 }
 
-export default function CareerChat() {
+export default function CareerChat({ userType, initialPrompt }) {
+  // Get user's name from localStorage (set in Login.jsx)
+  let userName = "";
+  try {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData && userData.firstName) {
+      userName = userData.firstName + (userData.lastName ? ` ${userData.lastName}` : "");
+    }
+  } catch (e) {}
   const navigate = useNavigate();
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      sender: "ai",
-      text: "👋 Welcome to your Career Navigator! I'm here to help you plan your career path, discover opportunities, and develop the skills you need. How can I assist you today?"
-    }
-  ]);
+  // Load messages from localStorage if available
+  const LOCAL_STORAGE_KEY = "careerChatMessages";
+  const getInitialMessages = () => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {}
+    return [
+      {
+        sender: "ai",
+        text:
+          userName
+            ? `👋 Welcome, ${userName}! I'm your Career Navigator. I'm here to help you plan your career path, discover opportunities, and develop the skills you need. How can I assist you today?`
+            : "👋 Welcome to your Career Navigator! I'm here to help you plan your career path, discover opportunities, and develop the skills you need. How can I assist you today?"
+      }
+    ];
+  };
+  const [messages, setMessages] = useState(getInitialMessages());
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
+    } catch (e) {}
+  }, [messages]);
   const [loading, setLoading] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeText, setResumeText] = useState("");
   const [notification, setNotification] = useState(null);
   const [loggedIn, setLoggedIn] = useState(true);
+  const [showPaywall, setShowPaywall] = useState(false);
   const chatRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
   
-  // Starter prompts for users
-  const starterPrompts = [
+  // Free prompts (Recent Graduate focused)
+  const freePrompts = [
+    "📝 How do I write a strong resume?",
+    "🎓 What entry-level jobs match my degree?",
+    "💼 How do I prepare for my first job interview?",
+    "📊 What are good starter positions in my field?"
+  ];
+
+  // Premium prompts
+  const premiumPrompts = [
     "🎯 What career paths match my interests?",
     "📚 What skills should I develop for tech careers?",
     "💼 How do I transition into a new industry?",
@@ -115,9 +153,26 @@ export default function CareerChat() {
     "🚀 How can I advance in my current career?"
   ];
 
+  const starterPrompts = userType === "graduate" ? freePrompts : premiumPrompts;
+
   const showNotification = (message) => {
     setNotification(message);
     setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleRefresh = () => {
+    const initialMessages = [
+      {
+        sender: "ai",
+        text:
+          userName
+            ? `👋 Welcome, ${userName}! I'm your Career Navigator. I'm here to help you plan your career path, discover opportunities, and develop the skills you need. How can I assist you today?`
+            : "👋 Welcome to your Career Navigator! I'm here to help you plan your career path, discover opportunities, and develop the skills you need. How can I assist you today?"
+      }
+    ];
+    setMessages(initialMessages);
+    setInput("");
+    showNotification("Chat history has been cleared!");
   };
 
   // Canvas Wave Animation
@@ -233,6 +288,10 @@ export default function CareerChat() {
     if (resumeText) {
       messageToSend = `[Resume Context: ${resumeText.substring(0, 500)}...]\n\nUser Question: ${input}`;
     }
+    // Add user name context for AI
+    if (userName) {
+      messageToSend = `User name: ${userName}\n` + messageToSend;
+    }
 
     const userMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
@@ -255,9 +314,22 @@ export default function CareerChat() {
     }
   }
 
+  // If an initial prompt is provided (from Dashboard quick buttons), send it once
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim()) {
+      // populate input and send
+      setInput(initialPrompt);
+      setTimeout(() => handleSend(), 120);
+    }
+  }, [initialPrompt]);
+
   const handleStarterPrompt = (prompt) => {
-    setInput(prompt.substring(2));
-    setTimeout(() => handleSend(), 100);
+    if (userType === "graduate" || premiumPrompts.indexOf(prompt) === -1) {
+      setInput(prompt.substring(2));
+      setTimeout(() => handleSend(), 100);
+    } else {
+      setShowPaywall(true);
+    }
   };
 
   return (
@@ -333,6 +405,29 @@ export default function CareerChat() {
           font-size: 1.25rem;
           font-weight: 600;
           color: #4a5568;
+        }
+
+        .chat-controls {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .refresh-btn {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 0.9rem;
+          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        .refresh-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
         }
 
         .resume-upload-btn {
@@ -586,6 +681,11 @@ export default function CareerChat() {
       `}</style>
 
       <div className="page-container">
+        {/* Paywall Popup */}
+        {showPaywall && (
+          <PaywallPopup onClose={() => setShowPaywall(false)} />
+        )}
+
         {/* Notification Toast */}
         {notification && (
           <div style={{
@@ -685,20 +785,28 @@ export default function CareerChat() {
         {/* Chat Container */}
         <div className="chat-container">
           <div className="chat-header">
-            <h2 className="chat-title">Let's Plan Your Career</h2>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleResumeUpload}
-              accept=".txt,.pdf,.doc,.docx"
-              style={{ display: 'none' }}
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="resume-upload-btn"
-            >
-              📄 Upload Resume
-            </button>
+            <h2 className="chat-title">Career Navigator Chat</h2>
+            <div className="chat-controls">
+              <button
+                className="refresh-btn"
+                onClick={handleRefresh}
+              >
+                🔄 New Chat
+              </button>
+              <button
+                className="resume-upload-btn"
+                onClick={() => fileInputRef.current.click()}
+              >
+                Upload Resume
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleResumeUpload}
+                accept=".pdf,.doc,.docx"
+              />
+            </div>
           </div>
 
           {resumeFile && (

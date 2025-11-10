@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import CareerChat from "../../CareerChat";
+import FeatureChat from "../FeatureChat";
 // User Type Configurations
-const userTypeConfigs = {
+export const userTypeConfigs = {
   student: {
     prompts: [
       "What subjects am I strongest in?",
@@ -160,7 +162,13 @@ const userTypeConfigs = {
   }
 };
 
-// Smart Response Generator
+export const dashboardUserTypes = [
+  { key: "student", label: "High School Student", icon: "🎓", description: "Planning your college path and exploring future career options", isPremium: false },
+  { key: "graduate", label: "Recent Graduate", icon: "👨‍🎓", description: "Ready to enter the job market with your new degree", isPremium: false },
+  { key: "changer", label: "Career Changer", icon: "🔄", description: "Looking to transition to a new field or industry", isPremium: true },
+  { key: "professional", label: "Working Professional", icon: "💼", description: "Advancing your career and developing new skills", isPremium: true }
+];
+
 function getSmartResponse(question, userType) {
   const responses = {
     student: {
@@ -281,139 +289,7 @@ function DashboardCard({ title, description, progressText, careersSaved, skillsI
   );
 }
 
-// CareerChat Component
-function CareerChat({ userType }) {
-  const config = userTypeConfigs[userType];
-  const [messages, setMessages] = useState([
-    { role: 'assistant', content: config.welcomeMessage }
-  ]);
-  const [input, setInput] = useState('');
-
-  const handleSend = (messageText) => {
-    const text = messageText || input;
-    if (!text.trim()) return;
-    
-    setMessages(prev => [...prev, 
-      { role: 'user', content: text },
-      { role: 'assistant', content: getSmartResponse(text, userType) }
-    ]);
-    setInput('');
-  };
-
-  const handlePromptClick = (prompt) => {
-    handleSend(prompt);
-  };
-
-  return (
-    <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <h2 style={{ marginBottom: '8px', fontSize: '1.5rem', fontWeight: '600' }}>💬 Career Planning Assistant</h2>
-      <p style={{ color: '#718096', marginBottom: '16px' }}>Ask me anything about your career path, skills development, or job market insights.</p>
-      
-      {messages.length <= 1 && (
-        <div style={{ marginBottom: '16px' }}>
-          <p style={{ fontSize: '0.9rem', color: '#4a5568', marginBottom: '10px', fontWeight: '600' }}>Quick questions:</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {config.prompts.map((prompt, idx) => (
-              <button
-                key={idx}
-                onClick={() => handlePromptClick(prompt)}
-                style={{
-                  padding: '8px 14px',
-                  background: '#f7fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  color: '#4a5568'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#667eea';
-                  e.currentTarget.style.color = 'white';
-                  e.currentTarget.style.borderColor = '#667eea';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#f7fafc';
-                  e.currentTarget.style.color = '#4a5568';
-                  e.currentTarget.style.borderColor = '#e2e8f0';
-                }}
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      <div style={{ 
-        flex: 1,
-        background: '#f7fafc', 
-        borderRadius: '12px', 
-        padding: '20px', 
-        marginBottom: '16px',
-        overflowY: 'auto',
-        minHeight: '250px',
-        maxHeight: '400px'
-      }}>
-        {messages.map((msg, idx) => (
-          <div key={idx} style={{
-            marginBottom: '16px',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            background: msg.role === 'user' ? '#667eea' : 'white',
-            color: msg.role === 'user' ? 'white' : '#2d3748',
-            maxWidth: '85%',
-            marginLeft: msg.role === 'user' ? 'auto' : '0',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            lineHeight: '1.5'
-          }}>
-            {msg.content}
-          </div>
-        ))}
-      </div>
-      
-      <div style={{ display: 'flex', gap: '12px' }}>
-        <input 
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Type your question here..."
-          style={{
-            flex: 1,
-            padding: '14px',
-            borderRadius: '10px',
-            border: '2px solid #e2e8f0',
-            fontSize: '1rem',
-            outline: 'none',
-            transition: 'border-color 0.2s'
-          }}
-          onFocus={(e) => e.target.style.borderColor = '#667eea'}
-          onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-        />
-        <button
-          onClick={() => handleSend()}
-          style={{
-            padding: '14px 28px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '1rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'opacity 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-        >
-          Send
-        </button>
-      </div>
-    </div>
-  );
-}
-
+// Using external CareerChat component (from src/CareerChat.jsx)
 // NavButton Component
 function NavButton({ onClick, children }) {
   return (
@@ -451,6 +327,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState("student");
   const [showCareerChat, setShowCareerChat] = useState(false);
+  const [showFeatureChat, setShowFeatureChat] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState(null);
+  const [careerInitialPrompt, setCareerInitialPrompt] = useState("");
   const [notification, setNotification] = useState(null);
   const [loggedIn, setLoggedIn] = useState(true);
 
@@ -474,12 +353,7 @@ export default function Dashboard() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const userTypes = [
-    { key: "student", label: "High School Student", icon: "🎓", description: "Planning your college path and exploring future career options" },
-    { key: "graduate", label: "Recent Graduate", icon: "👨‍🎓", description: "Ready to enter the job market with your new degree" },
-    { key: "changer", label: "Career Changer", icon: "🔄", description: "Looking to transition to a new field or industry" },
-    { key: "professional", label: "Working Professional", icon: "💼", description: "Advancing your career and developing new skills" },
-  ];
+  const userTypes = dashboardUserTypes;
 
   return (
     <div style={{ minHeight: '100vh', background: '#f7fafc' }}>
@@ -646,8 +520,36 @@ export default function Dashboard() {
                 }
               }}
             >
-              <div style={{ fontSize: '3rem', marginBottom: '12px' }}>{type.icon}</div>
-              <h3 style={{ fontSize: '1.15rem', marginBottom: '10px', fontWeight: '600', color: '#2d3748' }}>
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '12px' }}>{type.icon}</div>
+                {type.isPremium && type.key !== "student" && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-15px',
+                    background: 'linear-gradient(135deg, #f6e05e 0%, #ecc94b 100%)',
+                    color: '#744210',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '0.7rem',
+                    fontWeight: '600',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    transform: 'rotate(12deg)'
+                  }}>
+                    ✨ PREMIUM
+                  </div>
+                )}
+              </div>
+              <h3 style={{ 
+                fontSize: '1.15rem', 
+                marginBottom: '10px', 
+                fontWeight: '600', 
+                color: '#2d3748',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}>
                 {type.label}
               </h3>
               <p style={{ fontSize: '0.9rem', color: '#718096', margin: 0, lineHeight: '1.5' }}>
@@ -656,6 +558,8 @@ export default function Dashboard() {
             </button>
           ))}
         </section>
+
+        {/* ...existing code... (AI Chat section removed as requested) */}
 
         <section style={{
           display: 'grid',
@@ -668,7 +572,8 @@ export default function Dashboard() {
               {...feature}
               onAction={() => {
                 showNotification(`Opening ${feature.title}...`);
-                setTimeout(() => setShowCareerChat(true), 500);
+                setSelectedFeature(feature);
+                setShowFeatureChat(true);
               }}
             />
           ))}
@@ -737,7 +642,77 @@ export default function Dashboard() {
             >
               ✖
             </button>
-            <CareerChat userType={selectedUserType} />
+            <CareerChat userType={selectedUserType} initialPrompt={careerInitialPrompt} />
+          </div>
+        </div>
+      )}
+
+      {showFeatureChat && selectedFeature && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            animation: 'fadeIn 0.2s ease'
+          }}
+          onClick={() => setShowFeatureChat(false)}
+        >
+          <div 
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              maxWidth: '600px',
+              width: '90%',
+              maxHeight: '85vh',
+              overflow: 'hidden',
+              position: 'relative',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+              animation: 'slideUp 0.3s ease'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setShowFeatureChat(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: '#f7fafc',
+                border: 'none',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                fontSize: '1.3rem',
+                cursor: 'pointer',
+                color: '#718096',
+                zIndex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#e2e8f0';
+                e.currentTarget.style.color = '#2d3748';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#f7fafc';
+                e.currentTarget.style.color = '#718096';
+              }}
+            >
+              ✖
+            </button>
+            <FeatureChat 
+              feature={selectedFeature} 
+              onClose={() => setShowFeatureChat(false)} 
+            />
           </div>
         </div>
       )}
