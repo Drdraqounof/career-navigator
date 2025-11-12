@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {findAI} from "./FindAI";
-import PaywallPopup from "./components/PaywallPopup";
 // Mock AI function for demo
 
 
@@ -130,7 +129,6 @@ export default function CareerChat({ userType, initialPrompt }) {
   const [resumeText, setResumeText] = useState("");
   const [notification, setNotification] = useState(null);
   const [loggedIn, setLoggedIn] = useState(true);
-  const [showPaywall, setShowPaywall] = useState(false);
   const chatRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -681,10 +679,7 @@ export default function CareerChat({ userType, initialPrompt }) {
       `}</style>
 
       <div className="page-container">
-        {/* Paywall Popup */}
-        {showPaywall && (
-          <PaywallPopup onClose={() => setShowPaywall(false)} />
-        )}
+     
 
         {/* Notification Toast */}
         {notification && (

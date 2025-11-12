@@ -41,6 +41,50 @@ const featurePrompts = {
       - Available Time: ${data.time} hours/week
       - Goals: ${data.goals}
       Please suggest activities and create a balanced schedule.`
+  },
+  "Job Market Navigator": {
+    fields: [
+      { id: "degree", label: "What degree did you recently complete?", type: "text", placeholder: "e.g., B.S. in Marketing" },
+      { id: "skills", label: "List your core technical and soft skills", type: "text", placeholder: "e.g., SQL, Data Analysis, Communication" },
+      { id: "industries", label: "Which industries interest you most?", type: "text", placeholder: "e.g., Tech, Healthcare, Finance" },
+      { id: "locations", label: "Preferred job locations?", type: "text", placeholder: "e.g., Remote, New York, Austin" },
+      { id: "salary", label: "What salary range are you targeting?", type: "text", placeholder: "e.g., $60,000 - $75,000" }
+    ],
+    generatePrompt: (data) => `Help me find entry-level job opportunities:
+      - Degree: ${data.degree}
+      - Core Skills: ${data.skills}
+      - Target Industries: ${data.industries}
+      - Preferred Locations: ${data.locations}
+      - Salary Range: ${data.salary}
+      Provide specific roles, explain why they fit, and suggest next steps to apply.`
+  },
+  "Resume & Portfolio Builder": {
+    fields: [
+      { id: "summary", label: "Describe your professional summary", type: "text", placeholder: "e.g., Detail-oriented finance graduate with analytics experience" },
+      { id: "experience", label: "Highlight key experiences or internships", type: "text", placeholder: "e.g., Marketing intern at XYZ, research assistant" },
+      { id: "skills", label: "List key skills to spotlight", type: "text", placeholder: "e.g., UX Design, Figma, Collaboration" },
+      { id: "projects", label: "Notable projects or portfolio links?", type: "text", placeholder: "e.g., Portfolio at example.com" }
+    ],
+    generatePrompt: (data) => `Help me refine my resume and portfolio:
+      - Professional Summary: ${data.summary}
+      - Key Experiences: ${data.experience}
+      - Skills to Highlight: ${data.skills}
+      - Projects/Portfolio: ${data.projects}
+      Provide resume bullet suggestions and portfolio improvements tailored to entry-level roles.`
+  },
+  "Interview Prep Coach": {
+    fields: [
+      { id: "role", label: "What role are you interviewing for?", type: "text", placeholder: "e.g., Junior Product Manager" },
+      { id: "company", label: "Company or company type?", type: "text", placeholder: "e.g., SaaS startup, Fortune 500" },
+      { id: "stage", label: "Which interview stage are you preparing for?", type: "text", placeholder: "e.g., Behavioral, Technical, Final Round" },
+      { id: "challenges", label: "Areas you feel least confident about?", type: "text", placeholder: "e.g., Behavioral stories, case questions" }
+    ],
+    generatePrompt: (data) => `Help me prepare for an interview:
+      - Target Role: ${data.role}
+      - Company Context: ${data.company}
+      - Interview Stage: ${data.stage}
+      - Confidence Gaps: ${data.challenges}
+      Provide tailored practice questions, recommended responses, and tips for improvement.`
   }
 };
 

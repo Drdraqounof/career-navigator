@@ -571,6 +571,11 @@ export default function Dashboard() {
               key={idx} 
               {...feature}
               onAction={() => {
+                const isPremiumType = userTypes.find((type) => type.key === selectedUserType)?.isPremium;
+                if (isPremiumType) {
+                  navigate("/paywall", { state: { from: "/dashboard" } });
+                  return;
+                }
                 showNotification(`Opening ${feature.title}...`);
                 setSelectedFeature(feature);
                 setShowFeatureChat(true);
