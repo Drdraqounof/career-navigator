@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { findAI } from "../FindAI";
-
+// Define prompts and fields for each feature
+// Missing .env key handling is trigerd in dashbaord when accessing FeatureChat
 const featurePrompts = {
   "College Path Finder": {
     fields: [
