@@ -19,6 +19,20 @@ export default function CareerNavigator() {
   const [showResults, setShowResults] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Check if user is logged in and has already completed assessment
+  React.useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    const assessmentCompleted = localStorage.getItem("assessmentCompleted");
+    
+    if (userData && assessmentCompleted === "true") {
+      // User is logged in and already completed assessment, redirect to dashboard
+      navigate('/dashboard');
+    } else if (!userData) {
+      // User is not logged in, redirect to login
+      navigate('/login');
+    }
+  }, [navigate]);
+
   // --- Static data ---
   const groupsInit = [
     {
@@ -216,7 +230,11 @@ export default function CareerNavigator() {
     setCurrentStep((s) => Math.max(s - 1, 1));
   };
 
-  const goToDashboard = () => navigate("/dashboard");
+  const goToDashboard = () => {
+    // Mark assessment as completed
+    localStorage.setItem("assessmentCompleted", "true");
+    navigate("/dashboard");
+  };
 
   function handleNext() {
     if (!isStepAnswered(currentStep)) {

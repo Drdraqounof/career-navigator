@@ -9,16 +9,24 @@ export default function OnboardingFlow() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  // Load stored user data if available
+  // Load stored user data if available and check if assessment is completed
   useEffect(() => {
     const savedData = JSON.parse(localStorage.getItem("userData"));
+    const assessmentCompleted = localStorage.getItem("assessmentCompleted");
+    
     if (savedData) {
       setEmail(savedData.email || "");
       setFirstName(savedData.firstName || "");
       setLastName(savedData.lastName || "");
-      setCurrentPage("complete");
+      
+      // If assessment is already completed, go directly to dashboard
+      if (assessmentCompleted === "true") {
+        navigate('/dashboard');
+      } else {
+        setCurrentPage("complete");
+      }
     }
-  }, []);
+  }, [navigate]);
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -45,6 +53,7 @@ export default function OnboardingFlow() {
     setLastName("");
     setCurrentPage("login");
     localStorage.removeItem("userData");
+    localStorage.removeItem("assessmentCompleted");
   };
 
   // Step label helper
@@ -193,8 +202,15 @@ export default function OnboardingFlow() {
           <button onClick={handleStartOver} style={{ ...styles.button, flex: 1, background: 'linear-gradient(45deg, #ff6b6b, #ee5a52)' }}>
             Start Over
           </button>
-          <button onClick={() => navigate('/test')} style={{ ...styles.button, flex: 1, background: 'linear-gradient(45deg, #667eea, #764ba2)' }}>
-            Continue to Assessment
+          <button onClick={() => {
+            const assessmentCompleted = localStorage.getItem("assessmentCompleted");
+            if (assessmentCompleted === "true") {
+              navigate('/dashboard');
+            } else {
+              navigate('/test');
+            }
+          }} style={{ ...styles.button, flex: 1, background: 'linear-gradient(45deg, #667eea, #764ba2)' }}>
+            {localStorage.getItem("assessmentCompleted") === "true" ? 'Go to Dashboard' : 'Continue to Assessment'}
           </button>
         </div>
       </div>

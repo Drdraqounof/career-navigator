@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { findAI } from "../FindAI";
+import { HR } from "../HR";
 // Define prompts and fields for each feature
 // Missing .env key handling is trigerd in dashbaord when accessing FeatureChat
 const featurePrompts = {
@@ -150,7 +150,7 @@ export default function FeatureChat({ feature, onClose }) {
       if (userName) {
         initialPrompt = `User name: ${userName}\n` + initialPrompt;
       }
-      const response = await findAI(initialPrompt);
+      const response = await HR(initialPrompt);
       setMessages([
         { sender: "system", text: "Information collected successfully! Starting personalized assistance..." },
         { sender: "ai", text: response }
@@ -174,7 +174,7 @@ export default function FeatureChat({ feature, onClose }) {
     setLoading(true);
 
     try {
-      const aiResponse = await findAI(input);
+      const aiResponse = await HR(input);
       setMessages((prev) => [...prev, { sender: "ai", text: aiResponse }]);
     } catch (error) {
       console.error("AI fetch error:", error);

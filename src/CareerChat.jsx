@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {findAI} from "./FindAI";
+import {HR} from "./HR";
 // Mock AI function for demo
 
 
@@ -87,7 +88,7 @@ function NavButton({ onClick, children }) {
   );
 }
 
-export default function CareerChat({ userType, initialPrompt }) {
+export default function CareerChat({ userType, initialPrompt, aiType }) {
   // Get user's name from localStorage (set in Login.jsx)
   let userName = "";
   try {
@@ -298,7 +299,8 @@ export default function CareerChat({ userType, initialPrompt }) {
     setLoading(true);
 
     try {
-      const aiResponse = await findAI(currentInput);
+      const aiFunction = aiType === "hr" ? HR : findAI;
+      const aiResponse = await aiFunction(currentInput);
       const aiMsg = { sender: "ai", text: aiResponse };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (error) {
@@ -732,6 +734,7 @@ export default function CareerChat({ userType, initialPrompt }) {
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <NavButton onClick={() => navigate("/dashboard")}>Dashboard</NavButton>
               <NavButton onClick={() => navigate("/net")}>Network</NavButton>
+              <NavButton onClick={() => navigate("/lessonplan")}>Lesson Plan</NavButton>
               <NavButton onClick={() => showNotification("Already on My Plan")}>My Plan</NavButton>
               <NavButton onClick={() => navigate("/settings")}>Settings</NavButton>
               <button 

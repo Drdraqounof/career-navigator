@@ -348,6 +348,15 @@ export default function Dashboard() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
+  // Save selected user type to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('selectedUserType', selectedUserType);
+    } catch (e) {
+      console.error('Error saving user type:', e);
+    }
+  }, [selectedUserType]);
+
   const showNotification = (message) => {
     setNotification(message);
     setTimeout(() => setNotification(null), 3000);
@@ -406,6 +415,7 @@ export default function Dashboard() {
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <NavButton onClick={() => showNotification("Already on Dashboard")}>Dashboard</NavButton>
             <NavButton onClick={() => navigate("/net")}>Network</NavButton>
+            <NavButton onClick={() => navigate("/lessonplan")}>Lesson Plan</NavButton>
             <NavButton onClick={() => navigate("/careerchat")}>My Plan</NavButton>
             <NavButton onClick={() => navigate("/settings")}>Settings</NavButton>
             <button 

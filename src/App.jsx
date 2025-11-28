@@ -11,6 +11,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import ProfessionalEvents from "./components/pages/ProfessionalEvents";
 import EventCard from "./components/pages/EventCard";
 import Settings from "./components/pages/Settings";
+import LessonPlan from "./components/pages/LessonPlan";
 import CareerChat from "./CareerChat"; // ✅ ADD THIS IMPORT
 import PaywallPopup from "./components/PaywallPopup"; // ✅ Add this
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/eventcard" element={<EventCard />} /> {/* ✅ optional direct route */}
           <Route path="/careerchat" element={<CareerChat />} /> {/* ✅ fixed import & casing */}
           <Route path="/settings" element={<Settings />} />
+          <Route path="/lessonplan" element={<LessonPlan />} />
           <Route path="/paywall" element={<PaywallPopup />} />
         </Routes>
       </div>
