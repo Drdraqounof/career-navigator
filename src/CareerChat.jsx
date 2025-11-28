@@ -394,6 +394,14 @@ export default function CareerChat({ userType, initialPrompt, aiType }) {
           margin: 0 auto;
         }
 
+        @media (max-width: 768px) {
+          .chat-container {
+            padding: 1rem;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+          }
+        }
+
         .chat-header {
           display: flex;
           justify-content: space-between;
@@ -656,18 +664,35 @@ export default function CareerChat({ userType, initialPrompt, aiType }) {
 
         @media (max-width: 768px) {
           .wave-content h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
+          }
+
+          .wave-content p {
+            font-size: 0.95rem;
           }
 
           .chat-container {
-            margin: 0 1rem;
+            margin: 0 0.5rem;
             padding: 1rem;
+            border-radius: 0.75rem;
           }
 
           .chat-header {
             flex-direction: column;
             gap: 0.75rem;
-            align-items: flex-start;
+            align-items: stretch;
+          }
+
+          .chat-controls {
+            flex-direction: column;
+            width: 100%;
+          }
+
+          .refresh-btn,
+          .resume-upload-btn {
+            width: 100%;
+            font-size: 0.85rem;
+            padding: 0.6rem 1rem;
           }
 
           .messages-area {
@@ -676,6 +701,26 @@ export default function CareerChat({ userType, initialPrompt, aiType }) {
 
           .message {
             max-width: 90%;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+          }
+
+          .starter-prompts {
+            grid-template-columns: 1fr;
+          }
+
+          .prompt-button {
+            font-size: 0.85rem;
+            padding: 0.85rem;
+          }
+
+          .input-area {
+            flex-direction: column;
+          }
+
+          .chat-input,
+          .send-button {
+            width: 100%;
           }
         }
       `}</style>
@@ -718,8 +763,27 @@ export default function CareerChat({ userType, initialPrompt, aiType }) {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '1rem 2rem'
+            padding: '1rem 2rem',
+            flexWrap: 'wrap',
+            gap: '1rem'
           }}>
+            <style>{`
+              @media (max-width: 768px) {
+                nav > div {
+                  padding: 0.75rem 1rem !important;
+                  flex-direction: column;
+                  align-items: stretch !important;
+                }
+                nav > div > div:last-child {
+                  flex-wrap: wrap;
+                  justify-content: center;
+                }
+                nav button {
+                  font-size: 0.85rem !important;
+                  padding: 0.5rem 0.8rem !important;
+                }
+              }
+            `}</style>
             <div style={{
               fontSize: '1.5rem',
               fontWeight: '800',

@@ -383,6 +383,24 @@ export default function Dashboard() {
         </div>
       )}
 
+      <style>{`
+        @media (max-width: 768px) {
+          nav > div {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 0.75rem 1rem !important;
+            gap: 1rem;
+          }
+          nav > div > div:last-child {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+          nav button {
+            font-size: 0.85rem !important;
+            padding: 0.5rem 0.8rem !important;
+          }
+        }
+      `}</style>
       <nav style={{
         width: '100%',
         background: 'rgba(255, 255, 255, 0.98)',
@@ -499,6 +517,15 @@ export default function Dashboard() {
           gap: '20px',
           marginBottom: '36px'
         }}>
+          <style>{`
+            @media (max-width: 768px) {
+              section {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+                padding: 0 0.5rem;
+              }
+            }
+          `}</style>
           {userTypes.map((type) => (
             <button
               key={type.key}
@@ -576,6 +603,15 @@ export default function Dashboard() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
           gap: '24px'
         }}>
+          <style>{`
+            @media (max-width: 768px) {
+              section {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+                padding: 0 0.5rem;
+              }
+            }
+          `}</style>
           {currentConfig.features.map((feature, idx) => (
             <DashboardCard 
               key={idx} 

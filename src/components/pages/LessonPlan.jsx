@@ -1471,6 +1471,32 @@ Make assignments practical, achievable within the lesson timeframe, and directly
           from { transform: translateX(100%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
         }
+
+        @media (max-width: 768px) {
+          nav > div {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 0.75rem 1rem !important;
+            gap: 1rem;
+          }
+          nav > div > div:last-child {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+          nav button {
+            font-size: 0.85rem !important;
+            padding: 0.5rem 0.8rem !important;
+          }
+          .lesson-card {
+            min-width: 100% !important;
+          }
+          h1 {
+            font-size: 1.75rem !important;
+          }
+          h2 {
+            font-size: 1.35rem !important;
+          }
+        }
       `}</style>
     </div>
   );

@@ -195,6 +195,64 @@ export default function Home() {
           overflow: hidden;
         }
 
+        @media (max-width: 768px) {
+          nav {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+          }
+
+          nav ul {
+            flex-direction: column;
+            gap: 0.75rem;
+            text-align: center;
+            width: 100%;
+          }
+
+          nav ul li a,
+          nav ul li button {
+            display: block;
+            padding: 0.5rem;
+          }
+
+          .hero-section {
+            padding: 4rem 1rem;
+          }
+
+          .hero-content h1 {
+            font-size: 2rem !important;
+          }
+
+          .hero-content p {
+            font-size: 1rem !important;
+          }
+
+          .cta-button {
+            font-size: 0.95rem !important;
+            padding: 0.85rem 1.75rem !important;
+          }
+
+          .feature-grid,
+          .stats-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+            padding: 0 1rem;
+          }
+
+          section {
+            padding: 3rem 1rem !important;
+          }
+
+          section h2 {
+            font-size: 1.75rem !important;
+          }
+
+          .feature-card,
+          .stat-card {
+            padding: 1.5rem !important;
+          }
+        }
+
         .wave-canvas {
           position: absolute;
           top: 0;

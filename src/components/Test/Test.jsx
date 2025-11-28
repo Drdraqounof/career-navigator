@@ -369,6 +369,42 @@ export default function CareerNavigator() {
 
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+      <style>{`
+        @media (max-width: 768px) {
+          header nav {
+            padding: 0 1rem !important;
+          }
+          header nav > div {
+            font-size: 1.2rem !important;
+          }
+          section {
+            padding: 2rem 1rem !important;
+          }
+          section h2 {
+            font-size: 1.75rem !important;
+          }
+          section p {
+            font-size: 1rem !important;
+          }
+          section > div > div {
+            padding: 1.5rem !important;
+          }
+          .option-button {
+            font-size: 0.95rem !important;
+            padding: 0.85rem !important;
+          }
+          .nav-button {
+            font-size: 0.9rem !important;
+            padding: 0.7rem 1.25rem !important;
+          }
+          .career-card {
+            padding: 1.25rem !important;
+          }
+          .career-card h3 {
+            font-size: 1.1rem !important;
+          }
+        }
+      `}</style>
       {/* Header */}
       <header style={{ backgroundColor: "#fff", borderBottom: "1px solid #e0e0e0", padding: "1rem 0" }}>
         <nav style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>

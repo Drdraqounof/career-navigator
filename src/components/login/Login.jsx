@@ -67,7 +67,29 @@ export default function OnboardingFlow() {
   if (currentPage === "login") {
     return (
       <div style={styles.page}>
-        <div style={styles.container}>
+        <style>{`
+          @media (max-width: 768px) {
+            .login-container {
+              padding: 1.5rem !important;
+              max-width: 90% !important;
+            }
+            .login-container h1 {
+              font-size: 1.5rem !important;
+            }
+            .login-container p {
+              font-size: 0.9rem !important;
+            }
+            .login-container input {
+              font-size: 0.95rem !important;
+              padding: 0.7rem !important;
+            }
+            .login-container button {
+              font-size: 1rem !important;
+              padding: 0.85rem !important;
+            }
+          }
+        `}</style>
+        <div className="login-container" style={styles.container}>
           <p style={styles.step}>{getStep()}</p>
           <h1 style={styles.title}>Welcome Back</h1>
           <p style={styles.subtitle}>Log in to continue your career journey</p>
@@ -134,7 +156,7 @@ export default function OnboardingFlow() {
   if (currentPage === "name") {
     return (
       <div style={styles.page}>
-        <div style={styles.container}>
+        <div className="login-container" style={styles.container}>
           <p style={styles.step}>{getStep()}</p>
           <h1 style={styles.title}>Tell Us About You</h1>
           <p style={styles.subtitle}>Let's personalize your experience</p>
@@ -190,7 +212,7 @@ export default function OnboardingFlow() {
   // SUCCESS PAGE
   return (
     <div style={styles.page}>
-      <div style={styles.container}>
+      <div className="login-container" style={styles.container}>
         <p style={styles.step}>{getStep()}</p>
         <h1 style={styles.title}>Welcome, {firstName}!</h1>
         <p style={styles.subtitle}>Your profile has been set up successfully.</p>
