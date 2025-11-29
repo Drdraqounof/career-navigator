@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import EventCard from "./EventCard";
 
 export default function ProfessionalEvents() {
   const [search, setSearch] = useState("");
