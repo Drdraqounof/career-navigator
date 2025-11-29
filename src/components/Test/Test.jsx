@@ -2,13 +2,19 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Constants
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 10;
 
 const QUESTION_KEYS = {
   ENVIRONMENT: 'environment',
   ACTIVITIES: 'activities',
-  TECH_LEVEL: 'techLevel',
-  PRIORITY: 'priority'
+  SKILLS: 'skills',
+  PRIORITY: 'priority',
+  WORK_STYLE: 'workStyle',
+  INTERESTS: 'interests',
+  STRENGTHS: 'strengths',
+  LEARNING_PREFERENCE: 'learningPreference',
+  CAREER_GOALS: 'careerGoals',
+  INDUSTRY_PREFERENCE: 'industryPreference'
 };
 
 export default function CareerNavigator() {
@@ -36,34 +42,66 @@ export default function CareerNavigator() {
   // --- Static data ---
   const groupsInit = [
     {
-      name: "Tech Builders",
+      name: "Technology & Engineering",
       description:
-        "You excel at creating technical solutions and building digital products. Careers in this group focus on coding, architecture, and system design.",
-      careers: ["Software Developer", "DevOps Engineer"],
+        "You excel at creating technical solutions, building systems, and solving complex problems through technology.",
+      careers: ["Software Developer", "Data Scientist", "Cybersecurity Analyst", "Cloud Engineer"],
       score: 0,
       match: 0,
     },
     {
-      name: "Creative Designers",
+      name: "Creative & Design",
       description:
-        "You thrive in visual and user-centered design. These careers blend creativity with user experience to craft engaging digital experiences.",
-      careers: ["UX Designer", "UI Designer"],
+        "You thrive in visual communication, creative expression, and user-centered design to create engaging experiences.",
+      careers: ["UX Designer", "Graphic Designer", "Content Creator", "Art Director"],
       score: 0,
       match: 0,
     },
     {
-      name: "Analytical Thinkers",
+      name: "Business & Analytics",
       description:
-        "You love working with data and uncovering insights. These careers involve analysis, pattern recognition, and data-driven decision making.",
-      careers: ["Data Analyst", "Business Intelligence Analyst"],
+        "You love working with data, market trends, and strategic insights to drive business decisions.",
+      careers: ["Business Analyst", "Marketing Manager", "Financial Analyst", "Operations Manager"],
       score: 0,
       match: 0,
     },
     {
-      name: "Strategic Leaders",
+      name: "Leadership & Management",
       description:
-        "You excel at big-picture thinking and leading teams. These careers focus on strategy, stakeholder management, and product vision.",
-      careers: ["Product Manager", "Project Manager"],
+        "You excel at leading teams, managing projects, and coordinating people to achieve organizational goals.",
+      careers: ["Product Manager", "Project Manager", "HR Manager", "Operations Director"],
+      score: 0,
+      match: 0,
+    },
+    {
+      name: "Healthcare & Sciences",
+      description:
+        "You're passionate about helping others, scientific discovery, and making a direct impact on people's wellbeing.",
+      careers: ["Nurse Practitioner", "Physical Therapist", "Research Scientist", "Healthcare Administrator"],
+      score: 0,
+      match: 0,
+    },
+    {
+      name: "Education & Training",
+      description:
+        "You enjoy teaching, mentoring, and helping others develop their skills and knowledge.",
+      careers: ["Teacher", "Corporate Trainer", "Instructional Designer", "Education Consultant"],
+      score: 0,
+      match: 0,
+    },
+    {
+      name: "Communication & Media",
+      description:
+        "You excel at storytelling, public relations, and engaging audiences through various media channels.",
+      careers: ["Journalist", "Public Relations Specialist", "Social Media Manager", "Communications Director"],
+      score: 0,
+      match: 0,
+    },
+    {
+      name: "Legal & Compliance",
+      description:
+        "You're detail-oriented, analytical, and passionate about law, regulations, and ensuring compliance.",
+      careers: ["Paralegal", "Compliance Officer", "Legal Consultant", "Contract Specialist"],
       score: 0,
       match: 0,
     },
@@ -82,28 +120,84 @@ export default function CareerNavigator() {
 
   const questions = {
     [QUESTION_KEYS.ENVIRONMENT]: {
-      collaborative: "Collaborative team environment",
-      independent: "Independent work",
-      mixed: "Mix of both",
-      "client-facing": "Client-facing role",
+      collaborative: "Collaborative team environment with frequent interaction",
+      independent: "Independent work with minimal supervision",
+      mixed: "Balance of teamwork and solo work",
+      "client-facing": "Direct client/customer interaction",
     },
     [QUESTION_KEYS.ACTIVITIES]: {
-      "problem-solving": "Solving complex problems",
-      creative: "Creative design work",
-      data: "Analyzing data and patterns",
-      strategy: "Strategic planning",
+      "problem-solving": "Solving complex problems and troubleshooting",
+      creative: "Creative design and artistic expression",
+      data: "Analyzing data and identifying patterns",
+      strategy: "Strategic planning and big-picture thinking",
+      helping: "Helping and supporting others directly",
+      teaching: "Teaching and mentoring others",
     },
-    [QUESTION_KEYS.TECH_LEVEL]: {
-      beginner: "Beginner",
-      intermediate: "Intermediate",
-      advanced: "Advanced",
-      expert: "Expert",
+    [QUESTION_KEYS.SKILLS]: {
+      technical: "Technical and computer skills",
+      communication: "Communication and interpersonal skills",
+      analytical: "Critical thinking and analytical skills",
+      creative: "Creative and design skills",
+      leadership: "Leadership and management skills",
+      scientific: "Scientific and research skills",
     },
     [QUESTION_KEYS.PRIORITY]: {
-      salary: "High salary",
-      balance: "Work-life balance",
-      impact: "Positive impact",
-      growth: "Career growth",
+      salary: "High salary and financial stability",
+      balance: "Work-life balance and flexibility",
+      impact: "Making a positive social impact",
+      growth: "Career advancement opportunities",
+      security: "Job security and stability",
+      passion: "Following my passion and interests",
+    },
+    [QUESTION_KEYS.WORK_STYLE]: {
+      structured: "Structured with clear processes and routines",
+      flexible: "Flexible and adaptable to change",
+      fastPaced: "Fast-paced and dynamic",
+      steady: "Steady and predictable",
+    },
+    [QUESTION_KEYS.INTERESTS]: {
+      technology: "Technology and innovation",
+      arts: "Arts, design, and creativity",
+      business: "Business and entrepreneurship",
+      science: "Science and research",
+      health: "Healthcare and wellness",
+      education: "Education and development",
+      media: "Media and communications",
+      law: "Law and public policy",
+    },
+    [QUESTION_KEYS.STRENGTHS]: {
+      logical: "Logical reasoning and mathematics",
+      creative: "Creative thinking and innovation",
+      people: "Working with people and building relationships",
+      detail: "Attention to detail and accuracy",
+      writing: "Writing and verbal communication",
+      organizing: "Organizing and coordinating",
+    },
+    [QUESTION_KEYS.LEARNING_PREFERENCE]: {
+      handson: "Hands-on practice and experimentation",
+      visual: "Visual learning with diagrams and videos",
+      reading: "Reading books and articles",
+      discussion: "Group discussion and collaboration",
+      structured: "Structured courses with clear curriculum",
+      selfPaced: "Self-paced independent learning",
+    },
+    [QUESTION_KEYS.CAREER_GOALS]: {
+      specialist: "Becoming a deep specialist in one area",
+      generalist: "Developing broad skills across areas",
+      entrepreneur: "Starting my own business/venture",
+      executive: "Advancing to executive leadership",
+      impact: "Creating meaningful social impact",
+      innovation: "Driving innovation and change",
+    },
+    [QUESTION_KEYS.INDUSTRY_PREFERENCE]: {
+      tech: "Technology and software",
+      healthcare: "Healthcare and medical",
+      finance: "Finance and banking",
+      education: "Education and training",
+      nonprofit: "Nonprofit and social services",
+      corporate: "Corporate and enterprise",
+      creative: "Creative industries and media",
+      government: "Government and public sector",
     },
   };
 
@@ -194,18 +288,48 @@ export default function CareerNavigator() {
     },
     2: { 
       key: QUESTION_KEYS.ACTIVITIES, 
-      title: 'Which activities do you find most engaging?', 
+      title: 'Which activities do you find most engaging and fulfilling?', 
       options: questions[QUESTION_KEYS.ACTIVITIES] 
     },
     3: { 
-      key: QUESTION_KEYS.TECH_LEVEL, 
-      title: "What's your current experience level with technology?", 
-      options: questions[QUESTION_KEYS.TECH_LEVEL] 
+      key: QUESTION_KEYS.SKILLS, 
+      title: 'Which skills do you consider your strongest or most enjoy using?', 
+      options: questions[QUESTION_KEYS.SKILLS] 
     },
     4: { 
       key: QUESTION_KEYS.PRIORITY, 
       title: "What's most important to you in a career?", 
       options: questions[QUESTION_KEYS.PRIORITY] 
+    },
+    5: {
+      key: QUESTION_KEYS.WORK_STYLE,
+      title: 'What work style suits you best?',
+      options: questions[QUESTION_KEYS.WORK_STYLE]
+    },
+    6: {
+      key: QUESTION_KEYS.INTERESTS,
+      title: 'Which field or industry interests you most?',
+      options: questions[QUESTION_KEYS.INTERESTS]
+    },
+    7: {
+      key: QUESTION_KEYS.STRENGTHS,
+      title: 'What would you say is your greatest strength?',
+      options: questions[QUESTION_KEYS.STRENGTHS]
+    },
+    8: {
+      key: QUESTION_KEYS.LEARNING_PREFERENCE,
+      title: 'How do you prefer to learn new skills?',
+      options: questions[QUESTION_KEYS.LEARNING_PREFERENCE]
+    },
+    9: {
+      key: QUESTION_KEYS.CAREER_GOALS,
+      title: 'What is your long-term career aspiration?',
+      options: questions[QUESTION_KEYS.CAREER_GOALS]
+    },
+    10: {
+      key: QUESTION_KEYS.INDUSTRY_PREFERENCE,
+      title: 'Which industry sector appeals to you most?',
+      options: questions[QUESTION_KEYS.INDUSTRY_PREFERENCE]
     },
   };
 
@@ -233,6 +357,25 @@ export default function CareerNavigator() {
   const goToDashboard = () => {
     // Mark assessment as completed
     localStorage.setItem("assessmentCompleted", "true");
+    
+    // Save comprehensive assessment data for lesson plan personalization
+    const assessmentData = {
+      answers: answers,
+      completedAt: new Date().toISOString(),
+      environment: answers[QUESTION_KEYS.ENVIRONMENT],
+      activities: answers[QUESTION_KEYS.ACTIVITIES],
+      skills: answers[QUESTION_KEYS.SKILLS],
+      priority: answers[QUESTION_KEYS.PRIORITY],
+      workStyle: answers[QUESTION_KEYS.WORK_STYLE],
+      interests: answers[QUESTION_KEYS.INTERESTS],
+      strengths: answers[QUESTION_KEYS.STRENGTHS],
+      learningPreference: answers[QUESTION_KEYS.LEARNING_PREFERENCE],
+      careerGoals: answers[QUESTION_KEYS.CAREER_GOALS],
+      industryPreference: answers[QUESTION_KEYS.INDUSTRY_PREFERENCE],
+    };
+    
+    localStorage.setItem("assessmentData", JSON.stringify(assessmentData));
+    
     navigate("/dashboard");
   };
 

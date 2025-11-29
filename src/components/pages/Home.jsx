@@ -286,46 +286,6 @@ export default function Home() {
           text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
-        .scroll-down-btn {
-          display: inline-flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.5rem;
-          margin-top: 3rem;
-          padding: 1rem 2rem;
-          background: rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50px;
-          color: white;
-          text-decoration: none;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          animation: bounce 2s infinite;
-          z-index: 10;
-          position: relative;
-        }
-
-        .scroll-down-btn:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: translateY(-5px);
-          animation: none;
-        }
-
-        .scroll-down-btn svg {
-          animation: arrowBounce 1.5s infinite;
-        }
-
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-
-        @keyframes arrowBounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(5px); }
-        }
-
         .hero-overlay {
           position: absolute;
           inset: 0;
@@ -813,14 +773,6 @@ export default function Home() {
             <p>
               Empowering students, graduates, and career changers with personalized guidance based on real job market trends
             </p>
-            
-            {/* Scroll Down Button */}
-            <a href="#my-story" className="scroll-down-btn">
-              <span>Scroll to Learn More</span>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 5v14M19 12l-7 7-7-7"/>
-              </svg>
-            </a>
           </div>
         </section>
 

@@ -845,14 +845,27 @@ export default function LessonPlan() {
       // Gather user context from localStorage
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const careerChatMessages = JSON.parse(localStorage.getItem('careerChatMessages') || '[]');
-      const assessmentData = localStorage.getItem('assessmentCompleted');
+      const assessmentCompleted = localStorage.getItem('assessmentCompleted');
+      const assessmentData = JSON.parse(localStorage.getItem('assessmentData') || '{}');
       
-      // Build context for AI
+      // Build comprehensive context for AI
       const userContext = `
 User Profile:
 - Name: ${userData.firstName || 'User'} ${userData.lastName || ''}
 - User Type: ${userType}
-- Assessment Status: ${assessmentData ? 'Completed' : 'Not completed'}
+- Assessment Status: ${assessmentCompleted ? 'Completed' : 'Not completed'}
+
+Assessment Insights:
+- Work Environment Preference: ${assessmentData.environment || 'Not specified'}
+- Preferred Activities: ${assessmentData.activities || 'Not specified'}
+- Strongest Skills: ${assessmentData.skills || 'Not specified'}
+- Career Priority: ${assessmentData.priority || 'Not specified'}
+- Work Style: ${assessmentData.workStyle || 'Not specified'}
+- Primary Interests: ${assessmentData.interests || 'Not specified'}
+- Greatest Strength: ${assessmentData.strengths || 'Not specified'}
+- Learning Preference: ${assessmentData.learningPreference || 'Not specified'}
+- Career Goals: ${assessmentData.careerGoals || 'Not specified'}
+- Industry Preference: ${assessmentData.industryPreference || 'Not specified'}
 
 Recent Career Discussions:
 ${careerChatMessages.slice(-5).map(msg => `${msg.sender}: ${msg.text.substring(0, 150)}...`).join('\n')}
@@ -865,7 +878,7 @@ Lesson Information:
 - Modules: ${lesson.modules.map(m => m.name).join(', ')}
 `;
 
-      const prompt = `Based on the following user profile and lesson details, create 4-6 personalized, actionable assignments that will help the user master this lesson. Each assignment should be specific, measurable, and tailored to their career stage.
+      const prompt = `Based on the following user profile and lesson details, create 4-6 personalized, actionable assignments that will help the user master this lesson. Each assignment should be specific, measurable, and tailored to their career stage, learning preferences, and career goals.
 
 ${userContext}
 
@@ -874,7 +887,7 @@ Provide assignments in the following format:
 2. [Assignment Title] - [Brief description and specific action steps]
 ...
 
-Make assignments practical, achievable within the lesson timeframe, and directly related to the skills being taught. Include specific resources, exercises, or deliverables where applicable.`;
+Make assignments practical, achievable within the lesson timeframe, and directly related to the skills being taught. Include specific resources, exercises, or deliverables where applicable. Tailor the complexity and style based on their learning preference and career goals.`;
 
       const aiResponse = await findAI(prompt);
       
@@ -933,12 +946,16 @@ Make assignments practical, achievable within the lesson timeframe, and directly
     try {
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const careerChatMessages = JSON.parse(localStorage.getItem('careerChatMessages') || '[]');
+      const assessmentData = JSON.parse(localStorage.getItem('assessmentData') || '{}');
       
       const userContext = `
 User Profile:
 - Name: ${userData.firstName || 'User'}
 - User Type: ${userType}
 - Current Level: ${lesson.difficulty}
+- Learning Preference: ${assessmentData.learningPreference || 'Not specified'}
+- Strongest Skills: ${assessmentData.skills || 'Not specified'}
+- Career Goals: ${assessmentData.careerGoals || 'Not specified'}
 
 Lesson: ${lesson.title}
 Category: ${lesson.category}
