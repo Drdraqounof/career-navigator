@@ -286,6 +286,46 @@ export default function Home() {
           text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
+        .scroll-down-btn {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          margin-top: 3rem;
+          padding: 1rem 2rem;
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50px;
+          color: white;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          animation: bounce 2s infinite;
+          z-index: 10;
+          position: relative;
+        }
+
+        .scroll-down-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: translateY(-5px);
+          animation: none;
+        }
+
+        .scroll-down-btn svg {
+          animation: arrowBounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        @keyframes arrowBounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(5px); }
+        }
+
         .hero-overlay {
           position: absolute;
           inset: 0;
@@ -379,6 +419,196 @@ export default function Home() {
 
         section {
           margin-bottom: 5rem;
+        }
+
+        .fade-in {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in.opacity-100 {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* Personal Sections Styles */
+        .personal-section {
+          padding: 4rem 2rem;
+          background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+          margin: 2rem 0;
+          border-radius: 16px;
+        }
+
+        .personal-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          gap: 3rem;
+        }
+
+        .personal-section.reverse .personal-content {
+          flex-direction: row-reverse;
+        }
+
+        .personal-image {
+          flex: 0 0 400px;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+          transform: rotate(-2deg);
+          transition: transform 0.3s ease;
+        }
+
+        .personal-image:hover {
+          transform: rotate(0deg) scale(1.05);
+        }
+
+        .personal-image img {
+          width: 100%;
+          height: 400px;
+          object-fit: cover;
+          display: block;
+        }
+
+        .personal-text {
+          flex: 1;
+        }
+
+        .personal-text h2 {
+          font-size: 2.5rem;
+          margin-bottom: 1.5rem;
+          color: #1f2937;
+          font-weight: 800;
+        }
+
+        .personal-text p {
+          font-size: 1.1rem;
+          line-height: 1.8;
+          color: #4b5563;
+          margin-bottom: 1rem;
+        }
+
+        /* Hobbies Grid */
+        .hobbies-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.5rem;
+          margin-top: 1.5rem;
+        }
+
+        .hobby-item {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hobby-item:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .hobby-icon {
+          font-size: 2.5rem;
+          display: block;
+          margin-bottom: 0.75rem;
+        }
+
+        .hobby-item h4 {
+          font-size: 1.2rem;
+          color: #2563eb;
+          margin-bottom: 0.5rem;
+          font-weight: 700;
+        }
+
+        .hobby-item p {
+          font-size: 0.95rem;
+          color: #6b7280;
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        /* Skills Section */
+        .skills-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 2rem;
+        }
+
+        .skill-category {
+          background: white;
+          padding: 2rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-category h3 {
+          font-size: 1.5rem;
+          color: #1f2937;
+          margin-bottom: 1.5rem;
+          font-weight: 700;
+        }
+
+        .skill-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+
+        .skill-tag {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          transition: transform 0.2s ease;
+        }
+
+        .skill-tag:hover {
+          transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+          .personal-content {
+            flex-direction: column !important;
+            gap: 2rem;
+          }
+
+          .personal-section.reverse .personal-content {
+            flex-direction: column !important;
+          }
+
+          .personal-image {
+            flex: 0 0 auto;
+            width: 100%;
+            max-width: 350px;
+          }
+
+          .personal-image img {
+            height: 350px;
+          }
+
+          .personal-text h2 {
+            font-size: 1.75rem;
+          }
+
+          .personal-text p {
+            font-size: 1rem;
+          }
+
+          .hobbies-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .skills-container {
+            grid-template-columns: 1fr;
+          }
         }
 
         .fade-in {
@@ -583,10 +813,139 @@ export default function Home() {
             <p>
               Empowering students, graduates, and career changers with personalized guidance based on real job market trends
             </p>
+            
+            {/* Scroll Down Button */}
+            <a href="#my-story" className="scroll-down-btn">
+              <span>Scroll to Learn More</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+              </svg>
+            </a>
           </div>
         </section>
 
         <main className="container">
+
+        {/* Personal Story Section */}
+        <section id="my-story" className="fade-in" style={{ opacity: 0 }}>
+          <div className="personal-section">
+            <div className="personal-content">
+              <div className="personal-image">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="My Story" />
+              </div>
+              <div className="personal-text">
+                <h2>📖 My Story</h2>
+                <p>
+                  As a passionate developer and career enthusiast, I've always been fascinated by the intersection 
+                  of technology and personal growth. My journey began in college when I struggled to find the right 
+                  career path. After exploring various roles and industries, I realized that many people face similar 
+                  challenges when navigating their careers.
+                </p>
+                <p>
+                  This experience inspired me to create Career Navigator - a platform that combines AI technology 
+                  with personalized guidance to help others discover their ideal career paths without the trial and 
+                  error I went through.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Hobbies Section */}
+        <section id="my-hobbies" className="fade-in" style={{ opacity: 0 }}>
+          <div className="personal-section reverse">
+            <div className="personal-content">
+              <div className="personal-text">
+                <h2>🎨 My Hobbies & Interests</h2>
+                <div className="hobbies-grid">
+                  <div className="hobby-item">
+                    <span className="hobby-icon">💻</span>
+                    <h4>Coding & Development</h4>
+                    <p>Building innovative web applications and exploring new technologies</p>
+                  </div>
+                  <div className="hobby-item">
+                    <span className="hobby-icon">📚</span>
+                    <h4>Reading & Learning</h4>
+                    <p>Constantly expanding knowledge through books, courses, and tech blogs</p>
+                  </div>
+                  <div className="hobby-item">
+                    <span className="hobby-icon">🎮</span>
+                    <h4>Gaming</h4>
+                    <p>Enjoying strategic games and understanding game design principles</p>
+                  </div>
+                  <div className="hobby-item">
+                    <span className="hobby-icon">🏃</span>
+                    <h4>Fitness & Wellness</h4>
+                    <p>Maintaining a healthy lifestyle through regular exercise and mindfulness</p>
+                  </div>
+                </div>
+              </div>
+              <div className="personal-image">
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop" alt="Hobbies" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Vision Section */}
+        <section id="my-vision" className="fade-in" style={{ opacity: 0 }}>
+          <div className="personal-section">
+            <div className="personal-content">
+              <div className="personal-image">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=400&fit=crop" alt="Vision" />
+              </div>
+              <div className="personal-text">
+                <h2>🚀 My Vision</h2>
+                <p>
+                  I envision a future where career guidance is accessible to everyone, regardless of their background 
+                  or resources. Career Navigator is just the beginning - my goal is to democratize career development 
+                  through intelligent technology that understands individual needs and aspirations.
+                </p>
+                <p>
+                  By combining artificial intelligence with human-centered design, I believe we can help millions 
+                  of people find fulfilling careers that align with their passions, skills, and values. The future 
+                  of work is evolving, and I'm committed to helping people navigate it successfully.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Skills & Expertise */}
+        <section id="my-skills" className="fade-in" style={{ opacity: 0 }}>
+          <h2>💡 Skills & Expertise</h2>
+          <div className="skills-container">
+            <div className="skill-category">
+              <h3>Frontend Development</h3>
+              <div className="skill-tags">
+                <span className="skill-tag">React</span>
+                <span className="skill-tag">JavaScript</span>
+                <span className="skill-tag">TypeScript</span>
+                <span className="skill-tag">HTML/CSS</span>
+                <span className="skill-tag">Tailwind CSS</span>
+              </div>
+            </div>
+            <div className="skill-category">
+              <h3>Backend & Tools</h3>
+              <div className="skill-tags">
+                <span className="skill-tag">Node.js</span>
+                <span className="skill-tag">APIs</span>
+                <span className="skill-tag">Git</span>
+                <span className="skill-tag">Vite</span>
+                <span className="skill-tag">OpenAI API</span>
+              </div>
+            </div>
+            <div className="skill-category">
+              <h3>Design & UX</h3>
+              <div className="skill-tags">
+                <span className="skill-tag">UI/UX Design</span>
+                <span className="skill-tag">Responsive Design</span>
+                <span className="skill-tag">User Research</span>
+                <span className="skill-tag">Prototyping</span>
+              </div>
+            </div>
+          </div>
+        </section>
           
 <section id="overview" className="fade-in">
   <h2>Project Overview</h2>
