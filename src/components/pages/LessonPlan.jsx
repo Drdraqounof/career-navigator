@@ -755,6 +755,13 @@ export default function LessonPlan() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [aiAssignments, setAiAssignments] = useState({});
   const [loadingAssignments, setLoadingAssignments] = useState({});
+  const [quizzes, setQuizzes] = useState({});
+  const [loadingQuiz, setLoadingQuiz] = useState({});
+  const [activeQuiz, setActiveQuiz] = useState(null);
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [quizResults, setQuizResults] = useState(null);
+  const [studyMaterials, setStudyMaterials] = useState({});
+  const [loadingStudyMaterials, setLoadingStudyMaterials] = useState({});
 
   // Load user type from localStorage (set from dashboard)
   useEffect(() => {
@@ -780,6 +787,28 @@ export default function LessonPlan() {
         });
         setAiAssignments(assignments);
       }
+
+      // Load quizzes
+      const savedQuizzes = {};
+      enrolled.forEach(lesson => {
+        const lessonKey = `lesson_${lesson.id}`;
+        const savedQuiz = localStorage.getItem(`quiz_${lessonKey}`);
+        if (savedQuiz) {
+          savedQuizzes[lessonKey] = JSON.parse(savedQuiz);
+        }
+      });
+      setQuizzes(savedQuizzes);
+
+      // Load study materials
+      const savedMaterials = {};
+      enrolled.forEach(lesson => {
+        const lessonKey = `lesson_${lesson.id}`;
+        const savedMaterial = localStorage.getItem(`studyMaterials_${lessonKey}`);
+        if (savedMaterial) {
+          savedMaterials[lessonKey] = JSON.parse(savedMaterial);
+        }
+      });
+      setStudyMaterials(savedMaterials);
     } catch (e) {
       console.error('Error loading data:', e);
     }
@@ -885,6 +914,260 @@ Make assignments practical, achievable within the lesson timeframe, and directly
     } finally {
       setLoadingAssignments(prev => ({ ...prev, [lessonKey]: false }));
     }
+  };
+
+  // Generate AI-powered quiz based on lesson content and user knowledge
+  const generateAIQuiz = async (lesson) => {
+    const lessonKey = `lesson_${lesson.id}`;
+    
+    // Check if quiz already exists
+    const savedQuiz = localStorage.getItem(`quiz_${lessonKey}`);
+    if (savedQuiz) {
+      setQuizzes(prev => ({ ...prev, [lessonKey]: JSON.parse(savedQuiz) }));
+      setActiveQuiz(lessonKey);
+      return;
+    }
+
+    setLoadingQuiz(prev => ({ ...prev, [lessonKey]: true }));
+
+    try {
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const careerChatMessages = JSON.parse(localStorage.getItem('careerChatMessages') || '[]');
+      
+      const userContext = `
+User Profile:
+- Name: ${userData.firstName || 'User'}
+- User Type: ${userType}
+- Current Level: ${lesson.difficulty}
+
+Lesson: ${lesson.title}
+Category: ${lesson.category}
+Skills: ${lesson.skills.join(', ')}
+Modules: ${lesson.modules.map(m => m.name).join(', ')}
+
+Recent Career Context:
+${careerChatMessages.slice(-3).map(msg => `${msg.sender}: ${msg.text.substring(0, 100)}...`).join('\n')}
+`;
+
+      const prompt = `Create a comprehensive 10-question quiz to test knowledge on: "${lesson.title}". 
+
+${userContext}
+
+Format each question exactly as follows:
+Q1: [Question text]
+A) [Option A]
+B) [Option B]
+C) [Option C]
+D) [Option D]
+CORRECT: [A/B/C/D]
+EXPLANATION: [Brief explanation of why this is correct]
+
+Make questions:
+- Progressively harder (3 easy, 4 medium, 3 hard)
+- Practical and scenario-based when possible
+- Relevant to ${userType} career stage
+- Focused on real-world application
+- Include mix of concepts, definitions, and problem-solving
+
+Generate all 10 questions now:`;
+
+      const aiResponse = await findAI(prompt);
+      
+      // Parse quiz questions
+      const questionBlocks = aiResponse.split(/Q\d+:/g).filter(block => block.trim());
+      const questions = questionBlocks.map((block, index) => {
+        const lines = block.trim().split('\n').filter(l => l.trim());
+        const questionText = lines[0]?.trim() || `Question ${index + 1}`;
+        
+        const options = [];
+        let correct = '';
+        let explanation = '';
+        
+        lines.forEach(line => {
+          if (line.match(/^[A-D]\)/)) {
+            options.push(line.trim());
+          } else if (line.startsWith('CORRECT:')) {
+            correct = line.replace('CORRECT:', '').trim();
+          } else if (line.startsWith('EXPLANATION:')) {
+            explanation = line.replace('EXPLANATION:', '').trim();
+          }
+        });
+        
+        return {
+          question: questionText,
+          options: options.length === 4 ? options : ['A) Option A', 'B) Option B', 'C) Option C', 'D) Option D'],
+          correct: correct || 'A',
+          explanation: explanation || 'Review the lesson materials for more details.',
+          difficulty: index < 3 ? 'Easy' : index < 7 ? 'Medium' : 'Hard'
+        };
+      });
+
+      const quiz = {
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        questions: questions.slice(0, 10),
+        createdAt: new Date().toISOString(),
+        attempts: 0
+      };
+
+      setQuizzes(prev => ({ ...prev, [lessonKey]: quiz }));
+      localStorage.setItem(`quiz_${lessonKey}`, JSON.stringify(quiz));
+      setActiveQuiz(lessonKey);
+      showNotification(`📝 Quiz ready! Test your knowledge on "${lesson.title}"`);
+      
+    } catch (error) {
+      console.error('Error generating quiz:', error);
+      showNotification('⚠️ Unable to generate quiz. Please try again.');
+    } finally {
+      setLoadingQuiz(prev => ({ ...prev, [lessonKey]: false }));
+    }
+  };
+
+  // Generate personalized study materials based on quiz performance
+  const generateStudyMaterials = async (lesson, weakAreas = []) => {
+    const lessonKey = `lesson_${lesson.id}`;
+    
+    setLoadingStudyMaterials(prev => ({ ...prev, [lessonKey]: true }));
+
+    try {
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const quiz = quizzes[lessonKey];
+      
+      const weakAreasText = weakAreas.length > 0 
+        ? `Focus on these weak areas: ${weakAreas.join(', ')}`
+        : 'Provide comprehensive study materials covering all topics';
+
+      const prompt = `Create personalized study materials for: "${lesson.title}"
+
+User: ${userData.firstName || 'Student'}
+Career Stage: ${userType}
+Lesson Difficulty: ${lesson.difficulty}
+Skills Covered: ${lesson.skills.join(', ')}
+${weakAreasText}
+
+Quiz Performance Context:
+${quiz ? `User completed quiz with ${quiz.attempts} attempt(s)` : 'User has not taken the quiz yet'}
+
+Create study materials in the following sections:
+
+1. KEY CONCEPTS (5-7 main points)
+- Bullet point list of essential concepts
+- Clear definitions and explanations
+
+2. STUDY GUIDE (step-by-step)
+- Organized learning path
+- Progressive difficulty
+- Time estimates for each section
+
+3. PRACTICE EXERCISES (3-5 exercises)
+- Hands-on activities
+- Real-world scenarios
+- Self-assessment questions
+
+4. RESOURCES & REFERENCES
+- Recommended articles/videos
+- Practice websites
+- Further reading
+
+5. QUICK REVIEW CHECKLIST
+- Summary points for quick revision
+- Memory aids and mnemonics
+
+Format: Use clear headings, bullet points, and actionable items.`;
+
+      const aiResponse = await findAI(prompt);
+      
+      const materials = {
+        lessonId: lesson.id,
+        content: aiResponse,
+        createdAt: new Date().toISOString(),
+        weakAreas: weakAreas
+      };
+
+      setStudyMaterials(prev => ({ ...prev, [lessonKey]: materials }));
+      localStorage.setItem(`studyMaterials_${lessonKey}`, JSON.stringify(materials));
+      showNotification(`📚 Study materials generated for "${lesson.title}"!`);
+      
+    } catch (error) {
+      console.error('Error generating study materials:', error);
+      showNotification('⚠️ Unable to generate study materials. Please try again.');
+    } finally {
+      setLoadingStudyMaterials(prev => ({ ...prev, [lessonKey]: false }));
+    }
+  };
+
+  // Submit quiz and calculate results
+  const submitQuiz = () => {
+    if (!activeQuiz) return;
+    
+    const quiz = quizzes[activeQuiz];
+    let correctCount = 0;
+    const results = [];
+    const weakTopics = [];
+    
+    quiz.questions.forEach((q, index) => {
+      const userAnswer = quizAnswers[index];
+      const isCorrect = userAnswer === q.correct;
+      
+      if (isCorrect) {
+        correctCount++;
+      } else if (userAnswer) {
+        weakTopics.push(q.question.substring(0, 50) + '...');
+      }
+      
+      results.push({
+        question: q.question,
+        userAnswer: userAnswer || 'Not answered',
+        correctAnswer: q.correct,
+        isCorrect: isCorrect,
+        explanation: q.explanation,
+        difficulty: q.difficulty
+      });
+    });
+    
+    const score = Math.round((correctCount / quiz.questions.length) * 100);
+    const passed = score >= 70;
+    
+    // Update quiz attempts
+    const updatedQuiz = {
+      ...quiz,
+      attempts: quiz.attempts + 1,
+      lastScore: score,
+      lastAttempt: new Date().toISOString()
+    };
+    
+    setQuizzes(prev => ({ ...prev, [activeQuiz]: updatedQuiz }));
+    localStorage.setItem(`quiz_${activeQuiz}`, JSON.stringify(updatedQuiz));
+    
+    setQuizResults({
+      score,
+      passed,
+      correctCount,
+      totalQuestions: quiz.questions.length,
+      results,
+      weakTopics
+    });
+    
+    // Auto-generate study materials if score is below 80%
+    if (score < 80 && weakTopics.length > 0) {
+      const lesson = enrolledLessons.find(l => `lesson_${l.id}` === activeQuiz);
+      if (lesson) {
+        setTimeout(() => {
+          generateStudyMaterials(lesson, weakTopics);
+        }, 2000);
+      }
+    }
+  };
+
+  const retakeQuiz = () => {
+    setQuizAnswers({});
+    setQuizResults(null);
+  };
+
+  const closeQuiz = () => {
+    setActiveQuiz(null);
+    setQuizAnswers({});
+    setQuizResults(null);
   };
 
   const handleEnroll = async (lesson) => {
@@ -1296,13 +1579,86 @@ Make assignments practical, achievable within the lesson timeframe, and directly
                 gap: '24px'
               }}>
                 {enrolledLessons.map(lesson => (
-                  <LessonCard
-                    key={lesson.id}
-                    lesson={lesson}
-                    onStart={handleEnroll}
-                    onViewDetails={handleViewDetails}
-                    isEnrolled={true}
-                  />
+                  <div key={lesson.id} style={{position: 'relative'}}>
+                    <LessonCard
+                      lesson={lesson}
+                      onStart={handleEnroll}
+                      onViewDetails={handleViewDetails}
+                      isEnrolled={true}
+                    />
+                    {/* Quiz and Study Buttons */}
+                    <div style={{
+                      display: 'flex',
+                      gap: '8px',
+                      marginTop: '12px'
+                    }}>
+                      <button
+                        onClick={() => generateAIQuiz(lesson)}
+                        disabled={loadingQuiz[`lesson_${lesson.id}`]}
+                        style={{
+                          flex: 1,
+                          padding: '12px',
+                          background: loadingQuiz[`lesson_${lesson.id}`] 
+                            ? '#cbd5e0' 
+                            : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '10px',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          cursor: loadingQuiz[`lesson_${lesson.id}`] ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!loadingQuiz[`lesson_${lesson.id}`]) {
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                      >
+                        {loadingQuiz[`lesson_${lesson.id}`] ? '⏳ Generating...' : '📝 Take Quiz'}
+                      </button>
+                      
+                      <button
+                        onClick={() => generateStudyMaterials(lesson)}
+                        disabled={loadingStudyMaterials[`lesson_${lesson.id}`]}
+                        style={{
+                          flex: 1,
+                          padding: '12px',
+                          background: loadingStudyMaterials[`lesson_${lesson.id}`]
+                            ? '#cbd5e0'
+                            : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '10px',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          cursor: loadingStudyMaterials[`lesson_${lesson.id}`] ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!loadingStudyMaterials[`lesson_${lesson.id}`]) {
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                      >
+                        {loadingStudyMaterials[`lesson_${lesson.id}`] ? '⏳ Creating...' : '📚 Study Guide'}
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -1464,6 +1820,329 @@ Make assignments practical, achievable within the lesson timeframe, and directly
           aiAssignments={aiAssignments[`lesson_${selectedLesson?.id}`] || []}
           loadingAssignments={loadingAssignments[`lesson_${selectedLesson?.id}`] || false}
         />
+      )}
+
+      {/* Quiz Modal */}
+      {activeQuiz && quizzes[activeQuiz] && !quizResults && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.75)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000,
+          padding: '20px',
+          overflowY: 'auto'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            maxWidth: '800px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+          }}>
+            <div style={{
+              position: 'sticky',
+              top: 0,
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              color: 'white',
+              padding: '24px',
+              borderRadius: '20px 20px 0 0',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              zIndex: 1
+            }}>
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '4px' }}>
+                  📝 Knowledge Quiz
+                </h2>
+                <p style={{ fontSize: '0.9rem', opacity: 0.95 }}>
+                  {quizzes[activeQuiz].lessonTitle}
+                </p>
+              </div>
+              <button
+                onClick={closeQuiz}
+                style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  border: 'none',
+                  color: 'white',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  fontSize: '1.2rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ padding: '24px' }}>
+              {quizzes[activeQuiz].questions.map((q, index) => (
+                <div key={index} style={{
+                  marginBottom: '24px',
+                  padding: '20px',
+                  background: '#f8f9fa',
+                  borderRadius: '12px',
+                  border: '2px solid #e2e8f0'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'start',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontWeight: '600', color: '#2d3748', fontSize: '1.05rem', flex: 1 }}>
+                      {index + 1}. {q.question}
+                    </div>
+                    <span style={{
+                      background: q.difficulty === 'Easy' ? '#10b981' : q.difficulty === 'Medium' ? '#f59e0b' : '#ef4444',
+                      color: 'white',
+                      padding: '2px 8px',
+                      borderRadius: '8px',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      marginLeft: '8px',
+                      flexShrink: 0
+                    }}>
+                      {q.difficulty}
+                    </span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {q.options.map((option, optIdx) => {
+                      const optionLetter = option.charAt(0);
+                      const isSelected = quizAnswers[index] === optionLetter;
+                      
+                      return (
+                        <button
+                          key={optIdx}
+                          onClick={() => setQuizAnswers({...quizAnswers, [index]: optionLetter})}
+                          style={{
+                            padding: '12px 16px',
+                            background: isSelected ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'white',
+                            color: isSelected ? 'white' : '#2d3748',
+                            border: isSelected ? 'none' : '2px solid #cbd5e0',
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            fontSize: '0.95rem',
+                            fontWeight: isSelected ? '600' : '500',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isSelected) {
+                              e.currentTarget.style.borderColor = '#667eea';
+                              e.currentTarget.style.background = '#f7faff';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isSelected) {
+                              e.currentTarget.style.borderColor = '#cbd5e0';
+                              e.currentTarget.style.background = 'white';
+                            }
+                          }}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={submitQuiz}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  marginTop: '16px'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              >
+                Submit Quiz 🎯
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quiz Results Modal */}
+      {quizResults && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.75)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000,
+          padding: '20px',
+          overflowY: 'auto'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            maxWidth: '900px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+          }}>
+            <div style={{
+              background: quizResults.passed 
+                ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              color: 'white',
+              padding: '32px',
+              borderRadius: '20px 20px 0 0',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '4rem', marginBottom: '12px' }}>
+                {quizResults.passed ? '🎉' : '📚'}
+              </div>
+              <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '8px' }}>
+                {quizResults.passed ? 'Congratulations!' : 'Keep Learning!'}
+              </h2>
+              <p style={{ fontSize: '1.2rem', marginBottom: '16px' }}>
+                Your Score: {quizResults.score}%
+              </p>
+              <p style={{ fontSize: '1rem', opacity: 0.95 }}>
+                {quizResults.correctCount} out of {quizResults.totalQuestions} correct
+              </p>
+            </div>
+
+            <div style={{ padding: '24px' }}>
+              {/* Detailed Results */}
+              <div style={{ marginBottom: '24px' }}>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: '600', color: '#2d3748', marginBottom: '16px' }}>
+                  📊 Detailed Results
+                </h3>
+                
+                {quizResults.results.map((result, index) => (
+                  <div key={index} style={{
+                    marginBottom: '16px',
+                    padding: '16px',
+                    background: result.isCorrect ? '#f0fdf4' : '#fef2f2',
+                    borderRadius: '12px',
+                    border: `2px solid ${result.isCorrect ? '#10b981' : '#ef4444'}`
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'start',
+                      gap: '12px',
+                      marginBottom: '8px'
+                    }}>
+                      <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>
+                        {result.isCorrect ? '✅' : '❌'}
+                      </span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: '600', color: '#2d3748', marginBottom: '8px' }}>
+                          Q{index + 1}: {result.question}
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#4a5568' }}>
+                          <strong>Your Answer:</strong> {result.userAnswer}
+                          {!result.isCorrect && (
+                            <div style={{ marginTop: '4px' }}>
+                              <strong>Correct Answer:</strong> {result.correctAnswer}
+                            </div>
+                          )}
+                        </div>
+                        <div style={{
+                          marginTop: '8px',
+                          padding: '8px 12px',
+                          background: 'white',
+                          borderRadius: '8px',
+                          fontSize: '0.85rem',
+                          color: '#718096'
+                        }}>
+                          💡 {result.explanation}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={retakeQuiz}
+                  style={{
+                    flex: 1,
+                    minWidth: '200px',
+                    padding: '14px',
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  🔄 Retake Quiz
+                </button>
+                
+                <button
+                  onClick={closeQuiz}
+                  style={{
+                    flex: 1,
+                    minWidth: '200px',
+                    padding: '14px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✓ Close
+                </button>
+              </div>
+
+              {quizResults.weakTopics.length > 0 && (
+                <div style={{
+                  marginTop: '20px',
+                  padding: '16px',
+                  background: '#fffbeb',
+                  borderRadius: '12px',
+                  border: '2px solid #fbbf24'
+                }}>
+                  <div style={{ fontWeight: '600', color: '#92400e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    📚 Study materials have been generated for your weak areas
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#78350f' }}>
+                    Review the study guide to strengthen your understanding of these topics.
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       <style>{`
