@@ -166,7 +166,21 @@ export default function Home() {
         .grid { display: grid; gap: 2rem; }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
-        @media (max-width: 768px) { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { 
+          .grid-3, .grid-2 { grid-template-columns: 1fr; }
+          .hero-section { padding: 4rem 0; min-height: 80vh; }
+          .hero-section h1 { font-size: 2.5rem; }
+          .hero-section p { font-size: 1.1rem; }
+          .cta-button { padding: 0.875rem 2rem; font-size: 1rem; }
+          section h2 { font-size: 2rem; }
+          .nav-title { font-size: 1.25rem; }
+          main { padding: 2rem 1rem; }
+          section { margin-bottom: 4rem; }
+          .card { padding: 1.5rem; }
+          .card h3 { font-size: 1.25rem; }
+          .audience-item { font-size: 1rem; padding: 1.25rem; }
+          .floating-shape { display: none; }
+        }
         .card { padding: 2rem; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-radius: 1rem; border: 1px solid #f3f4f6; transition: all 0.3s ease; }
         .card:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); transform: translateY(-5px); border-color: #667eea; }
         .card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #1f2937; }
@@ -185,6 +199,14 @@ export default function Home() {
         @media (max-width: 768px) { 
           .timeline-item { padding-left: 2rem; }
           .timeline-badge { left: -0.5rem; padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+          .timeline-item::before { width: 2px; }
+          .timeline-card ul { padding-left: 1rem; }
+          .timeline-card li { font-size: 0.9rem; margin-bottom: 0.75rem; }
+        }
+        .scroll-to-top { position: fixed; bottom: 2rem; right: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; opacity: 0; pointer-events: none; }
+        .scroll-to-top.visible { opacity: 1; pointer-events: all; }
+        @media (max-width: 768px) {
+          .scroll-to-top { bottom: 1.5rem; right: 1.5rem; width: 45px; height: 45px; font-size: 1.25rem; }
         }
       `}</style>
       
